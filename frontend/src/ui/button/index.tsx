@@ -1,0 +1,60 @@
+import React from "react";
+import { cva } from "class-variance-authority";
+import { cn } from "../../lib/utils";
+import { Link } from "react-router-dom";
+
+interface BtnProps {
+  children?: string;
+  link?: string;
+  className?: string;
+  variant?: "default" | "transparent" | "disabled";
+  size?: "default" | "sm" | "lg";
+  onClick?: () => void;
+}
+
+const buttonVariants = cva("rounded-md font-medium focus:outline-none", {
+  variants: {
+    variant: {
+      default:
+        "bg-cyan-500 text-light shadow-lg hover:bg-cyan-400 focus:bg-cyan-400 focus:ring-cyan-500 cursor-pointer focus:underline focus:ring-transparent",
+      disabled: "bg-gray-400 text-light cursor-not-allowed",
+      transparent:
+        "text-dark hover:underline cursor-pointer focus:underline focus:ring-transparent",
+    },
+    size: {
+      default: "h-10 px-4 py-2",
+      sm: "h-9 rounded-md px-3",
+      lg: "h-11 rounded-md px-8",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+  },
+});
+
+
+export default function Button({ variant = "default", size = "default", className, children, link, ...props }: BtnProps) {
+  if (link) {
+    return (
+      <Link
+        to={link} // Assure que `to` reçoit toujours une string valide
+        className={cn(buttonVariants({ variant, size }), className)}
+        {...props}
+      >
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+
+

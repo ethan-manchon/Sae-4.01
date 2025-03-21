@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #1DA1F2;
+  --color-light: #F5F8FA;
+  --color-dark: #3D6C93;
+
+  --color-fg: var(--color-dark);
+  --color-bg: var(--color-light);
+}
+
+@layer base {
+  .indicator {
+    height: 4px;
+    border-radius: 4px;
+    width: 15%;
+    margin-right: 8px;
+  }
+  
+  .indicator-container {
+    flex-direction: row;
+    display: flex;
+  }
+}
+
+ 

@@ -1,0 +1,53 @@
+import React, { useState } from "react";
+import Button from "../../ui/button";
+
+interface TweetInputProps {
+    onTweetSent?: (tweet: string) => void;
+}
+
+const TweetInput: React.FC<TweetInputProps> = ({ onTweetSent }) => {
+    const [text, setText] = useState("");
+    const maxChars = 280;
+
+    const handlePublish = async () => {
+        if (!text.trim()) return;
+        
+            const response = await fetch("http://localhost:8080/posts", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ content: text }),
+            });
+            
+            if (response.ok) {
+                setText("");
+                if (typeof onTweetSent === "function") {
+                    onTweetSent(text);
+                }
+                console.log("Post ajouté avec succès");
+            }
+    };
+
+
+    return (
+        <div className='flex flex-row gap-8 items-center p-4 border bg-white shadow border-gray-200 rounded-lg mb-4 w-3/4 mx-auto'>
+            <div className="flex flex-col w-full">
+                <input
+                    type="text"
+                    className="bg-light p-4 border border-gray-200 rounded-lg text-dark"
+                    placeholder="Publier un tweet..."
+                    value={text}
+                    onChange={(e) => setText(e.target.value.slice(0, maxChars))}
+                />
+                <div
+                    className={`text-sm text-right ${text.length === 280 ? "text-red-500" : "text-gray-500"}`}>
+                    {`${maxChars - text.length} / 280`}
+                </div>
+            </div>
+            <Button onClick={() => handlePublish()}>Publier</Button>
+        </div>
+    );
+};
+
+export default TweetInput;
