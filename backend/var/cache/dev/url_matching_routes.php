@@ -20,9 +20,9 @@ return [
             [['_route' => 'posts.index', '_controller' => 'App\\Controller\\PostController::index'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'posts.create', '_format' => 'json', '_controller' => 'App\\Controller\\PostController::create'], null, ['POST' => 0], null, false, false, null],
         ],
-        '/users' => [[['_route' => 'user.index', '_controller' => 'App\\Controller\\UserController::index'], null, ['GET' => 0], null, false, false, null]],
-        '/login' => [[['_route' => 'user.login', '_controller' => 'App\\Controller\\UserController::login'], null, ['POST' => 0], null, false, false, null]],
-        '/register' => [[['_route' => 'user.register', '_controller' => 'App\\Controller\\UserController::register'], null, ['POST' => 0], null, false, false, null]],
+        '/register' => [[['_route' => 'user.register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, ['POST' => 0], null, false, false, null]],
+        '/verify/email' => [[['_route' => 'app_verify_email', '_controller' => 'App\\Controller\\RegistrationController::verifyUserEmail'], null, null, null, false, false, null]],
+        '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, ['POST' => 0], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'

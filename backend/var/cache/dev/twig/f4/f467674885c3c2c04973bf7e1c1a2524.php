@@ -339,6 +339,6 @@ class __TwigTemplate_d3a954ab9963e319523260f756273a06 extends Template
         {% block body '' %}
     </body>
 </html>
-", "@WebProfiler/Profiler/base.html.twig", "/app/backend/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/base.html.twig");
+", "@WebProfiler/Profiler/base.html.twig", "/home/ethan/SAE4.01/SAE/SAE4.DWeb-DI.01/backend/vendor/symfony/web-profiler-bundle/Resources/views/Profiler/base.html.twig");
     }
 }

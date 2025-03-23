@@ -170,6 +170,6 @@ class __TwigTemplate_e5e5d79b31e98028c59740c5ba26b8ca extends Template
     </ul>
 </div>
 {% endblock %}
-", "post/index.html.twig", "/app/backend/templates/post/index.html.twig");
+", "post/index.html.twig", "/home/ethan/SAE4.01/SAE/SAE4.DWeb-DI.01/backend/templates/post/index.html.twig");
     }
 }

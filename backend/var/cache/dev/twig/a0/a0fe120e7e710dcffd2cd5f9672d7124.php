@@ -1866,6 +1866,6 @@ class __TwigTemplate_34674a3bc2328fff6e805be5f754f3e0 extends Template
         </tbody>
     </table>
 {% endmacro %}
-", "@Doctrine/Collector/db.html.twig", "/app/backend/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
+", "@Doctrine/Collector/db.html.twig", "/home/ethan/SAE4.01/SAE/SAE4.DWeb-DI.01/backend/vendor/doctrine/doctrine-bundle/templates/Collector/db.html.twig");
     }
 }

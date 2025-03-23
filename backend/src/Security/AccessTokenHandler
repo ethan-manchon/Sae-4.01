@@ -1,0 +1,42 @@
+<!-- 
+namespace App\Security;
+
+use App\Repository\AccessTokenRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+
+class AccessTokenHandler implements AccessTokenHandlerInterface
+{
+    public function __construct(
+        private AccessTokenRepository $accessTokenRepository
+    ) {}
+
+    public function getUserBadgeFrom(Request $request): ?UserBadge
+    {
+        $authHeader = $request->headers->get('Authorization');
+
+        if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
+            return null;
+        }
+
+        $rawToken = substr($authHeader, 7); // remove "Bearer "
+        $hashedToken = hash('sha256', $rawToken);
+
+        $accessToken = $this->accessTokenRepository->findOneBy([
+            'hashedToken' => $hashedToken,
+            'isValid' => true
+        ]);
+
+        if (!$accessToken) {
+            return null;
+        }
+
+        if ($accessToken->getExpiresAt() < new \DateTimeImmutable()) {
+            return null;
+        }
+
+        // ⚠️ Attention : on utilise ici l’email pour identifier l’utilisateur (et PAS l’id !)
+        return new UserBadge($accessToken->getUser()->getUserIdentifier());
+    }
+}

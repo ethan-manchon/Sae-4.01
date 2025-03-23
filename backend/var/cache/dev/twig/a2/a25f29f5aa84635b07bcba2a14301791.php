@@ -1960,6 +1960,6 @@ $context["voter_detail"], "vote", [], "array", false, false, false, 577) == Twig
         </div>
     {% endif %}
 {% endblock %}
-", "@Security/Collector/security.html.twig", "/app/backend/vendor/symfony/security-bundle/Resources/views/Collector/security.html.twig");
+", "@Security/Collector/security.html.twig", "/home/ethan/SAE4.01/SAE/SAE4.DWeb-DI.01/backend/vendor/symfony/security-bundle/Resources/views/Collector/security.html.twig");
     }
 }

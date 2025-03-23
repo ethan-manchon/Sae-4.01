@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\AccessToken;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -38,5 +39,28 @@ class UserService
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    public function generatePersonalTokenForUser(User $user): string
+    {
+        $rawToken = bin2hex(random_bytes(32)); 
+        $hashedToken = hash('sha256', $rawToken); 
+
+        
+        foreach ($user->getAccessTokens() as $existing) {
+            $existing->setIsValid(false);
+        }
+
+        $accessToken = new AccessToken();
+        $accessToken->setUser($user);
+        $accessToken->setHashedToken($hashedToken);
+        $accessToken->setIsValid(true);
+        $accessToken->setCreatedAt(new \DateTimeImmutable());
+        $accessToken->setExpiresAt((new \DateTimeImmutable())->modify('+30 days'));
+
+        $this->entityManager->persist($accessToken);
+        $this->entityManager->flush();
+
+        return $rawToken; 
     }
 }

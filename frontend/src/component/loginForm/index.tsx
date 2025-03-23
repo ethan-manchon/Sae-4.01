@@ -49,7 +49,13 @@ export default function LoginForm() {
             try {
                 const response = await fetch("http://127.0.0.1:8080/login", {
                     method: "POST",
-                    body: formDataToSend
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        password: formData.password
+                    })
                 });
 
                 const result = await response.json();
@@ -66,7 +72,7 @@ export default function LoginForm() {
     };
 
     return (
-        <form action="http://127.0.0.1:8080/login" method="POST" className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
             <Mail name="email" value={formData.email} onChange={handleChange} />
             <Password name="password" value={formData.password} onChange={handleChange} />
             <Button variant={(valid.email && valid.password) ? "default" : "disabled"}>

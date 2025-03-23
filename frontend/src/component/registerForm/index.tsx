@@ -69,7 +69,7 @@ export default function RegisterForm() {
     };
 
     return (
-        <form action="http://127.0.0.1:8080/register" method="POST" className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
             <Pseudo name="pseudo" value={formData.pseudo} onChange={handleChange} />
             <Mail name="email" value={formData.email} onChange={handleChange} />
             <Password type="register" name="password" value={formData.password} onChange={handleChange} />
