@@ -24,10 +24,12 @@ return [
     'user.register' => [[], ['_controller' => 'App\\Controller\\RegistrationController::register'], [], [['text', '/register']], [], [], []],
     'app_verify_email' => [[], ['_controller' => 'App\\Controller\\RegistrationController::verifyUserEmail'], [], [['text', '/verify/email']], [], [], []],
     'app_login' => [[], ['_controller' => 'App\\Controller\\SecurityController::login'], [], [['text', '/login']], [], [], []],
+    'api_me' => [[], ['_controller' => 'App\\Controller\\SecurityController::me'], [], [['text', '/api/me']], [], [], []],
     'App\Controller\PostController::base' => [[], ['_controller' => 'App\\Controller\\PostController::base'], [], [['text', '/']], [], [], []],
     'App\Controller\PostController::index' => [[], ['_controller' => 'App\\Controller\\PostController::index'], [], [['text', '/posts']], [], [], []],
     'App\Controller\PostController::create' => [[], ['_format' => 'json', '_controller' => 'App\\Controller\\PostController::create'], [], [['text', '/posts']], [], [], []],
     'App\Controller\RegistrationController::register' => [[], ['_controller' => 'App\\Controller\\RegistrationController::register'], [], [['text', '/register']], [], [], []],
     'App\Controller\RegistrationController::verifyUserEmail' => [[], ['_controller' => 'App\\Controller\\RegistrationController::verifyUserEmail'], [], [['text', '/verify/email']], [], [], []],
     'App\Controller\SecurityController::login' => [[], ['_controller' => 'App\\Controller\\SecurityController::login'], [], [['text', '/login']], [], [], []],
+    'App\Controller\SecurityController::me' => [[], ['_controller' => 'App\\Controller\\SecurityController::me'], [], [['text', '/api/me']], [], [], []],
 ];

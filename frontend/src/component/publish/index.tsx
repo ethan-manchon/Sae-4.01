@@ -31,17 +31,17 @@ const TweetInput: React.FC<TweetInputProps> = ({ onTweetSent }) => {
 
 
     return (
-        <div className='flex flex-row gap-8 items-center p-4 border bg-white shadow border-gray-200 rounded-lg mb-4 w-3/4 mx-auto'>
-            <div className="flex flex-col w-full">
+        <div className='flex flex-row gap-8 items-center p-4 border shadow border-border rounded-lg'>
+            <div className="flex flex-col grow-1">
                 <input
                     type="text"
-                    className="bg-light p-4 border border-gray-200 rounded-lg text-dark"
+                    className="bg-bg p-4 border border-border rounded-lg text-fg"
                     placeholder="Publier un tweet..."
                     value={text}
                     onChange={(e) => setText(e.target.value.slice(0, maxChars))}
                 />
                 <div
-                    className={`text-sm text-right ${text.length === 280 ? "text-red-500" : "text-gray-500"}`}>
+                    className={`text-sm text-right ${text.length === 280 ? "text-red-500" : "text-fg"}`}>
                     {`${maxChars - text.length} / 280`}
                 </div>
             </div>

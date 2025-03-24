@@ -22,12 +22,15 @@ security:
                 password_path: password
 
         main:
-            lazy: true
+            stateless: true
             provider: app_user_provider
+            access_token:
+                token_handler: App\Security\AccessTokenHandler
 
     access_control:
         - { path: ^/, methods: [OPTIONS], roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

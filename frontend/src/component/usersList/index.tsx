@@ -28,7 +28,7 @@ export default function UsersList() {
         }}
         />
         </div>
-        <div className="max-h-96 flex flex-col gap-4 overflow-y-auto border border-gray-300 rounded p-4">
+        <div className="max-h-96 flex flex-col gap-4 overflow-y-auto border border-border rounded p-4">
             {users.map((user, index: number) => (
                 <User
                 key={index}

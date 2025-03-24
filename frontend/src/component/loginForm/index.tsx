@@ -60,6 +60,8 @@ export default function LoginForm() {
 
                 const result = await response.json();
                 if (response.ok) {
+                    window.location.href = "/";
+                    localStorage.setItem("token", result.token);
                     console.log("User login successfully:", result);
                 } else {
                     console.error("Error:", result.error);
@@ -67,6 +69,7 @@ export default function LoginForm() {
                 }
             } catch (error) {
                 console.error("Error:", error);
+                setError(error);
         }
         }
     };
@@ -79,7 +82,7 @@ export default function LoginForm() {
                 Login
             </Button>
             {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-2" role="alert">
+            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
                 <span className="block sm:inline">{error}</span>
             </div>
             )}

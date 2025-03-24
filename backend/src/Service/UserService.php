@@ -56,7 +56,7 @@ class UserService
         $accessToken->setHashedToken($hashedToken);
         $accessToken->setIsValid(true);
         $accessToken->setCreatedAt(new \DateTimeImmutable());
-        $accessToken->setExpiresAt((new \DateTimeImmutable())->modify('+30 days'));
+        $accessToken->setExpiresAt((new \DateTimeImmutable())->modify('+7 days'));
 
         $this->entityManager->persist($accessToken);
         $this->entityManager->flush();

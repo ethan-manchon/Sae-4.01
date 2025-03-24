@@ -23,3 +23,28 @@ export async function loadUsers() {
         return { users: [], error: error.message };
     }
 }
+export async function loadMe() {
+    const token = localStorage.getItem("token");
+    console.log("Token envoyé :", token); // ⬅️ ici
+  
+    if (!token) return null;
+  
+    try {
+      const response = await fetch("http://localhost:8080/api/me", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error("Unauthorized");
+      }
+  
+      const user = await response.json();
+      return user;
+    } catch (error) {
+      console.error("Error loading user:", error);
+      return null;
+    }
+  }

@@ -10,8 +10,8 @@ interface ContentProps {
 const contentVariants = cva("text-left", {
     variants: {
         mode: {
-            light: "text-dark bg-light",
-            dark: "text-light bg-dark",
+            light: "text-fg bg-bg break-words",
+            dark: "text-bg bg-fg break-words",
         },
         size: {
             default: "text-sm",

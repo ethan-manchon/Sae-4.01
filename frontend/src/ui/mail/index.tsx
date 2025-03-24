@@ -34,11 +34,11 @@ export default function Mail({ name, value, onChange }: MailProps) {
                 type="email"
                 name={name}
                 placeholder="Enter your mail"
-                className="w-full p-2 border text-dark border-gray-300 rounded-md"
+                className="w-full p-2 border text-fg border-border rounded-md"
                 value={value}
                 onChange={handleChange}
             />
-                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                {error && <p className="text-error text-sm mt-1">{error}</p>}
         </div>
     );
 }

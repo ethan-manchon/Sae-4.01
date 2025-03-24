@@ -36,12 +36,12 @@ export default function Password({ name, value, type, onChange }: PasswordProps)
                     type="password"
                     name={name}
                     placeholder="Enter your password"
-                    className="w-full p-2 border text-dark border-gray-300 rounded-md"
+                    className="w-full p-2 border text-fg border-border rounded-md"
                     value={value}
                     onChange={onChange}
                 />
                 {value !== "" && <Indicators score={indicator.score} />}
-                {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+                {error && <p className="text-error text-sm mt-1">{error}</p>}
             </div>
         </div>
     );}    else {
@@ -52,7 +52,7 @@ export default function Password({ name, value, type, onChange }: PasswordProps)
                     type="password"
                     name={name}
                     placeholder="Enter your password"
-                    className="w-full p-2 border text-dark border-gray-300 rounded-md"
+                    className="w-full p-2 border text-fg border-border rounded-md"
                     value={value}
                     onChange={onChange}
                 />

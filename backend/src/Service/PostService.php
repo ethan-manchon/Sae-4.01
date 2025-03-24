@@ -22,8 +22,6 @@ class PostService
         $post->setContent($content);
         $post->setCreatedAt(new \DateTimeImmutable());
 
-
-
         $this->entityManager->persist($post);
         $this->entityManager->flush(); 
 

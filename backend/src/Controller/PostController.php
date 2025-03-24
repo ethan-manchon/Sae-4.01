@@ -22,12 +22,12 @@ class PostController extends AbstractController
         ]);
     }
 
-    // Get all posts
+    // Get posts
     #[Route('/posts', name: 'posts.index', methods: ['GET'])]
     public function index(Request $request, PostRepository $postRepository): Response
     {
         $page = $request->query->getInt('page', 1); // Par défaut, on commence à la page 1
-        $limit = 5; // Nombre d'éléments par page
+        $limit = 15; // Nombre d'éléments par page
         $offset = ($page - 1) * $limit; // Calcul de l'offset
         
 
@@ -37,11 +37,26 @@ class PostController extends AbstractController
         $previousPage = $page > 1 ? $page - 1 : null;
         $nextPage = ($page * $limit) >= $totalPostsCount ? null : $page + 1;
 
+        $postsArray = [];
+
+        foreach ($paginator as $post) {
+            $postsArray[] = [
+                'id' => $post->getId(),
+                'content' => $post->getContent(),
+                'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
+                'user' => [
+                    'id' => $post->getUser()->getId(),
+                    'pseudo' => $post->getUser()->getPseudo()
+                ]
+            ];
+        }
+        
         return $this->json([
-            'posts' => $paginator,
+            'posts' => $postsArray,
             'previous_page' => $previousPage,
             'next_page' => $nextPage
         ]);
+        
     }
 
     #[Route('/posts', name: 'posts.create', methods: ['POST'], format: 'json')]

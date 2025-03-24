@@ -401,6 +401,9 @@
       <tag name="doctrine.repository_service"/>
       <argument type="service" id="doctrine"/>
     </service>
+    <service id="App\Security\AccessTokenHandler" class="App\Security\AccessTokenHandler" autowire="true" autoconfigure="true">
+      <argument type="service" id="App\Repository\AccessTokenRepository"/>
+    </service>
     <service id="App\Security\EmailVerifier" class="App\Security\EmailVerifier" public="true" autowire="true" autoconfigure="true">
       <argument type="service" id="symfonycasts.verify_email.helper"/>
       <argument type="service" id="mailer.mailer"/>
@@ -1501,14 +1504,6 @@
           <argument>checkPassport</argument>
         </argument>
         <argument>1024</argument>
-      </call>
-      <call method="addListener">
-        <argument>kernel.response</argument>
-        <argument type="collection">
-          <argument type="service_closure" id="security.context_listener.0"/>
-          <argument>onKernelResponse</argument>
-        </argument>
-        <argument>0</argument>
       </call>
       <call method="addListener">
         <argument>kernel.request</argument>
@@ -4436,7 +4431,7 @@
       <argument type="collection">
         <argument key="dev">null</argument>
         <argument key="login" type="service" id=".service_locator.D16UbTj"/>
-        <argument key="main">null</argument>
+        <argument key="main" type="service" id=".service_locator.dw2Icml"/>
       </argument>
     </service>
     <service id="security.user_value_resolver" class="Symfony\Component\Security\Http\Controller\UserValueResolver">
@@ -4632,6 +4627,13 @@
         <argument type="service" id=".security.request_matcher.BhpRUZK"/>
         <argument type="collection">
           <argument>PUBLIC_ACCESS</argument>
+        </argument>
+        <argument>null</argument>
+      </call>
+      <call method="add">
+        <argument type="service" id=".security.request_matcher.0tMb.ud"/>
+        <argument type="collection">
+          <argument>IS_AUTHENTICATED_FULLY</argument>
         </argument>
         <argument>null</argument>
       </call>
@@ -4939,7 +4941,9 @@
         <argument key="login" type="collection">
           <argument type="service" id="debug.security.authenticator.json_login.login"/>
         </argument>
-        <argument key="main" type="collection"/>
+        <argument key="main" type="collection">
+          <argument type="service" id="debug.security.authenticator.access_token.main"/>
+        </argument>
       </argument>
       <argument>false</argument>
       <call method="setName">
@@ -5083,13 +5087,15 @@
       <argument>security.user_checker</argument>
       <argument>null</argument>
       <argument>true</argument>
-      <argument>false</argument>
+      <argument>true</argument>
       <argument>security.user.provider.concrete.app_user_provider</argument>
-      <argument>main</argument>
       <argument>null</argument>
       <argument>null</argument>
       <argument>null</argument>
-      <argument type="collection"/>
+      <argument>null</argument>
+      <argument type="collection">
+        <argument>access_token</argument>
+      </argument>
       <argument>null</argument>
       <argument>null</argument>
     </service>
@@ -5100,29 +5106,25 @@
     <service id="security.user_checker.chain.main" class="Symfony\Component\Security\Core\User\ChainUserChecker">
       <argument type="tagged_iterator" tag="security.user_checker.main"/>
     </service>
-    <service id="security.context_listener.0" class="Symfony\Component\Security\Http\Firewall\ContextListener">
-      <tag name="kernel.event_listener" event="kernel.response" method="onKernelResponse"/>
-      <tag name="container.hot_path"/>
-      <argument type="service" id="security.untracked_token_storage"/>
-      <argument type="iterator">
-        <argument type="service" id="security.user.provider.concrete.app_user_provider"/>
-      </argument>
-      <argument>main</argument>
-      <argument type="service" id="logger" on-invalid="null"/>
-      <argument type="service" id="debug.security.event_dispatcher.main"/>
-      <argument type="service" id="security.authentication.trust_resolver"/>
-      <argument type="collection">
-        <argument type="service" id="security.token_storage"/>
-        <argument>enableUsageTracking</argument>
-      </argument>
+    <service id="security.access_token_handler.main" class="App\Security\AccessTokenHandler" autowire="true">
+      <argument type="service" id="App\Repository\AccessTokenRepository"/>
     </service>
-    <service id="security.listener.session.main" class="Symfony\Component\Security\Http\EventListener\SessionStrategyListener">
-      <tag name="kernel.event_subscriber" dispatcher="debug.security.event_dispatcher.main"/>
-      <argument type="service" id="security.authentication.session_strategy"/>
+    <service id="security.authenticator.access_token.main" class="Symfony\Component\Security\Http\Authenticator\AccessTokenAuthenticator">
+      <argument type="service" id="security.access_token_handler.main"/>
+      <argument type="service" id="security.access_token_extractor.header"/>
+      <argument type="service" id="security.user.provider.concrete.app_user_provider"/>
+      <argument>null</argument>
+      <argument>null</argument>
+      <argument>null</argument>
+    </service>
+    <service id="debug.security.authenticator.access_token.main" class="Symfony\Component\Security\Http\Authenticator\Debug\TraceableAuthenticator">
+      <argument type="service" id="security.authenticator.access_token.main"/>
     </service>
     <service id="security.authenticator.manager.main" class="Symfony\Component\Security\Http\Authentication\AuthenticatorManager">
       <tag name="monolog.logger" channel="security"/>
-      <argument type="collection"/>
+      <argument type="collection">
+        <argument type="service" id="debug.security.authenticator.access_token.main"/>
+      </argument>
       <argument type="service" id="security.token_storage"/>
       <argument type="service" id="debug.security.event_dispatcher.main"/>
       <argument>main</argument>
@@ -5149,19 +5151,23 @@
       <argument>null</argument>
       <argument>null</argument>
       <argument type="service" id="logger" on-invalid="null"/>
-      <argument>false</argument>
+      <argument>true</argument>
     </service>
-    <service id="security.firewall.map.context.main" class="Symfony\Bundle\SecurityBundle\Security\LazyFirewallContext">
+    <service id=".service_locator.dw2Icml" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="security.authenticator.access_token.main" type="service_closure" id="security.authenticator.access_token.main"/>
+      </argument>
+    </service>
+    <service id="security.firewall.map.context.main" class="Symfony\Bundle\SecurityBundle\Security\FirewallContext">
       <argument type="iterator">
         <argument type="service" id="security.channel_listener"/>
-        <argument type="service" id="security.context_listener.0"/>
         <argument type="service" id="debug.security.firewall.authenticator.main"/>
         <argument type="service" id="security.access_listener"/>
       </argument>
       <argument type="service" id="security.exception_listener.main"/>
       <argument>null</argument>
       <argument type="service" id="security.firewall.map.config.main"/>
-      <argument type="service" id="security.untracked_token_storage"/>
     </service>
     <service id=".service_locator.ia8k1Sf" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
@@ -5188,6 +5194,14 @@
     <service id=".security.request_matcher.BhpRUZK" class="Symfony\Component\HttpFoundation\ChainRequestMatcher">
       <argument type="collection">
         <argument type="service" id=".security.request_matcher.T8BdVIN"/>
+      </argument>
+    </service>
+    <service id=".security.request_matcher.3qgJVJN" class="Symfony\Component\HttpFoundation\RequestMatcher\PathRequestMatcher">
+      <argument>^/api</argument>
+    </service>
+    <service id=".security.request_matcher.0tMb.ud" class="Symfony\Component\HttpFoundation\ChainRequestMatcher">
+      <argument type="collection">
+        <argument type="service" id=".security.request_matcher.3qgJVJN"/>
       </argument>
     </service>
     <service id="security.command.user_password_hash" class="Symfony\Component\PasswordHasher\Command\UserPasswordHashCommand">
@@ -5897,14 +5911,6 @@
           <argument>checkPassport</argument>
         </argument>
         <argument>2048</argument>
-      </call>
-      <call method="addListener">
-        <argument>Symfony\Component\Security\Http\Event\LoginSuccessEvent</argument>
-        <argument type="collection">
-          <argument type="service_closure" id="security.listener.session.main"/>
-          <argument>onSuccessfulLogin</argument>
-        </argument>
-        <argument>0</argument>
       </call>
       <call method="addListener">
         <argument>Symfony\Component\Security\Http\Event\CheckPassportEvent</argument>
@@ -7647,7 +7653,7 @@
     <service id="Symfony\Component\Security\Core\User\UserProviderInterface" alias="security.user.provider.concrete.app_user_provider"/>
     <service id="security.authentication.session_strategy.login" alias="security.authentication.session_strategy_noop"/>
     <service id="security.user_checker.login" alias="security.user_checker"/>
-    <service id="security.authentication.session_strategy.main" alias="security.authentication.session_strategy"/>
+    <service id="security.authentication.session_strategy.main" alias="security.authentication.session_strategy_noop"/>
     <service id="security.user_checker.main" alias="security.user_checker"/>
     <service id="security.firewall.context_locator" alias=".service_locator.ia8k1Sf"/>
     <service id="Symfony\Component\Security\Core\User\UserCheckerInterface" alias="security.user_checker"/>

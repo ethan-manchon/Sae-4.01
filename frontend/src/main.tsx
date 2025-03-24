@@ -7,13 +7,20 @@ import Register from './route/register.tsx';
 import Login from './route/login.tsx';
 import BackOffice from './route/backoffice.tsx';
 
+import ProtectedRoute from './component/protectedRoute/index.tsx';
+
 import './index.css';
 
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root />
+   
+    element:( 
+    // <ProtectedRoute>
+      <Root />
+      // </ProtectedRoute> 
+      )
   },
   {
     path: '/register',

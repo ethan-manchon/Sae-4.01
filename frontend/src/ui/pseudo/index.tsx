@@ -37,9 +37,9 @@ export default function Pseudo({ name, value, onChange }: PseudoProps) {
             value={value} 
             onChange={handleChange} 
             placeholder="Enter your pseudo" 
-            className="w-full p-2 border text-dark border-gray-300 rounded-md"
+            className="w-full p-2 border text-fg border-border rounded-md"
         />
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+        {error && <p className="text-error text-sm mt-1">{error}</p>}
         </div>
     );
 }

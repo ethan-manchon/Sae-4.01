@@ -2,8 +2,24 @@
 
 @theme {
   --color-primary: #1DA1F2;
+  --color-primary-hover: #0F81C7;
+  --color-primary-active: #0F7CBF;
+
   --color-light: #F5F8FA;
+  --color-very-light: #E8E0E2;
   --color-dark: #3D6C93;
+
+  --color-red: #E0245E;
+  --color-red-very-light: #F8D7DA;
+  --color-red-light: #F5C6CB;
+
+
+
+  --color-error: var(--color-red);
+  --color-error-bg: var(--color-red-very-light);
+  --color-error-border: var(--color-red-light);
+
+  --color-border: var(--color-very-light);
 
   --color-fg: var(--color-dark);
   --color-bg: var(--color-light);

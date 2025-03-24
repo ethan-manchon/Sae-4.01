@@ -36,12 +36,29 @@ class SecurityController extends AbstractController
 
         $token = $userService->generatePersonalTokenForUser($user);
 
-        return $this->json([
+        return $this->json([ // Le problème à lieu ici avec des références circulaires dans l'objet User et token
             'token' => $token,
             'user' => [
                 'id' => $user->getId(),
-                'email' => $user->getEmail()
+                'email' => $user->getEmail(),
+                'pseudo' => $user->getPseudo(),
             ]
+        ]);
+    } 
+
+    #[Route('/api/me', name: 'api_me', methods: ['GET'])]
+    public function me(): JsonResponse
+    {
+        $user = $this->getUser();
+        
+        if (!$user) {
+            return $this->json(['error' => 'Not authenticated'], 401);
+        }
+    
+        return $this->json([
+            'id' => $user->getId(),
+            'email' => $user->getEmail(),
+            'pseudo' => $user->getPseudo(),
         ]);
     }
 }

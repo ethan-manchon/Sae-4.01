@@ -3,11 +3,13 @@ import Feed from "./feed";
 import { loadPosts } from "../../lib/loader";
 
 interface FeedsProps {
-    posts: string[];
+    posts: any[];
 }
 
 export default function Feeds() {
-    const [posts, setPosts] = useState<Array<{ id: number; content: string; created_at: string }>>([]);
+    const [posts, setPosts] = useState<Array<{ id: number; content: string; createdAt: string; user: { pseudo: string } }>>([]);
+    const [error, setError] = useState("");
+    const [endOfPosts, setEndOfPosts] = useState("");
     const [nextPage, setNextPage] = useState(null);
     const [loading, setLoading] = useState(true);
     const observer = useRef<IntersectionObserver | null>(null);
@@ -20,6 +22,7 @@ export default function Feeds() {
                 setNextPage(data.next_page);
             } catch (error) {
                 console.error("Error loading posts:", error);
+                setError("Error loading posts:" + error);
             } finally {
                 setLoading(false);
             }
@@ -29,7 +32,7 @@ export default function Feeds() {
     }, []);
 
     const loadMorePosts = useCallback(async () => {
-        if (!nextPage) return;
+        if (!nextPage) return setEndOfPosts("Fin des posts");
         setLoading(true);
 
         try {
@@ -73,6 +76,16 @@ export default function Feeds() {
             <div ref={lastPostRef} style={{ height: "10px" }}></div>
 
             {loading && <p className="text-center text-dark">Chargement...</p>}
+            { error && (
+            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
+                <span className="block sm:inline">{error}</span>
+            </div>
+            )}
+            { endOfPosts && (
+            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
+                <span className="block sm:inline">{endOfPosts}</span>
+            </div>
+            )}
         </div>
     );
 }

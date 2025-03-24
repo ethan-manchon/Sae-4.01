@@ -3,20 +3,26 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 import { Link } from "react-router-dom";
 
-interface BtnProps {
+interface BtnDataProps {
   children?: string;
   link?: string;
+  onClick?: () => void;
+}
+
+interface BtnStyleProps  {
   className?: string;
   variant?: "default" | "transparent" | "disabled";
   size?: "default" | "sm" | "lg";
-  onClick?: () => void;
+
 }
+
+type BtnProps = BtnDataProps & BtnStyleProps;
 
 const buttonVariants = cva("rounded-md font-medium focus:outline-none", {
   variants: {
     variant: {
       default:
-        "bg-cyan-500 text-light shadow-lg hover:bg-cyan-400 focus:bg-cyan-400 focus:ring-cyan-500 cursor-pointer focus:underline focus:ring-transparent",
+        "bg-primary text-light shadow-lg hover:bg-primary-hover focus:bg-primary-hover focus:ring-primary-active cursor-pointer focus:underline focus:ring-transparent",
       disabled: "bg-gray-400 text-light cursor-not-allowed",
       transparent:
         "text-dark hover:underline cursor-pointer focus:underline focus:ring-transparent",
