@@ -1,3 +1,6 @@
+import { loadMe } from "../../lib/loader"; 
+import { useEffect, useState } from "react";
+
 import React from "react";
 import Button from "../../ui/button";
 import Icon from "../../ui/icon";
@@ -8,6 +11,19 @@ interface Props {
 }
 
 export default function NavBar({ user }: Props) {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+      const checkAdmin = async () => {
+          const user = await loadMe();
+
+          if (user?.roles?.includes("ROLE_ADMIN")) {
+              setIsAdmin(true);
+          }
+      };
+
+      checkAdmin();
+  }, []);
   return (
     <div className="flex flex-col md:flex-row md:h-screen">
       <div className="flex justify-between items-center p-4 border-border w-full bg-bg fixed md:flex-col md:justify-start md:items-start md:w-64 md:h-screen md:border-r md:border-b-0">
@@ -20,6 +36,9 @@ export default function NavBar({ user }: Props) {
           {!user ? null : <Content>{`Welcome, ${user.pseudo}`}</Content>}
           <Button variant="transparent" link="/">Home</Button>
           <Button variant="transparent">Profile</Button>
+          {isAdmin && (
+            <Button variant="transparent" link="/backoffice">Back Office</Button>
+                )}
           <Button variant="transparent" link="/login">Logout</Button>
         </div>
       </div>
