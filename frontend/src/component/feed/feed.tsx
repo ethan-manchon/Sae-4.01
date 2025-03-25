@@ -19,10 +19,10 @@ type FeedProps = FeedDataProps & FeedStyleProps;
 
 export default function Feed({ posts }: FeedProps) {
     return (
-        <div className='flex flex-col items-center w-full'>
+        <ul className='flex flex-col items-center'>
             {posts.map((post) => (
                 <Post key={post.id} pseudo={post.user.pseudo} content={post.content} createdAt={post.createdAt} />
             ))}
-        </div>
+        </ul>
     );
 }

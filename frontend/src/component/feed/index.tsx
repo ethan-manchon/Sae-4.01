@@ -70,7 +70,7 @@ export default function Feeds() {
     );
 
     return (
-        <div className="">
+        <>
             <Feed posts={posts} />
 
             <div ref={lastPostRef} style={{ height: "10px" }}></div>
@@ -86,6 +86,6 @@ export default function Feeds() {
                 <span className="block sm:inline">{endOfPosts}</span>
             </div>
             )}
-        </div>
+        </>
     );
 }

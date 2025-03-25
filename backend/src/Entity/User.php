@@ -42,10 +42,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     /**
-     * @var Collection<int, AccessToken>
+     * @var Collection<int, AccessTokens>
      */
     #[ORM\OneToMany(targetEntity: AccessToken::class, mappedBy: 'user')]
-    private Collection $accessToken;
+    private Collection $accessTokens;
 
     /**
      * @var Collection<int, Post>
@@ -55,7 +55,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function __construct()
     {
-        $this->accessToken = new ArrayCollection();
+        $this->accessTokens = new ArrayCollection();
         $this->posts = new ArrayCollection();
     }
 
@@ -159,29 +159,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, AccessToken>
+     * @return Collection<int, AccessTokens>
      */
-    public function getAccessToken(): Collection
+    public function getAccessTokens(): Collection
     {
-        return $this->accessToken;
+        return $this->accessTokens;
     }
 
-    public function addAccessToken(AccessToken $accessToken): static
+    public function addAccessTokens(AccessToken $accessTokens): static
     {
-        if (!$this->accessToken->contains($accessToken)) {
-            $this->accessToken->add($accessToken);
-            $accessToken->setUser($this);
+        if (!$this->accessTokens->contains($accessTokens)) {
+            $this->accessTokens->add($accessTokens);
+            $accessTokens->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeAccessToken(AccessToken $accessToken): static
+    public function removeAccessTokens(AccessTokens $accessTokens): static
     {
-        if ($this->accessToken->removeElement($accessToken)) {
+        if ($this->accessTokens->removeElement($accessTokens)) {
             // set the owning    side to null (unless already changed)
-            if ($accessToken->getUser() === $this) {
-                $accessToken->setUser(null);
+            if ($accessTokens->getUser() === $this) {
+                $accessTokens->setUser(null);
             }
         }
 

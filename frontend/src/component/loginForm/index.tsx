@@ -57,20 +57,30 @@ export default function LoginForm() {
                         password: formData.password
                     })
                 });
-
-                const result = await response.json();
-                if (response.ok) {
-                    window.location.href = "/";
-                    localStorage.setItem("token", result.token);
-                    console.log("User login successfully:", result);
+            
+                const contentType = response.headers.get("content-type");
+                let result;
+            
+                if (contentType && contentType.includes("application/json")) {
+                    result = await response.json();
                 } else {
-                    console.error("Error:", result.error);
-                    setError(result.error);
+                    const text = await response.text();
+                    throw new Error(`Server did not return JSON. HTML response:\n${text}`);
                 }
+            
+                if (response.ok) {
+                    localStorage.setItem("token", result.token);
+                    console.log("✅ User logged in successfully:", result);
+                    window.location.href = "/";
+                } else {
+                    console.error("❌ Login error:", result);
+                    setError(result.message || "Login failed.");
+                }
+            
             } catch (error) {
-                console.error("Error:", error);
-                setError(error);
-        }
+                console.error("❗ Request failed:", error);
+                setError(error.toString());
+            }
         }
     };
 
@@ -82,7 +92,7 @@ export default function LoginForm() {
                 Login
             </Button>
             {error && (
-            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
+            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2 break-words" role="alert">
                 <span className="block sm:inline">{error}</span>
             </div>
             )}

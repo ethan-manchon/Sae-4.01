@@ -12,18 +12,16 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-
-        login:
-            pattern: ^/login
+    
+        main:
             stateless: true
+            provider: app_user_provider
+    
             json_login:
                 check_path: /login
                 username_path: email
                 password_path: password
-
-        main:
-            stateless: true
-            provider: app_user_provider
+    
             access_token:
                 token_handler: App\Security\AccessTokenHandler
 
@@ -31,6 +29,7 @@ security:
         - { path: ^/, methods: [OPTIONS], roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
 
 when@test:
     security:

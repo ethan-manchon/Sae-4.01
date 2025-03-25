@@ -22,7 +22,7 @@ class User extends \App\Entity\User implements \Doctrine\ORM\Proxy\InternalProxy
     
 
     private const LAZY_OBJECT_PROPERTY_SCOPES = [
-        "\0".parent::class."\0".'accessToken' => [parent::class, 'accessToken', null],
+        "\0".parent::class."\0".'accessTokens' => [parent::class, 'accessTokens', null],
         "\0".parent::class."\0".'email' => [parent::class, 'email', null],
         "\0".parent::class."\0".'id' => [parent::class, 'id', null],
         "\0".parent::class."\0".'isVerified' => [parent::class, 'isVerified', null],
@@ -30,7 +30,7 @@ class User extends \App\Entity\User implements \Doctrine\ORM\Proxy\InternalProxy
         "\0".parent::class."\0".'posts' => [parent::class, 'posts', null],
         "\0".parent::class."\0".'pseudo' => [parent::class, 'pseudo', null],
         "\0".parent::class."\0".'roles' => [parent::class, 'roles', null],
-        'accessToken' => [parent::class, 'accessToken', null],
+        'accessTokens' => [parent::class, 'accessTokens', null],
         'email' => [parent::class, 'email', null],
         'id' => [parent::class, 'id', null],
         'isVerified' => [parent::class, 'isVerified', null],

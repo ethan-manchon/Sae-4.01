@@ -58,13 +58,14 @@ export default function RegisterForm() {
                 const result = await response.json();
                 if (response.ok) {
                     console.log("User registered successfully:", result);
+                    window.location.href = "/login";
                 } else {
                     console.error("Error:", result.error);
                     setError(result.error);
                 }
             } catch (error) {
                 console.error("Request failed:", error);
-                setError(error);
+                setError(error.toString());
             }
         }
     };

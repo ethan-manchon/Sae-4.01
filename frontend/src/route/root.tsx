@@ -14,7 +14,7 @@ export default function Root() {
     return (
         <div className="flex flex-col md:flex-row md:h-screen">
             <NavBar user={user} />
-            <div className="pt-28 md:pt-0 md:pl-64">
+            <div className="pt-28 md:pt-0 md:pl-64 w-full">
             <Publish onTweetSent={(tweet) => console.log("Tweet sent:", tweet)} />
             <Feeds />
             </div>
