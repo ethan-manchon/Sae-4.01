@@ -20,7 +20,17 @@ class UserRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, User::class);
     }
+    public function paginateAllOrderedByLatest($offset, $count): Paginator
+    {
+        $query = $this->createQueryBuilder('u')
+            ->orderBy('u.pseudo', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($count)
+            ->getQuery()
+        ;
 
+        return new Paginator($query);
+    }
     public function save(User $user, bool $flush = true): void
     {
         $this->_em->persist($user);

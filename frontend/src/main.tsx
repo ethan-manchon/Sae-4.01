@@ -8,6 +8,7 @@ import Login from './route/login.tsx';
 import BackOffice from './route/backoffice.tsx';
 
 import ProtectedRoute from './component/protectedRoute/index.tsx';
+import ProtectedRouteAdmin from './component/protectedRouteAdmin/index.tsx';
 
 import './index.css';
 
@@ -32,7 +33,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/backoffice',
-    element: <BackOffice />
+    element: ( 
+      <ProtectedRouteAdmin>
+        <BackOffice />
+        </ProtectedRouteAdmin> 
+        )
   }
 ]);
 

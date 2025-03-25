@@ -9,14 +9,16 @@ const TweetInput: React.FC<TweetInputProps> = ({ onTweetSent }) => {
     const [text, setText] = useState("");
     const maxChars = 280;
 
+    const token = localStorage.getItem("token");
     const handlePublish = async () => {
         if (!text.trim()) return;
         
-            const response = await fetch("http://localhost:8080/posts", {
+            const response = await fetch("http://localhost:8080/api/posts", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                },
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                  },
                 body: JSON.stringify({ content: text }),
             });
             

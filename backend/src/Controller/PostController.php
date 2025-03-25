@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Service\PostService;
+use Symfony\Bundle\SecurityBundle\Security; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,8 +13,17 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Repository\PostRepository;
 use App\Dto\Payload\CreatePostPayload;
 
+
 class PostController extends AbstractController
 {
+    private Security $security;
+    private PostService $postService;
+
+    public function __construct(Security $security, PostService $postService)
+    {
+        $this->security = $security;
+        $this->postService = $postService;
+    }
     #[Route('/')]
     public function base(): Response
     {
@@ -23,7 +34,7 @@ class PostController extends AbstractController
     }
 
     // Get posts
-    #[Route('/posts', name: 'posts.index', methods: ['GET'])]
+    #[Route('/api/posts', name: 'posts.index', methods: ['GET'])]
     public function index(Request $request, PostRepository $postRepository): Response
     {
         $page = $request->query->getInt('page', 1); // Par défaut, on commence à la page 1
@@ -59,19 +70,28 @@ class PostController extends AbstractController
         
     }
 
-    #[Route('/posts', name: 'posts.create', methods: ['POST'], format: 'json')]
-    public function create(Request $request, PostService $postService): JsonResponse
+    #[Route('/api/posts', name: 'posts.create', methods: ['POST'], format: 'json')]
+    public function create(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
-        
+
         if (!isset($data['content']) || empty(trim($data['content']))) {
             return new JsonResponse(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
-    
-        $payload = new CreatePostPayload($data['content']);
-        $post = $postService->create($payload);
-    
-        return new JsonResponse(['message' => 'Post created successfully'], Response::HTTP_CREATED);
-    }
 
+        $user = $this->security->getUser();
+        if (!$user instanceof User) {
+            return new JsonResponse(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
+        }
+
+        $payload = new CreatePostPayload($data['content']);
+        $post = $this->postService->create($payload, $user);
+
+        return new JsonResponse([
+            'message' => 'Post created successfully',
+            'id' => $post->getId(),
+            'content' => $post->getContent(),
+            'createdAt' => $post->getCreatedAt()->format(\DateTime::ATOM)
+        ], Response::HTTP_CREATED);
+    }
 }

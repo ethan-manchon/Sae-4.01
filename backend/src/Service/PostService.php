@@ -2,29 +2,27 @@
 
 namespace App\Service;
 
-use App\Dto\Payload\CreatePostPayload;
 use App\Entity\Post;
+use App\Entity\User;
+use App\Dto\Payload\CreatePostPayload;
 use Doctrine\ORM\EntityManagerInterface;
 
 class PostService
 {
-    private EntityManagerInterface $entityManager;
+    public function __construct(
+        private EntityManagerInterface $entityManager
+    ) {}
 
-    public function __construct(EntityManagerInterface $entityManager)
+    public function create(CreatePostPayload $payload, User $user): Post
     {
-        $this->entityManager = $entityManager;
-    }
-
-    public function create($content): Post
-    {
-        $content = $content->content;
         $post = new Post();
-        $post->setContent($content);
+        $post->setContent($payload->getContent());
         $post->setCreatedAt(new \DateTimeImmutable());
+        $post->setUser($user); 
 
         $this->entityManager->persist($post);
-        $this->entityManager->flush(); 
+        $this->entityManager->flush();
 
-        return $post; 
+        return $post;
     }
 }

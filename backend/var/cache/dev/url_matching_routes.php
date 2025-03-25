@@ -16,7 +16,7 @@ return [
         '/_profiler/xdebug' => [[['_route' => '_profiler_xdebug', '_controller' => 'web_profiler.controller.profiler::xdebugAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/' => [[['_route' => 'app_post_base', '_controller' => 'App\\Controller\\PostController::base'], null, null, null, false, false, null]],
-        '/posts' => [
+        '/api/posts' => [
             [['_route' => 'posts.index', '_controller' => 'App\\Controller\\PostController::index'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'posts.create', '_format' => 'json', '_controller' => 'App\\Controller\\PostController::create'], null, ['POST' => 0], null, false, false, null],
         ],
@@ -24,6 +24,7 @@ return [
         '/verify/email' => [[['_route' => 'app_verify_email', '_controller' => 'App\\Controller\\RegistrationController::verifyUserEmail'], null, null, null, false, false, null]],
         '/login' => [[['_route' => 'app_login', '_controller' => 'App\\Controller\\SecurityController::login'], null, ['POST' => 0], null, false, false, null]],
         '/api/me' => [[['_route' => 'api_me', '_controller' => 'App\\Controller\\SecurityController::me'], null, ['GET' => 0], null, false, false, null]],
+        '/admin/users' => [[['_route' => 'users.index', '_controller' => 'App\\Controller\\UserController::index'], null, ['GET' => 0], null, false, false, null]],
     ],
     [ // $regexpList
         0 => '{^(?'
@@ -45,6 +46,7 @@ return [
                         .')'
                     .')'
                 .')'
+                .'|/admin/users/([^/]++)(*:223)'
             .')/?$}sDu',
     ],
     [ // $dynamicRoutes
@@ -55,8 +57,9 @@ return [
         148 => [[['_route' => '_profiler_router', '_controller' => 'web_profiler.controller.router::panelAction'], ['token'], null, null, false, false, null]],
         168 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         181 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
-        191 => [
-            [['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null],
+        191 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
+        223 => [
+            [['_route' => 'user_update', '_controller' => 'App\\Controller\\UserController::update'], ['id'], ['PATCH' => 0], null, false, true, null],
             [null, null, null, null, false, false, 0],
         ],
     ],

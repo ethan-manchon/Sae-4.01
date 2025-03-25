@@ -1,6 +1,12 @@
 export async function loadPosts(page) {
+  const token = localStorage.getItem("token");
   try {
-      const response = await fetch(`http://localhost:8080/posts?page=${page}`);
+    const response = await fetch(`http://localhost:8080/api/posts?page=${page}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
+    });
       if (!response.ok) {
           throw new Error("Failed to load posts");
       }
@@ -11,9 +17,15 @@ export async function loadPosts(page) {
   }
 }
 
-export async function loadUsers() {
+export async function loadUsers(page) {
+  const token = localStorage.getItem("token");
     try {
-        const response = await fetch("http://localhost:8080/users");
+      const response = await fetch(`http://localhost:8080/admin/users?page=${page}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });        
         if (!response.ok) {
             throw new Error("Failed to load users");
         }

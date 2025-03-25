@@ -14,4 +14,8 @@ class CreatePostPayload
     {
         $this->content = $content;
     }
+    public function getContent(): string
+    {
+        return $this->content;
+    }
 }

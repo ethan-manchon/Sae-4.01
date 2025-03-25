@@ -54,7 +54,7 @@ class SecurityController extends AbstractController
     public function me(): JsonResponse
     {
         $user = $this->getUser();
-        
+    
         if (!$user) {
             return $this->json(['error' => 'Not authenticated'], 401);
         }
@@ -63,6 +63,7 @@ class SecurityController extends AbstractController
             'id' => $user->getId(),
             'email' => $user->getEmail(),
             'pseudo' => $user->getPseudo(),
+            'roles' => $user->getRoles() 
         ]);
     }
 }

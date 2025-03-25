@@ -1,14 +1,9 @@
 nelmio_cors:
     defaults:
-        allow_credentials: true
         allow_origin: ['http://localhost:8090']
         allow_headers: ['Content-Type', 'Authorization']
-        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE']
+        allow_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
         max_age: 3600
-
+        allow_credentials: true
     paths:
-        '^/':
-            allow_origin: ['http://localhost:8090']
-            allow_headers: ['Content-Type', 'Authorization']
-            allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'DELETE']
-            allow_credentials: true
+        '^/': ~
