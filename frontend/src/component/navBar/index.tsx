@@ -24,6 +24,10 @@ export default function NavBar({ user }: Props) {
 
       checkAdmin();
   }, []);
+
+  const handleDisconnect = () => {
+    localStorage.removeItem("token");
+  };
   return (
     <div className="flex flex-col md:flex-row md:h-screen">
       <div className="flex justify-between items-center p-4 border-border w-full bg-bg fixed md:flex-col md:justify-start md:items-start md:w-64 md:h-screen md:border-r md:border-b-0">
@@ -39,7 +43,7 @@ export default function NavBar({ user }: Props) {
           {isAdmin && (
             <Button variant="transparent" link="/backoffice">Back Office</Button>
                 )}
-          <Button variant="transparent" link="/login">Logout</Button>
+          <Button variant="transparent" link="/login" onClick={() => handleDisconnect()}>Logout</Button>
         </div>
       </div>
     </div>
