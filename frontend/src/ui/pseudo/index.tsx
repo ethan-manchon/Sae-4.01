@@ -16,7 +16,7 @@ export default function Pseudo({ name, value, onChange }: PseudoProps) {
             setError("");
         } else {
             if (!PseudoRegex.test(value)) {
-                setError("Le pseudo doit contenir au moins 3 caractères et aucun caractère spécial");
+                setError("Le pseudo doit contenir au moins 4 caractères et aucun caractère spécial");
             } else {
                 setError("");
             }

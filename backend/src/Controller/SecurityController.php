@@ -34,9 +34,13 @@ class SecurityController extends AbstractController
             return $this->json(['error' => 'Invalid credentials'], 401);
         }
 
+        if (!$user->IsVerified()) {
+            return new JsonResponse(['error' => 'Account not verified'], 401);
+        }
+
         $token = $userService->generatePersonalTokenForUser($user);
 
-        return $this->json([ // Le problème à lieu ici avec des références circulaires dans l'objet User et token
+        return $this->json([ 
             'token' => $token,
             'user' => [
                 'id' => $user->getId(),

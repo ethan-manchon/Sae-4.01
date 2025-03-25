@@ -64,7 +64,7 @@ class RegistrationController extends AbstractController
         );
 
     
-        return $this->json(['message' => 'User registered successfully'], Response::HTTP_CREATED);
+        return $this->json(['message' => 'User registered successfully, please verify your email'], Response::HTTP_CREATED);
     }
     
 

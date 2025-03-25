@@ -74,7 +74,7 @@ export default function LoginForm() {
                     window.location.href = "/";
                 } else {
                     console.error("❌ Login error:", result);
-                    setError(result.message || "Login failed.");
+                    setError(result.error || "An error occurred");
                 }
             
             } catch (error) {

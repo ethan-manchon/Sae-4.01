@@ -11,6 +11,7 @@ export default function RegisterForm() {
         password: ""
     });
     const [error, setError] = useState("");
+    const [success, setSuccess] = useState("");
     
     const [valid, setValid] = useState({
         pseudo: false,
@@ -57,8 +58,9 @@ export default function RegisterForm() {
 
                 const result = await response.json();
                 if (response.ok) {
-                    console.log("User registered successfully:", result);
-                    window.location.href = "/login";
+                    console.log("User registered successsfully:", result);
+                    setSuccess(result.message);
+                    
                 } else {
                     console.error("Error:", result.error);
                     setError(result.error);
@@ -81,6 +83,11 @@ export default function RegisterForm() {
             {error && (
             <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
                 <span className="block sm:inline">{error}</span>
+            </div>
+            )}
+            {success && (
+            <div className="bg-success-bg border border-success-border text-success px-4 py-3 rounded relative mt-2" role="alert">
+                <span className="block sm:inline">{success}</span>
             </div>
             )}
         </form>
