@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -41,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private bool $isVerified = false;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $isBlocked = false;
+    
     /**
      * @var Collection<int, AccessTokens>
      */
@@ -52,6 +56,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $bio = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $locate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $url = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $icon = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $pdp = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $banniere = null;
+
+    #[ORM\Column (type: Types::BOOLEAN, options: ['default' => true])]
+    private ?bool $refresh = true;
 
     public function __construct()
     {
@@ -218,4 +243,98 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    public function getBio(): ?string
+    {
+        return $this->bio;
+    }
+
+    public function setBio(?string $bio): static
+    {
+        $this->bio = $bio;
+
+        return $this;
+    }
+
+    public function getLocate(): ?string
+    {
+        return $this->locate;
+    }
+
+    public function setLocate(?string $locate): static
+    {
+        $this->locate = $locate;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getPdp(): ?string
+    {
+        return $this->pdp;
+    }
+
+    public function setPdp(?string $pdp): static
+    {
+        $this->pdp = $pdp;
+
+        return $this;
+    }
+
+    public function getBanniere(): ?string
+    {
+        return $this->banniere;
+    }
+
+    public function setBanniere(?string $banniere): static
+    {
+        $this->banniere = $banniere;
+
+        return $this;
+    }
+
+    public function isRefresh(): ?bool
+    {
+        return $this->refresh;
+    }
+
+    public function setRefresh(bool $refresh): static
+    {
+        $this->refresh = $refresh;
+
+        return $this;
+    }
+    
+    public function isBlocked(): bool
+    {
+        return $this->isBlocked;
+    }
+    
+    public function setIsBlocked(bool $blocked): self
+    {
+        $this->isBlocked = $blocked;
+        return $this;
+    }
 }

@@ -1,91 +1,107 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import Feed from "./feed";
-import { loadPosts } from "../../lib/loader";
+import Post from "../../ui/post";
+import Error from "../../ui/error";
+import { loadMe } from "../../lib/loader";
 
-interface FeedsProps {
-    posts: any[];
+interface FeedDataProps {
+  loader: (page: number) => Promise<{ posts: any[]; next_page: number | null }>;
+  refresh?: boolean;
+}
+interface FeedStyleProps {
+  className?: string;
 }
 
-export default function Feeds() {
-    const [posts, setPosts] = useState<Array<{ id: number; content: string; createdAt: string; user: { pseudo: string } }>>([]);
-    const [error, setError] = useState("");
-    const [endOfPosts, setEndOfPosts] = useState("");
-    const [nextPage, setNextPage] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const observer = useRef<IntersectionObserver | null>(null);
+type FeedProps = FeedDataProps & FeedStyleProps;
 
-    useEffect(() => {
-        const fetchInitialPosts = async () => {
-            try {
-                const data = await loadPosts(1);
-                setPosts(data.posts || []);
-                setNextPage(data.next_page);
-            } catch (error) {
-                console.error("Error loading posts:", error);
-                setError("Error loading posts:" + error);
-            } finally {
-                setLoading(false);
-            }
-        };
+export default function Feeds({ loader, refresh, className }: FeedProps) {
+  const [posts, setPosts] = useState<any[]>([]);
+  const [error, setError] = useState("");
+  const [nextPage, setNextPage] = useState<number | null>(1);
+  const [loading, setLoading] = useState(true);
+  const [meId, setMeId] = useState<number | null>(null);
+  const observer = useRef<IntersectionObserver | null>(null);
 
-        fetchInitialPosts();
-    }, []);
+  const fetchPosts = useCallback(async (page: number) => {
+    try {
+      const data = await loader(page);
+      setPosts((prev) => {
+        const existingIds = new Set(prev.map((post) => post.id));
+        const newPosts = data.posts?.filter((post) => !existingIds.has(post.id)) || [];
+        return [...prev, ...newPosts];
+      });
+      setNextPage(data.next_page);
+    } catch (err: any) {
+      console.error("Loading error:", err);
+      setError("Error loading posts: " + err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [loader]);
 
-    const loadMorePosts = useCallback(async () => {
-        if (!nextPage) return setEndOfPosts("Fin des posts");
-        setLoading(true);
+  useEffect(() => {
+    if (nextPage === 1) {
+      fetchPosts(1);
+    }
+  }, [fetchPosts, nextPage]);
 
-        try {
-            const data = await loadPosts(nextPage);
-            setPosts((prev) => {
-                const existingIds = new Set(prev.map(post => post.id));
-                const newPosts = data.posts?.filter(post => !existingIds.has(post.id)) || [];
-                return [...prev, ...newPosts];
-            });
-            setNextPage(data.next_page);
-        } catch (error) {
-            console.error("Error loading more posts:", error);
-        } finally {
-            setLoading(false);
+  useEffect(() => {
+    if (refresh) {
+      setPosts([]);
+      setNextPage(1);
+      setLoading(true);
+    }
+  }, [refresh]);
+
+  useEffect(() => {
+    async function fetchMe() {
+      const me = await loadMe();
+      if (me && me.id) {
+        setMeId(me.id);
+      }
+    }
+    fetchMe();
+  }, []);
+
+  const lastPostRef = useCallback(
+    (node) => {
+      if (loading || !nextPage) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          fetchPosts(nextPage);
         }
-    }, [nextPage]);
+      });
 
-    const lastPostRef = useCallback(
-        (node) => {
-            if (loading) return;
-            if (observer.current) observer.current.disconnect();
+      if (node) observer.current.observe(node);
+    },
+    [loading, nextPage, fetchPosts]
+  );
 
-            observer.current = new IntersectionObserver(
-                (entries) => {
-                    if (entries[0].isIntersecting && nextPage) {
-                        loadMorePosts();
-                    }
-                },
-                { threshold: 0.5 }
-            );
-
-            if (node) observer.current.observe(node);
-        },
-        [loading, nextPage, loadMorePosts]
-    );
-
-    return (
-        <>
-            <Feed posts={posts} />
-
-            <div ref={lastPostRef} style={{ height: "10px" }}></div>
-
-            {loading && <p className="text-center text-dark">Chargement...</p>}
-            { error && (
-            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
-                <span className="block sm:inline">{error}</span>
-            </div>
-            )}
-            { endOfPosts && (
-            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
-                <span className="block sm:inline">{endOfPosts}</span>
-            </div>
-            )}
-        </>
-    );
+  return (
+    <>
+      <ul className={`flex flex-col items-center ${className || ""}`}>
+        {posts.map((post) => (
+          <Post
+            key={post.id}
+            pdp={post.user.pdp}
+            post_id={post.id}
+            pseudo={post.user.pseudo}
+            content={post.content}
+            createdAt={post.createdAt}
+            userId={post.user.id}
+            meId={meId ?? -1}
+            blocked={post.blocked} 
+            onDeleted={() => setPosts((prev) => prev.filter((p) => p.id !== post.id))}
+          />
+        ))}
+      </ul>
+      <div ref={lastPostRef} style={{ height: "10px" }} />
+      {posts.length > 0 && !nextPage && (
+        <p className="text-center pb-4 text-element">Vous avez atteint la fin des posts.</p>
+      )}
+      {loading && <p className="text-center text-fg">Chargement...</p>}
+      {error && <Error error={error} />}
+    </>
+  );
 }

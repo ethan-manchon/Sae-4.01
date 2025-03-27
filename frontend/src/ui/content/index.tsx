@@ -2,21 +2,28 @@ import React from "react";
 import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
-interface ContentProps {
+interface ContentDataProps {
     children?: string;
+}
+
+interface ContentStyleProps {
+    mode?: "light" | "dark";
+    size?: "default" | "lg" | "xl";
     className?: string;
 }
+
+type ContentProps = ContentDataProps & ContentStyleProps;
 
 const contentVariants = cva("text-left", {
     variants: {
         mode: {
-            light: "text-fg bg-bg break-words",
+            light: "text-fg break-words",
             dark: "text-bg bg-fg break-words",
         },
         size: {
             default: "text-sm",
             lg: "text-lg",
-            xl: "text-xl",
+            xl: "text-xxl",
         },
     },
     defaultVariants: {

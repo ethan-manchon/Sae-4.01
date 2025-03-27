@@ -1,24 +1,30 @@
 import React, { useState } from "react";
 
 interface InfoProps {
-    children: string;
+    children: React.ReactNode;
+    content?: string;
     className?: string;
 }
 
-export default function Info({ children, className }: InfoProps) {
+export default function Info({ children, content, className }: InfoProps) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
-            <div
-                    className={`relative inline-block ${className}`}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}>
-                    <p className="rounded p-2 cursor-pointer text-fg border-border">?</p>
-                <div className={`absolute left-1/2 transform -translate-x-1/2 mt-2 w-48 md:w-96 bg-fg text-bg text-sm rounded p-2 ${isHovered ? "flex" : "hidden"}`}>
-                    {children}
-                </div>
+        <div
+            className={`relative inline-block ${className}`}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            {/* L’élément cible à survoler (icône) */}
+            <div className="w-full h-full">
+                {children}
             </div>
-
+            {/* Tooltip */}
+            {isHovered && (
+                <div className="absolute right-0 mt-2 w-auto max-w-xs md:max-w-md bg-bg text-fg text-sm rounded-lg shadow-lg p-3">
+                {content}
+                </div>
+            )}
+        </div>
     );
-
 }

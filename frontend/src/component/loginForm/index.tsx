@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Mail from "../../ui/mail/";
 import Password from "../../ui/password/";
 import Button from "../../ui/button/";
+import Error from "../../ui/error/";
 
 export default function LoginForm() {
     const [formData, setFormData] = useState({
@@ -59,26 +60,19 @@ export default function LoginForm() {
                 });
             
                 const contentType = response.headers.get("content-type");
-                let result;
-            
-                if (contentType && contentType.includes("application/json")) {
-                    result = await response.json();
-                } else {
-                    const text = await response.text();
-                    throw new Error(`Server did not return JSON. HTML response:\n${text}`);
-                }
+                let result = await response.json();
             
                 if (response.ok) {
                     localStorage.setItem("token", result.token);
-                    console.log("✅ User logged in successfully:", result);
+                    console.log("User logged in successfully:", result);
                     window.location.href = "/";
                 } else {
-                    console.error("❌ Login error:", result);
+                    console.error("Login error:", result);
                     setError(result.error || "An error occurred");
                 }
             
             } catch (error) {
-                console.error("❗ Request failed:", error);
+                console.error("Request failed:", error);
                 setError(error.toString());
             }
         }
@@ -92,9 +86,7 @@ export default function LoginForm() {
                 Login
             </Button>
             {error && (
-            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2 break-words" role="alert">
-                <span className="block sm:inline">{error}</span>
-            </div>
+                <Error error={error} />
             )}
         </form>
     );

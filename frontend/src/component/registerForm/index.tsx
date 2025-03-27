@@ -3,6 +3,7 @@ import Pseudo from "../../ui/pseudo/";
 import Mail from "../../ui/mail/";
 import Password from "../../ui/password/";
 import Button from "../../ui/button/";
+import Error from "../../ui/error/";
 
 export default function RegisterForm() {
     const [formData, setFormData] = useState({
@@ -81,9 +82,7 @@ export default function RegisterForm() {
             Register
             </Button>
             {error && (
-            <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
-                <span className="block sm:inline">{error}</span>
-            </div>
+                <Error error={error} />
             )}
             {success && (
             <div className="bg-success-bg border border-success-border text-success px-4 py-3 rounded relative mt-2" role="alert">

@@ -7,8 +7,9 @@
   --color-primary-hover: #0F81C7;
   --color-primary-active: #0F7CBF;
 
-  --color-light: #F5F8FA;
-  --color-very-light: #E8E0E2;
+  --color-grey: #F5F8FA;
+  --color-very-light-grey: #E8E0E2;
+  --color-light-grey: #A3A3A3;
   --color-dark: #3D6C93;
 
   --color-red: #E0245E;
@@ -29,10 +30,11 @@
   --color-success-bg: var(--color-green-very-light);
   --color-success-border: var(--color-green-light);
 
-  --color-border: var(--color-very-light);
+  --color-border: var(--color-very-light-grey);
+  --color-element: var(--color-light-grey);
 
   --color-fg: var(--color-dark);
-  --color-bg: var(--color-light);
+  --color-bg: var(--color-grey);
 }
 
 @layer base {

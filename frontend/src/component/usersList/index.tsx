@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import UserList from "../../ui/user";
+import UserList from "../user";
 import { loadUsers } from "../../lib/loader";
+import Error from "../../ui/error";
 
 interface User {
     id: number;
     pseudo: string;
     email: string;
     roles: string;
+    blocked: boolean;
 }
 
 export default function UsersList() {
@@ -36,9 +38,8 @@ export default function UsersList() {
 
     const loadMoreUsers = useCallback(async () => {
         setLoading(true);
-
         try {
-            const data = await loadUsers(nextPage);
+            const data = await loadUsers(nextPage ?? undefined);
             setUsers((prev) => {
                 const existingIds = new Set(prev.map(user => user.id));
                 const newUsers = data.users?.filter(user => !existingIds.has(user.id)) || [];
@@ -51,6 +52,24 @@ export default function UsersList() {
             setLoading(false);
         }
     }, [nextPage]);
+
+    const refreshUser = async (id: number) => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/admin/users/${id}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (response.ok) {
+                const updatedUser = await response.json();
+                setUsers((prev) =>
+                    prev.map((u) => (u.id === id ? { ...u, ...updatedUser } : u))
+                );
+            }
+        } catch (err) {
+            console.error("Erreur lors du rafraîchissement de l'utilisateur", err);
+        }
+    };
 
     const lastUserRef = useCallback(
         (node) => {
@@ -72,46 +91,38 @@ export default function UsersList() {
     );
 
     return (
-
-<>
-    <div className="mb-4">
-        <input
-            type="text"
-            placeholder="Rechercher par pseudo"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-        />
-    </div>
-
-    <div className="flex flex-col items-center gap-4 h-96 border-border overflow-y-auto px-2">
-        {users
-            .filter((user) =>
-                user.pseudo.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((user) => (
-                <UserList
-                    key={user.id}
-                    id={user.id}
-                    pseudo={user.pseudo}
-                    email={user.email}
-                    roles={user.roles}
+        <>
+            <div className="mb-4">
+                <input
+                    type="text"
+                    placeholder="Rechercher par pseudo"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                 />
-            ))}
-        <div ref={lastUserRef} style={{ height: "10px" }}></div>
-    </div>
+            </div>
 
-    {loading && <p className="text-center text-dark mt-2">Chargement...</p>}
+            <div className="flex flex-col items-center gap-4 h-96 border-border overflow-y-auto px-2">
+                {users
+                    .filter((user) =>
+                        user.pseudo.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .map((user) => (
+                        <UserList
+                            key={user.id}
+                            id={user.id}
+                            pseudo={user.pseudo}
+                            email={user.email}
+                            roles={user.roles}
+                            blocked={user.blocked}
+                            onUpdated={() => refreshUser(user.id)}
+                        />
+                    ))}
+                <div ref={lastUserRef} style={{ height: "10px" }}></div>
+            </div>
 
-    {error && (
-        <div
-            className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2"
-            role="alert"
-        >
-            <span className="block sm:inline">{error}</span>
-        </div>
-    )}
-</> 
-
+            {loading && <p className="text-center text-dark mt-2">Chargement...</p>}
+            {error && <Error error={error} />}
+        </>
     );
 }

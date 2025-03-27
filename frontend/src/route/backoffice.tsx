@@ -14,10 +14,10 @@ export default function BackOffice() {
     return (
             <div className="flex flex-col md:flex-row md:h-screen">
                 <NavBar user={user} />
-                <h1 className="text-4xl font-bold">Backoffice</h1>
                 <div className="pt-28 md:pt-0 md:pl-64 w-full">
                     <UsersList />
                 </div>
+                
             </div>
     );
 }

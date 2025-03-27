@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import Button from "../../ui/button";
 
 interface TweetInputProps {
-    onTweetSent?: (tweet: string) => void;
+    OnClick: () => void;
 }
 
-const TweetInput: React.FC<TweetInputProps> = ({ onTweetSent }) => {
+export default function Publish({ OnClick }: TweetInputProps) {
     const [text, setText] = useState("");
     const maxChars = 280;
 
@@ -24,13 +24,10 @@ const TweetInput: React.FC<TweetInputProps> = ({ onTweetSent }) => {
             
             if (response.ok) {
                 setText("");
-                if (typeof onTweetSent === "function") {
-                    onTweetSent(text);
-                }
+                OnClick();
                 console.log("Post ajouté avec succès");
             }
     };
-
 
     return (
         <div className='flex flex-row gap-8 items-center p-4 border shadow border-border rounded-lg w-3/4 md:w-8/9 mx-auto'>
@@ -52,4 +49,3 @@ const TweetInput: React.FC<TweetInputProps> = ({ onTweetSent }) => {
     );
 };
 
-export default TweetInput;

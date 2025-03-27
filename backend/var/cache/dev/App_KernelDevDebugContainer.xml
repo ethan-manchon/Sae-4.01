@@ -342,35 +342,56 @@
     <service id="App\Entity" class="App\Entity" abstract="true">
       <tag name="container.excluded" source="in &quot;config/services.yaml&quot;"/>
     </service>
-    <service id="App\Controller\PostController" class="App\Controller\PostController" public="true" autowire="true" autoconfigure="true">
+    <service id="App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Admin\UserController"/>
+      </call>
+    </service>
+    <service id="App\Controller\Api\LikeController" class="App\Controller\Api\LikeController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Api\LikeController"/>
+      </call>
+    </service>
+    <service id="App\Controller\Api\PostController" class="App\Controller\Api\PostController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <argument type="service" id="security.helper"/>
       <argument type="service" id="App\Service\PostService"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\PostController"/>
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Api\PostController"/>
       </call>
     </service>
-    <service id="App\Controller\RegistrationController" class="App\Controller\RegistrationController" public="true" autowire="true" autoconfigure="true">
+    <service id="App\Controller\Api\RegistrationController" class="App\Controller\Api\RegistrationController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <argument type="service" id="App\Security\EmailVerifier"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\RegistrationController"/>
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Api\RegistrationController"/>
       </call>
     </service>
-    <service id="App\Controller\SecurityController" class="App\Controller\SecurityController" public="true" autowire="true" autoconfigure="true">
+    <service id="App\Controller\Api\SubscribeController" class="App\Controller\Api\SubscribeController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\SecurityController"/>
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Api\SubscribeController"/>
       </call>
     </service>
-    <service id="App\Controller\UserController" class="App\Controller\UserController" public="true" autowire="true" autoconfigure="true">
+    <service id="App\Controller\Api\UserController" class="App\Controller\Api\UserController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
       <call method="setContainer">
-        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\UserController"/>
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Api\UserController"/>
+      </call>
+    </service>
+    <service id="App\Controller\Login\SecurityController" class="App\Controller\Login\SecurityController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Login\SecurityController"/>
       </call>
     </service>
     <service id="App\Dto\Payload\CreatePostPayload" class="App\Dto\Payload\CreatePostPayload" autowire="true" autoconfigure="true">
@@ -386,7 +407,15 @@
       <tag name="doctrine.repository_service"/>
       <argument type="service" id="doctrine"/>
     </service>
+    <service id="App\Repository\LikeRepository" class="App\Repository\LikeRepository" autowire="true" autoconfigure="true">
+      <tag name="doctrine.repository_service"/>
+      <argument type="service" id="doctrine"/>
+    </service>
     <service id="App\Repository\PostRepository" class="App\Repository\PostRepository" autowire="true" autoconfigure="true">
+      <tag name="doctrine.repository_service"/>
+      <argument type="service" id="doctrine"/>
+    </service>
+    <service id="App\Repository\SubscribeRepository" class="App\Repository\SubscribeRepository" autowire="true" autoconfigure="true">
       <tag name="doctrine.repository_service"/>
       <argument type="service" id="doctrine"/>
     </service>
@@ -438,7 +467,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag priority="-50" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.9VZ4k9D"/>
+      <argument type="service" id=".service_locator.sz0NP8g"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag priority="-100" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">controller.argument_value_resolver</tag>
@@ -1944,7 +1973,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.9VZ4k9D"/>
+      <argument type="service" id=".service_locator.sz0NP8g"/>
     </service>
     <service id="routing.resolver" class="Symfony\Component\Config\Loader\LoaderResolver">
       <call method="addLoader">
@@ -3924,7 +3953,7 @@
     <service id="doctrine.orm.configuration" class="Doctrine\ORM\Configuration" abstract="true"/>
     <service id="doctrine.orm.entity_manager.abstract" class="Doctrine\ORM\EntityManager" lazy="true" abstract="true"/>
     <service id="doctrine.orm.container_repository_factory" class="Doctrine\Bundle\DoctrineBundle\Repository\ContainerRepositoryFactory">
-      <argument type="service" id=".service_locator.wNwIZVU"/>
+      <argument type="service" id=".service_locator.f7rsgzd"/>
     </service>
     <service id="doctrine.orm.manager_configurator.abstract" class="Doctrine\Bundle\DoctrineBundle\ManagerConfigurator" abstract="true">
       <argument type="collection"/>
@@ -4626,6 +4655,13 @@
         </argument>
         <argument>null</argument>
       </call>
+      <call method="add">
+        <argument type="service" id=".security.request_matcher.CUDSgej"/>
+        <argument type="collection">
+          <argument>IS_AUTHENTICATED_FULLY</argument>
+        </argument>
+        <argument>null</argument>
+      </call>
     </service>
     <service id="security.context_listener" class="Symfony\Component\Security\Http\Firewall\ContextListener">
       <tag name="monolog.logger" channel="security"/>
@@ -5125,6 +5161,11 @@
         <argument type="service" id=".security.request_matcher.pqyCXG8"/>
       </argument>
     </service>
+    <service id=".security.request_matcher.CUDSgej" class="Symfony\Component\HttpFoundation\ChainRequestMatcher">
+      <argument type="collection">
+        <argument type="service" id=".security.request_matcher.SbN0Tkg"/>
+      </argument>
+    </service>
     <service id="security.command.user_password_hash" class="Symfony\Component\PasswordHasher\Command\UserPasswordHashCommand">
       <tag name="console.command"/>
       <tag name="container.no_preload"/>
@@ -5315,24 +5356,37 @@
       <argument type="service" id="symfonycasts.verify_email.token_generator"/>
       <argument>3600</argument>
     </service>
-    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\PostController" class="App\Controller\PostController" autowire="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\PostController" class="App\Controller\PostController" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Controller\PostController" class="App\Controller\PostController" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\RegistrationController" class="App\Controller\RegistrationController" autowire="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\RegistrationController" class="App\Controller\RegistrationController" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Controller\RegistrationController" class="App\Controller\RegistrationController" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\SecurityController" class="App\Controller\SecurityController" autowire="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\SecurityController" class="App\Controller\SecurityController" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Controller\SecurityController" class="App\Controller\SecurityController" autowire="true" autoconfigure="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\UserController" class="App\Controller\UserController" autowire="true" abstract="true"/>
-    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\UserController" class="App\Controller\UserController" autowire="true" abstract="true"/>
-    <service id=".abstract.instanceof.App\Controller\UserController" class="App\Controller\UserController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\LikeController" class="App\Controller\Api\LikeController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\LikeController" class="App\Controller\Api\LikeController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\LikeController" class="App\Controller\Api\LikeController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\PostController" class="App\Controller\Api\PostController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\PostController" class="App\Controller\Api\PostController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\PostController" class="App\Controller\Api\PostController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\RegistrationController" class="App\Controller\Api\RegistrationController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\RegistrationController" class="App\Controller\Api\RegistrationController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\RegistrationController" class="App\Controller\Api\RegistrationController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\SubscribeController" class="App\Controller\Api\SubscribeController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\SubscribeController" class="App\Controller\Api\SubscribeController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\SubscribeController" class="App\Controller\Api\SubscribeController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Api\UserController" class="App\Controller\Api\UserController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Api\UserController" class="App\Controller\Api\UserController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Api\UserController" class="App\Controller\Api\UserController" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Login\SecurityController" class="App\Controller\Login\SecurityController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Login\SecurityController" class="App\Controller\Login\SecurityController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Login\SecurityController" class="App\Controller\Login\SecurityController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Component\Form\FormTypeInterface.0.App\Form\RegistrationFormType" class="App\Form\RegistrationFormType" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Form\RegistrationFormType" class="App\Form\RegistrationFormType" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\AccessTokenRepository" class="App\Repository\AccessTokenRepository" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Repository\AccessTokenRepository" class="App\Repository\AccessTokenRepository" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\LikeRepository" class="App\Repository\LikeRepository" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Repository\LikeRepository" class="App\Repository\LikeRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\PostRepository" class="App\Repository\PostRepository" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Repository\PostRepository" class="App\Repository\PostRepository" autowire="true" autoconfigure="true" abstract="true"/>
+    <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\SubscribeRepository" class="App\Repository\SubscribeRepository" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Repository\SubscribeRepository" class="App\Repository\SubscribeRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepositoryInterface.0.App\Repository\UserRepository" class="App\Repository\UserRepository" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Repository\UserRepository" class="App\Repository\UserRepository" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".service_locator.pRu6x_4" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -5845,60 +5899,21 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.zHyJIs5" method="withContext"/>
     </service>
-    <service id=".service_locator.jcYtTcg" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
-      </argument>
-    </service>
-    <service id=".service_locator.jcYtTcg.App\Controller\PostController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\PostController::index()"/>
-      <argument>App\Controller\PostController::index()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.jcYtTcg" method="withContext"/>
-    </service>
-    <service id=".service_locator.KAWHxDW" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="userPasswordHasher" type="service_closure" id="security.user_password_hasher"/>
-        <argument key="entityManager" type="service_closure" id="doctrine.orm.default_entity_manager"/>
-      </argument>
-    </service>
-    <service id=".service_locator.KAWHxDW.App\Controller\RegistrationController::register()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\RegistrationController::register()"/>
-      <argument>App\Controller\RegistrationController::register()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.KAWHxDW" method="withContext"/>
-    </service>
     <service id=".service_locator.OzEre6h" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="userRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
-    <service id=".service_locator.OzEre6h.App\Controller\RegistrationController::verifyUserEmail()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\RegistrationController::verifyUserEmail()"/>
-      <argument>App\Controller\RegistrationController::verifyUserEmail()</argument>
+    <service id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\UserController::show()"/>
+      <argument>App\Controller\Admin\UserController::show()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.OzEre6h" method="withContext"/>
     </service>
-    <service id=".service_locator.g2TMuy3" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
-        <argument key="passwordHasher" type="service_closure" id="security.user_password_hasher"/>
-        <argument key="userService" type="service_closure" id="App\Service\UserService"/>
-      </argument>
-    </service>
-    <service id=".service_locator.g2TMuy3.App\Controller\SecurityController::login()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\SecurityController::login()"/>
-      <argument>App\Controller\SecurityController::login()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.g2TMuy3" method="withContext"/>
-    </service>
-    <service id=".service_locator.OzEre6h.App\Controller\UserController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\UserController::index()"/>
-      <argument>App\Controller\UserController::index()</argument>
+    <service id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\UserController::index()"/>
+      <argument>App\Controller\Admin\UserController::index()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.OzEre6h" method="withContext"/>
     </service>
@@ -5909,33 +5924,239 @@
         <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
       </argument>
     </service>
-    <service id=".service_locator.OA38qqg.App\Controller\UserController::update()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\UserController::update()"/>
-      <argument>App\Controller\UserController::update()</argument>
+    <service id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\UserController::update()"/>
+      <argument>App\Controller\Admin\UserController::update()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.OA38qqg" method="withContext"/>
     </service>
-    <service id=".service_locator.9VZ4k9D" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.pwqhacm" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="likeRepository" type="service_closure" id="App\Repository\LikeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.pwqhacm.App\Controller\Api\LikeController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\LikeController::index()"/>
+      <argument>App\Controller\Api\LikeController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.pwqhacm" method="withContext"/>
+    </service>
+    <service id=".service_locator._98tlIb" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="like" type="service_closure" id=".errored..service_locator._98tlIb.App\Entity\Like"/>
+      </argument>
+    </service>
+    <service id=".service_locator._98tlIb.App\Controller\Api\LikeController::get()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\LikeController::get()"/>
+      <argument>App\Controller\Api\LikeController::get()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator._98tlIb" method="withContext"/>
+    </service>
+    <service id=".service_locator.RJ3ocas" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+        <argument key="likeRepo" type="service_closure" id="App\Repository\LikeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.RJ3ocas.App\Controller\Api\LikeController::create()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\LikeController::create()"/>
+      <argument>App\Controller\Api\LikeController::create()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.RJ3ocas" method="withContext"/>
+    </service>
+    <service id=".service_locator.n7t1Uis" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="like" type="service_closure" id=".errored..service_locator.n7t1Uis.App\Entity\Like"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.n7t1Uis.App\Controller\Api\LikeController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\LikeController::delete()"/>
+      <argument>App\Controller\Api\LikeController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.n7t1Uis" method="withContext"/>
+    </service>
+    <service id=".service_locator.7znPbMJ" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="likeRepo" type="service_closure" id="App\Repository\LikeRepository"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\LikeController::indexByPost()"/>
+      <argument>App\Controller\Api\LikeController::indexByPost()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.7znPbMJ" method="withContext"/>
+    </service>
+    <service id=".service_locator.jcYtTcg" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::index()"/>
+      <argument>App\Controller\Api\PostController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.jcYtTcg" method="withContext"/>
+    </service>
+    <service id=".service_locator.mlMhPL1" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="post" type="service_closure" id=".errored..service_locator.mlMhPL1.App\Entity\Post"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+        <argument key="tokenStorage" type="service_closure" id="security.token_storage"/>
+      </argument>
+    </service>
+    <service id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::delete()"/>
+      <argument>App\Controller\Api\PostController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.mlMhPL1" method="withContext"/>
+    </service>
+    <service id=".service_locator.BbCY9d." class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
+        <argument key="subscribeRepository" type="service_closure" id="App\Repository\SubscribeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.BbCY9d..App\Controller\Api\PostController::feed()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::feed()"/>
+      <argument>App\Controller\Api\PostController::feed()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.BbCY9d." method="withContext"/>
+    </service>
+    <service id=".service_locator.KAWHxDW" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="userPasswordHasher" type="service_closure" id="security.user_password_hasher"/>
+        <argument key="entityManager" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.KAWHxDW.App\Controller\Api\RegistrationController::register()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\RegistrationController::register()"/>
+      <argument>App\Controller\Api\RegistrationController::register()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.KAWHxDW" method="withContext"/>
+    </service>
+    <service id=".service_locator.OzEre6h.App\Controller\Api\RegistrationController::verifyUserEmail()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\RegistrationController::verifyUserEmail()"/>
+      <argument>App\Controller\Api\RegistrationController::verifyUserEmail()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.OzEre6h" method="withContext"/>
+    </service>
+    <service id=".service_locator.67XUPCF" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="user" type="service_closure" id=".errored..service_locator.67XUPCF.App\Entity\User"/>
+        <argument key="subscribeRepo" type="service_closure" id="App\Repository\SubscribeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.67XUPCF.App\Controller\Api\SubscribeController::getFollowers()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\SubscribeController::getFollowers()"/>
+      <argument>App\Controller\Api\SubscribeController::getFollowers()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.67XUPCF" method="withContext"/>
+    </service>
+    <service id=".service_locator.1vFMvPs" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="user" type="service_closure" id=".errored..service_locator.1vFMvPs.App\Entity\User"/>
+        <argument key="subscribeRepo" type="service_closure" id="App\Repository\SubscribeRepository"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::subscribe()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\SubscribeController::subscribe()"/>
+      <argument>App\Controller\Api\SubscribeController::subscribe()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.1vFMvPs" method="withContext"/>
+    </service>
+    <service id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::unsubscribe()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\SubscribeController::unsubscribe()"/>
+      <argument>App\Controller\Api\SubscribeController::unsubscribe()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.1vFMvPs" method="withContext"/>
+    </service>
+    <service id=".service_locator.OzEre6h.App\Controller\Api\UserController::profil()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\UserController::profil()"/>
+      <argument>App\Controller\Api\UserController::profil()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.OzEre6h" method="withContext"/>
+    </service>
+    <service id=".service_locator.OA38qqg.App\Controller\Api\UserController::updateRefresh()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\UserController::updateRefresh()"/>
+      <argument>App\Controller\Api\UserController::updateRefresh()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.OA38qqg" method="withContext"/>
+    </service>
+    <service id=".service_locator.g2TMuy3" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+        <argument key="passwordHasher" type="service_closure" id="security.user_password_hasher"/>
+        <argument key="userService" type="service_closure" id="App\Service\UserService"/>
+      </argument>
+    </service>
+    <service id=".service_locator.g2TMuy3.App\Controller\Login\SecurityController::login()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Login\SecurityController::login()"/>
+      <argument>App\Controller\Login\SecurityController::login()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.g2TMuy3" method="withContext"/>
+    </service>
+    <service id=".service_locator.sz0NP8g" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
         <argument key="App\Kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.zHyJIs5.kernel::loadRoutes()"/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.zHyJIs5.kernel::loadRoutes()"/>
-        <argument key="App\Controller\PostController::index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\PostController::index()"/>
-        <argument key="App\Controller\RegistrationController::register" type="service_closure" id=".service_locator.KAWHxDW.App\Controller\RegistrationController::register()"/>
-        <argument key="App\Controller\RegistrationController::verifyUserEmail" type="service_closure" id=".service_locator.OzEre6h.App\Controller\RegistrationController::verifyUserEmail()"/>
-        <argument key="App\Controller\SecurityController::login" type="service_closure" id=".service_locator.g2TMuy3.App\Controller\SecurityController::login()"/>
-        <argument key="App\Controller\UserController::index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\UserController::index()"/>
-        <argument key="App\Controller\UserController::update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\UserController::update()"/>
+        <argument key="App\Controller\Admin\UserController::show" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()"/>
+        <argument key="App\Controller\Admin\UserController::index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()"/>
+        <argument key="App\Controller\Admin\UserController::update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()"/>
+        <argument key="App\Controller\Api\LikeController::index" type="service_closure" id=".service_locator.pwqhacm.App\Controller\Api\LikeController::index()"/>
+        <argument key="App\Controller\Api\LikeController::get" type="service_closure" id=".service_locator._98tlIb.App\Controller\Api\LikeController::get()"/>
+        <argument key="App\Controller\Api\LikeController::create" type="service_closure" id=".service_locator.RJ3ocas.App\Controller\Api\LikeController::create()"/>
+        <argument key="App\Controller\Api\LikeController::delete" type="service_closure" id=".service_locator.n7t1Uis.App\Controller\Api\LikeController::delete()"/>
+        <argument key="App\Controller\Api\LikeController::indexByPost" type="service_closure" id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()"/>
+        <argument key="App\Controller\Api\PostController::index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()"/>
+        <argument key="App\Controller\Api\PostController::delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
+        <argument key="App\Controller\Api\PostController::feed" type="service_closure" id=".service_locator.BbCY9d..App\Controller\Api\PostController::feed()"/>
+        <argument key="App\Controller\Api\RegistrationController::register" type="service_closure" id=".service_locator.KAWHxDW.App\Controller\Api\RegistrationController::register()"/>
+        <argument key="App\Controller\Api\RegistrationController::verifyUserEmail" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\RegistrationController::verifyUserEmail()"/>
+        <argument key="App\Controller\Api\SubscribeController::getFollowers" type="service_closure" id=".service_locator.67XUPCF.App\Controller\Api\SubscribeController::getFollowers()"/>
+        <argument key="App\Controller\Api\SubscribeController::subscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::subscribe()"/>
+        <argument key="App\Controller\Api\SubscribeController::unsubscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::unsubscribe()"/>
+        <argument key="App\Controller\Api\UserController::profil" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\UserController::profil()"/>
+        <argument key="App\Controller\Api\UserController::updateRefresh" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Api\UserController::updateRefresh()"/>
+        <argument key="App\Controller\Login\SecurityController::login" type="service_closure" id=".service_locator.g2TMuy3.App\Controller\Login\SecurityController::login()"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.zHyJIs5.kernel::loadRoutes()"/>
-        <argument key="App\Controller\PostController:index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\PostController::index()"/>
-        <argument key="App\Controller\RegistrationController:register" type="service_closure" id=".service_locator.KAWHxDW.App\Controller\RegistrationController::register()"/>
-        <argument key="App\Controller\RegistrationController:verifyUserEmail" type="service_closure" id=".service_locator.OzEre6h.App\Controller\RegistrationController::verifyUserEmail()"/>
-        <argument key="App\Controller\SecurityController:login" type="service_closure" id=".service_locator.g2TMuy3.App\Controller\SecurityController::login()"/>
-        <argument key="App\Controller\UserController:index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\UserController::index()"/>
-        <argument key="App\Controller\UserController:update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\UserController::update()"/>
+        <argument key="App\Controller\Admin\UserController:show" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()"/>
+        <argument key="App\Controller\Admin\UserController:index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()"/>
+        <argument key="App\Controller\Admin\UserController:update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()"/>
+        <argument key="App\Controller\Api\LikeController:index" type="service_closure" id=".service_locator.pwqhacm.App\Controller\Api\LikeController::index()"/>
+        <argument key="App\Controller\Api\LikeController:get" type="service_closure" id=".service_locator._98tlIb.App\Controller\Api\LikeController::get()"/>
+        <argument key="App\Controller\Api\LikeController:create" type="service_closure" id=".service_locator.RJ3ocas.App\Controller\Api\LikeController::create()"/>
+        <argument key="App\Controller\Api\LikeController:delete" type="service_closure" id=".service_locator.n7t1Uis.App\Controller\Api\LikeController::delete()"/>
+        <argument key="App\Controller\Api\LikeController:indexByPost" type="service_closure" id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()"/>
+        <argument key="App\Controller\Api\PostController:index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()"/>
+        <argument key="App\Controller\Api\PostController:delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
+        <argument key="App\Controller\Api\PostController:feed" type="service_closure" id=".service_locator.BbCY9d..App\Controller\Api\PostController::feed()"/>
+        <argument key="App\Controller\Api\RegistrationController:register" type="service_closure" id=".service_locator.KAWHxDW.App\Controller\Api\RegistrationController::register()"/>
+        <argument key="App\Controller\Api\RegistrationController:verifyUserEmail" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\RegistrationController::verifyUserEmail()"/>
+        <argument key="App\Controller\Api\SubscribeController:getFollowers" type="service_closure" id=".service_locator.67XUPCF.App\Controller\Api\SubscribeController::getFollowers()"/>
+        <argument key="App\Controller\Api\SubscribeController:subscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::subscribe()"/>
+        <argument key="App\Controller\Api\SubscribeController:unsubscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::unsubscribe()"/>
+        <argument key="App\Controller\Api\UserController:profil" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\UserController::profil()"/>
+        <argument key="App\Controller\Api\UserController:updateRefresh" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Api\UserController::updateRefresh()"/>
+        <argument key="App\Controller\Login\SecurityController:login" type="service_closure" id=".service_locator.g2TMuy3.App\Controller\Login\SecurityController::login()"/>
       </argument>
     </service>
     <service id=".service_locator.ea.H0ae" class="Symfony\Component\DependencyInjection\ServiceLocator">
@@ -6126,11 +6347,13 @@
         <argument key="doctrine.orm.default_listeners.attach_entity_listeners" type="service_closure" id="doctrine.orm.default_listeners.attach_entity_listeners"/>
       </argument>
     </service>
-    <service id=".service_locator.wNwIZVU" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.f7rsgzd" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="App\Repository\AccessTokenRepository" type="service_closure" id="App\Repository\AccessTokenRepository"/>
+        <argument key="App\Repository\LikeRepository" type="service_closure" id="App\Repository\LikeRepository"/>
         <argument key="App\Repository\PostRepository" type="service_closure" id="App\Repository\PostRepository"/>
+        <argument key="App\Repository\SubscribeRepository" type="service_closure" id="App\Repository\SubscribeRepository"/>
         <argument key="App\Repository\UserRepository" type="service_closure" id="App\Repository\UserRepository"/>
       </argument>
     </service>
@@ -6214,27 +6437,45 @@
         <argument key="parameter_bag" type="service_closure" id="parameter_bag" on-invalid="ignore"/>
       </argument>
     </service>
-    <service id=".service_locator.ZyP9f7K.App\Controller\PostController" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\PostController"/>
-      <argument>App\Controller\PostController</argument>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Admin\UserController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\UserController"/>
+      <argument>App\Controller\Admin\UserController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.ZyP9f7K" method="withContext"/>
     </service>
-    <service id=".service_locator.ZyP9f7K.App\Controller\RegistrationController" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\RegistrationController"/>
-      <argument>App\Controller\RegistrationController</argument>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Api\LikeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\LikeController"/>
+      <argument>App\Controller\Api\LikeController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.ZyP9f7K" method="withContext"/>
     </service>
-    <service id=".service_locator.ZyP9f7K.App\Controller\SecurityController" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\SecurityController"/>
-      <argument>App\Controller\SecurityController</argument>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Api\PostController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController"/>
+      <argument>App\Controller\Api\PostController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.ZyP9f7K" method="withContext"/>
     </service>
-    <service id=".service_locator.ZyP9f7K.App\Controller\UserController" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\UserController"/>
-      <argument>App\Controller\UserController</argument>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Api\RegistrationController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\RegistrationController"/>
+      <argument>App\Controller\Api\RegistrationController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ZyP9f7K" method="withContext"/>
+    </service>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Api\SubscribeController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\SubscribeController"/>
+      <argument>App\Controller\Api\SubscribeController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ZyP9f7K" method="withContext"/>
+    </service>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Api\UserController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\UserController"/>
+      <argument>App\Controller\Api\UserController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ZyP9f7K" method="withContext"/>
+    </service>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Login\SecurityController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Login\SecurityController"/>
+      <argument>App\Controller\Login\SecurityController</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.ZyP9f7K" method="withContext"/>
     </service>
@@ -6377,10 +6618,13 @@
       <call method="allowControllers">
         <argument type="collection">
           <argument>App\Kernel</argument>
-          <argument>App\Controller\PostController</argument>
-          <argument>App\Controller\RegistrationController</argument>
-          <argument>App\Controller\SecurityController</argument>
-          <argument>App\Controller\UserController</argument>
+          <argument>App\Controller\Admin\UserController</argument>
+          <argument>App\Controller\Api\LikeController</argument>
+          <argument>App\Controller\Api\PostController</argument>
+          <argument>App\Controller\Api\RegistrationController</argument>
+          <argument>App\Controller\Api\SubscribeController</argument>
+          <argument>App\Controller\Api\UserController</argument>
+          <argument>App\Controller\Login\SecurityController</argument>
           <argument>Doctrine\Bundle\DoctrineBundle\Controller\ProfilerController</argument>
         </argument>
       </call>
@@ -6564,6 +6808,21 @@
     </service>
     <service id=".errored..service_locator.zHyJIs5.Symfony\Component\Config\Loader\LoaderInterface" class="Symfony\Component\Config\Loader\LoaderInterface">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.zHyJIs5&quot;: it needs an instance of &quot;Symfony\Component\Config\Loader\LoaderInterface&quot; but this type has been excluded from autowiring."/>
+    </service>
+    <service id=".errored..service_locator._98tlIb.App\Entity\Like" class="App\Entity\Like">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator._98tlIb&quot;: it needs an instance of &quot;App\Entity\Like&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.n7t1Uis.App\Entity\Like" class="App\Entity\Like">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.n7t1Uis&quot;: it needs an instance of &quot;App\Entity\Like&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.mlMhPL1.App\Entity\Post" class="App\Entity\Post">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.mlMhPL1&quot;: it needs an instance of &quot;App\Entity\Post&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.67XUPCF.App\Entity\User" class="App\Entity\User">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.67XUPCF&quot;: it needs an instance of &quot;App\Entity\User&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.1vFMvPs.App\Entity\User" class="App\Entity\User">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.1vFMvPs&quot;: it needs an instance of &quot;App\Entity\User&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
     </service>
     <service id=".console.command.about.lazy" class="Symfony\Component\Console\Command\LazyCommand">
       <argument>about</argument>
@@ -7535,7 +7794,7 @@
     <service id="SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface" alias="symfonycasts.verify_email.helper"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.pRu6x_4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.9VZ4k9D"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.sz0NP8g"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.BxSdgVt"/>
     <service id="Psr\Log\LoggerInterface" alias="logger"/>
@@ -7552,11 +7811,20 @@
     <service id="security.event_dispatcher.main" alias="debug.security.event_dispatcher.main"/>
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator.n_ENPtW" alias=".service_locator.zHyJIs5"/>
-    <service id=".service_locator.gkWRRmJ" alias=".service_locator.jcYtTcg"/>
-    <service id=".service_locator.113K_6l" alias=".service_locator.KAWHxDW"/>
     <service id=".service_locator.hNMhKaf" alias=".service_locator.OzEre6h"/>
-    <service id=".service_locator.u1eRij5" alias=".service_locator.g2TMuy3"/>
     <service id=".service_locator.gBWxp9p" alias=".service_locator.OA38qqg"/>
+    <service id=".service_locator.gPNaGXj" alias=".service_locator.pwqhacm"/>
+    <service id=".service_locator.HCAllhs" alias=".service_locator._98tlIb"/>
+    <service id=".service_locator.czTYVwo" alias=".service_locator.RJ3ocas"/>
+    <service id=".service_locator.dRKvAm5" alias=".service_locator.n7t1Uis"/>
+    <service id=".service_locator.bVgOQZf" alias=".service_locator.7znPbMJ"/>
+    <service id=".service_locator.gkWRRmJ" alias=".service_locator.jcYtTcg"/>
+    <service id=".service_locator.XhKY4to" alias=".service_locator.mlMhPL1"/>
+    <service id=".service_locator.4Pme8Tz" alias=".service_locator.BbCY9d."/>
+    <service id=".service_locator.113K_6l" alias=".service_locator.KAWHxDW"/>
+    <service id=".service_locator.XqoxNni" alias=".service_locator.67XUPCF"/>
+    <service id=".service_locator.14koWdc" alias=".service_locator.1vFMvPs"/>
+    <service id=".service_locator.u1eRij5" alias=".service_locator.g2TMuy3"/>
     <service id=".service_locator.JGQPwcJ" alias=".service_locator.ZyP9f7K"/>
   </services>
 </container>

@@ -6,6 +6,8 @@ import Root from './route/root.tsx';
 import Register from './route/register.tsx';
 import Login from './route/login.tsx';
 import BackOffice from './route/backoffice.tsx';
+import Profil from './route/profil.tsx';
+import Feed from './route/feed.tsx';
 
 import ProtectedRoute from './component/protectedRoute/index.tsx';
 import ProtectedRouteAdmin from './component/protectedRouteAdmin/index.tsx';
@@ -16,11 +18,18 @@ import './index.css';
 const router = createBrowserRouter([
   {
     path: '/',
-   
     element:( 
     <ProtectedRoute>
       <Root />
-      </ProtectedRoute> 
+    </ProtectedRoute> 
+      )
+  },
+  {
+    path: '/foryoupage',
+    element:( 
+    <ProtectedRoute>
+      <Feed />
+    </ProtectedRoute> 
       )
   },
   {
@@ -30,6 +39,14 @@ const router = createBrowserRouter([
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path: '/profil/:username',
+    element: (
+    <ProtectedRoute>
+      <Profil /> 
+    </ProtectedRoute> 
+  )
   },
   {
     path: '/backoffice',
