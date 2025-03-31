@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import UserList from "../user";
-import { loadUsers } from "../../lib/loader";
+import { loadUsers } from "../../lib/UserService";
 import Error from "../../ui/error";
 
 interface User {
@@ -8,7 +8,7 @@ interface User {
     pseudo: string;
     email: string;
     roles: string;
-    blocked: boolean;
+    banned: boolean;
 }
 
 export default function UsersList() {
@@ -114,7 +114,7 @@ export default function UsersList() {
                             pseudo={user.pseudo}
                             email={user.email}
                             roles={user.roles}
-                            blocked={user.blocked}
+                            banned={user.banned}
                             onUpdated={() => refreshUser(user.id)}
                         />
                     ))}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../ui/button"; 
-import Bloquer from "../../ui/bloquer"; 
+import Ban from "../../ui/banned"; 
 
 
 interface UserListProps {
@@ -8,11 +8,11 @@ interface UserListProps {
     pseudo: string;
     email: string;
     roles: string | string[];
-    blocked: boolean;
+    banned: boolean;
     onUpdated?: () => void;
   }
 
-export default function UserList({ id, pseudo, email, roles, blocked, onUpdated }: UserListProps) {
+export default function UserList({ id, pseudo, email, roles, banned, onUpdated }: UserListProps) {
     const [editMode, setEditMode] = useState(false);
     const [newPseudo, setNewPseudo] = useState(pseudo);
     const [newEmail, setNewEmail] = useState(email);
@@ -74,7 +74,7 @@ export default function UserList({ id, pseudo, email, roles, blocked, onUpdated 
                         <Button variant="default" size="sm" onClick={handleSave}>✅</Button>
                         <Button variant="transparent" size="sm" onClick={handleCancel}>❌</Button>
                     </div>
-                    <Bloquer id={id} bloquer={blocked} onUpdated={onUpdated}/>
+                    <Ban id={id} ban={banned} onUpdated={onUpdated}/>
                 </>
             ) : (
                 <>
@@ -85,7 +85,7 @@ export default function UserList({ id, pseudo, email, roles, blocked, onUpdated 
                         <p className="text-fg border p-1 rounded">{roleLabels[initialRole] || initialRole}</p>
                         <Button size="sm" onClick={() => setEditMode(true)}> Modifier </Button>
                     </div>
-                    <Bloquer id={id} bloquer={blocked} onUpdated={onUpdated} />
+                    <Ban id={id} ban={banned} onUpdated={onUpdated} />
                 </>
             )}
         </li>

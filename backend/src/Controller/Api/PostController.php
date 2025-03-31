@@ -4,19 +4,22 @@ namespace App\Controller\Api;
 
 use App\Entity\User;
 use App\Entity\Post;
-use App\Repository\SubscribeRepository;
+use App\Entity\Like;
+use App\Entity\Respond;
 use App\Service\PostService;
+use App\Repository\SubscribeRepository;
 use App\Repository\UserRepository;
 use App\Repository\PostRepository;
 use App\Dto\Payload\CreatePostPayload;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 
 #[Route('/api')]
 class PostController extends AbstractController
@@ -28,14 +31,6 @@ class PostController extends AbstractController
     {
         $this->security = $security;
         $this->postService = $postService;
-    }
-
-    #[Route('', name: 'api_base')]
-    public function base(): Response
-    {
-        return $this->render('base.html.twig', [
-            'create' => 'posts',
-        ]);
     }
 
     #[Route('/posts', name: 'api_posts_index', methods: ['GET'])]
@@ -56,7 +51,7 @@ class PostController extends AbstractController
         foreach ($paginator as $post) {
             $author = $post->getUser();
         
-            if ($author->isBlocked()) {
+            if ($author->isBanned()) {
                 $postsArray[] = [
                     'id' => $post->getId(),
                     'content' => 'Ce compte a été bloqué pour non respect des conditions d’utilisation.',
@@ -66,7 +61,7 @@ class PostController extends AbstractController
                         'pseudo' => $author->getPseudo(),
                         'pdp' => $author->getPdp(),
                     ],
-                    'blocked' => true
+                    'banned' => true
                 ];
             } else {
                 $postsArray[] = [
@@ -78,7 +73,7 @@ class PostController extends AbstractController
                         'pseudo' => $author->getPseudo(),
                         'pdp' => $author->getPdp(),
                     ],
-                    'blocked' => false
+                    'banned' => false
                 ];
             }
         }
@@ -95,7 +90,7 @@ class PostController extends AbstractController
     {
         $user = $this->getUser();
 
-        if ($user->isBlocked()) {
+        if ($user->isBanned()) {
             return $this->json([
                 'error' => 'Votre compte est bloqué. Vous ne pouvez plus interagir avec la plateforme.'
             ], 403);
@@ -126,20 +121,51 @@ class PostController extends AbstractController
     public function delete(Post $post, EntityManagerInterface $em, TokenStorageInterface $tokenStorage): JsonResponse
     {
         $user = $tokenStorage->getToken()->getUser();
-
+    
         if (!$user || !method_exists($user, 'getId')) {
             return new JsonResponse(['error' => 'Utilisateur non connecté ou invalide'], Response::HTTP_FORBIDDEN);
         }
-
+    
         if ($post->getUser()->getId() !== $user->getId()) {
             return new JsonResponse(['error' => 'Non autorisé'], Response::HTTP_FORBIDDEN);
         }
+            $responds = $post->getResponds();
+            if ($responds !== null) {
+                foreach ($responds as $respond) {
+                    $em->remove($respond);
+                }
+            }
+    
+            $likes = $em->getRepository(Like::class)->findBy(['post' => $post]);
+            if ($likes !== null) {
+                foreach ($likes as $like) {
+                    $em->remove($like);
+                }
+            }
+            $em->remove($post);
+            $em->flush();
+    
+            return new JsonResponse(['success' => true]);
+    }
+    
+    #[Route('/posts/{id}', name: 'patch_post', methods: ['PATCH'])]
+    public function patch(Post $post, EntityManagerInterface $em, Request $request, TokenStorageInterface $tokenStorage): JsonResponse
+    {
+        $user = $tokenStorage->getToken()->getUser();
 
-        $em->remove($post);
+        $data = json_decode($request->getContent(), true);
+
+
+        if (!isset($data['content']) || empty(trim($data['content']))) {
+            return new JsonResponse(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $post->setContent($data['content']);
         $em->flush();
 
         return new JsonResponse(['success' => true]);
     }
+
     #[Route('/feed', name: 'api_feed', methods: ['GET'])]
     public function feed(
         Request $request,
@@ -157,7 +183,7 @@ class PostController extends AbstractController
     
         $posts = $postRepository->findBy(
             ['user' => $followedUsers],
-            ['created_at' => 'DESC'], // 
+            ['created_at' => 'DESC'],
             $limit,
             $offset
         );
@@ -169,7 +195,7 @@ class PostController extends AbstractController
         foreach ($posts as $post) {
             $author = $post->getUser();
         
-            if ($author->isBlocked()) {
+            if ($author->isBanned()) {
                 $postsArray[] = [
                     'id' => $post->getId(),
                     'content' => 'Ce compte a été bloqué pour non respect des conditions d’utilisation.',
@@ -179,7 +205,7 @@ class PostController extends AbstractController
                         'pseudo' => $author->getPseudo(),
                         'pdp' => $author->getPdp(),
                     ],
-                    'blocked' => true 
+                    'banned' => true 
                 ];
             } else {
                 $postsArray[] = [
@@ -191,7 +217,7 @@ class PostController extends AbstractController
                         'pseudo' => $author->getPseudo(),
                         'pdp' => $author->getPdp(),
                     ],
-                    'blocked' => false
+                    'banned' => false
                 ];
             }
         }

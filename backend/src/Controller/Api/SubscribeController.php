@@ -13,22 +13,34 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api')]
 class SubscribeController extends AbstractController
 {
-    #[Route('/user/{id}/followers', name: 'api_user_followers', methods: ['GET'])]
+    #[Route('/subscribes/{id}', name: 'api_user_followers', methods: ['GET'])]
     public function getFollowers(User $user, SubscribeRepository $subscribeRepo): JsonResponse
     {
         $followers = $subscribeRepo->findBy(['following' => $user]);
 
-        $data = array_map(function (Subscribe $sub) {
+        $dataFollowers = array_map(function (Subscribe $sub) {
             return [
-                'id' => $sub->getFollower()->getId(),
-                'pseudo' => $sub->getFollower()->getPseudo(),
+            'id' => $sub->getFollower()->getId(),
+            'pseudo' => $sub->getFollower()->getPseudo(),
             ];
         }, $followers);
 
-        return $this->json($data);
+        $following = $subscribeRepo->findBy(['follower' => $user]);
+
+        $dataFollowing = array_map(function (Subscribe $sub) {
+            return [
+            'id' => $sub->getFollowing()->getId(),
+            'pseudo' => $sub->getFollowing()->getPseudo(),
+            ];
+        }, $following);
+
+        return $this->json([
+            'followers' => $dataFollowers,
+            'following' => $dataFollowing,
+        ]);
     }
 
-    #[Route('/subscribe/{id}', name: 'api_subscribe_user', methods: ['POST'])]
+    #[Route('/subscribes/{id}', name: 'api_subscribe_user', methods: ['POST'])]
     public function subscribe(
         User $user,
         SubscribeRepository $subscribeRepo,
@@ -62,7 +74,7 @@ class SubscribeController extends AbstractController
         return $this->json(['message' => 'Subscribed successfully']);
     }
 
-    #[Route('/subscribe/{id}', name: 'api_unsubscribe_user', methods: ['DELETE'])]
+    #[Route('/subscribes/{id}', name: 'api_unsubscribe_user', methods: ['DELETE'])]
     public function unsubscribe(
         User $user,
         SubscribeRepository $subscribeRepo,

@@ -30,6 +30,17 @@ class Post
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    /**
+     * @var Collection<int, Respond>
+     */
+    #[ORM\OneToMany(targetEntity: Respond::class, mappedBy: 'id_post')]
+    private Collection $responds;
+
+    public function __construct()
+    {
+        $this->responds = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +85,36 @@ class Post
     public function setUser(?User $user): static
     {
         $this->user = $user;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Respond>
+     */
+    public function getResponds(): Collection
+    {
+        return $this->responds;
+    }
+
+    public function addRespond(Respond $respond): static
+    {
+        if (!$this->responds->contains($respond)) {
+            $this->responds->add($respond);
+            $respond->setIdPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRespond(Respond $respond): static
+    {
+        if ($this->responds->removeElement($respond)) {
+            // set the owning side to null (unless already changed)
+            if ($respond->getIdPost() === $this) {
+                $respond->setIdPost(null);
+            }
+        }
+
         return $this;
     }
 

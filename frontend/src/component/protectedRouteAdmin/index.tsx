@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
-import { loadMe } from "../../lib/loader"; // ⬅️ adapte le chemin selon ton projet
+import { loadMe } from "../../lib/UserService"; 
 
 interface ProtectedRouteAdminProps {
     children: React.ReactNode;

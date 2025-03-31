@@ -1,7 +1,6 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import { loadMe } from "../lib/loader";
-import Button from "../ui/button";
+import { loadMe } from "../lib/UserService";
 import UsersList from "../component/usersList";
 import NavBar from "../component/navBar";
 

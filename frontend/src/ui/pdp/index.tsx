@@ -3,7 +3,7 @@ import Content from "../content";
 import Button from "../button";
 
 interface PictureProps {
-    pdp: any;
+    pdp?: any;
     pseudo?: string;
     link?: string;
     className?: string;

@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
 
         $user = $em->getRepository(User::class)->findOneBy(['email' => $email]);
 
-        if ($user && $user->isBlocked()) {
+        if ($user && $user->isBanned()) {
             return $this->json([
                 'error' => 'Votre compte a été bloqué pour non respect des conditions d’utilisation.'
             ], 403);

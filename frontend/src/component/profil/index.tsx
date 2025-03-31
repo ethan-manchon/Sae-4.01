@@ -1,11 +1,9 @@
 import React, { useEffect, useState }from "react";
-import { isUserFollowed } from "../../lib/loader";
-import { Link } from "react-router-dom";
+import { isUserFollowed } from "../../lib/SubscribeService";
+import Settings from "../settings/";
 import Icon from "../../ui/icon";
-import Content from "../../ui/content";
 import Pdp from "../../ui/pdp";
-import Boolean from "../../ui/boolean";
-import Abonner from "../../ui/abonner";
+import Subscribe from "../../ui/subscribe";
 
 interface UserProps {
   user: {
@@ -16,7 +14,6 @@ interface UserProps {
     banniere: string;
     locate: string;
     url: string;
-    icon: string;
   };
   type: any;
 }
@@ -48,9 +45,7 @@ export default function ProfilComponent({ user, type }: UserProps) {
   if (user.url === undefined) {
     return <div>Default</div>;
   }
-  if (user.icon === undefined) {
-    return <div>Default</div>;
-  }
+
   const bannerImage = user.banniere || "default.webp";
 
   const [bioState, setBioState] = useState(!!user.bio);
@@ -78,7 +73,7 @@ export default function ProfilComponent({ user, type }: UserProps) {
       <h2 className="text-xl font-semibold text-primary">{user.pseudo}</h2>
       {user.url && (
         <a href={user.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline" >
-          <Icon icon={user.icon} url={user.url} className="w-6 h-6" />
+          <Icon url={user.url} className="w-6 h-6" />
         </a>
       )}
     </div>
@@ -95,9 +90,9 @@ export default function ProfilComponent({ user, type }: UserProps) {
 
     <div className="flex justify-end">
       {type === "me" ? (
-      <Boolean />
+      <Settings />
       ) : (
-      <Abonner
+      <Subscribe
         isFollowing={isFollowing}
         userId={user.id}
         setIsFollowing={setIsFollowing}

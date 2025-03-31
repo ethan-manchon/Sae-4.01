@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { loadProfil, loadMe, loadPosts } from "../lib/loader";
+import { loadProfil, loadMe } from "../lib/UserService";
+import { loadPosts } from "../lib/PostService";
 import NavBar from "../component/navBar";
 import Profil from "../component/profil";
 import Feeds from "../component/feed";
@@ -13,12 +14,11 @@ interface User {
   banniere: string;
   locate: string;
   url: string;
-  icon: string;
 }
 
 export default function ProfilPage() {
-  const [user, setUser] = useState<User | null>(null);       // Profil affiché
-  const [meUser, setMeUser] = useState<User | null>(null);   // Utilisateur connecté
+  const [user, setUser] = useState<User | null>(null);
+  const [meUser, setMeUser] = useState<User | null>(null);
   const { username } = useParams<{ username: string }>();
 
   const loadMyPosts = async (page: number) => {

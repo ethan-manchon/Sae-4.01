@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { loadMe, loadLikes, likePost, deleteLike } from "../../lib/loader";
+import { loadMe } from "../../lib/UserService";
+import { loadLikes, likePost, deleteLike } from "../../lib/LikeService";
+import Button from "../button";
+import { LikeSvg } from "../../assets/svg/svg";
 
 interface LikeButtonProps {
   postId: number;
@@ -53,13 +56,13 @@ export default function LikeButton({ postId }: LikeButtonProps) {
   };
 
   return (
-    <button
+    <Button
       onClick={toggleLike}
-      className={`flex items-center gap-1 px-2 py-1 rounded-md transition-colors cursor-pointer ${
-      myLikeId ? "bg-red-very-light text-red" : "bg-very-light-grey text-element"
-      }`}
+      variant="transparent"
+      className={`flex items-center space-x-2 transition-colors duration-200 ease-in-out ${myLikeId ? "text-red-500" : "text-gray-500"}`}
     >
-      {myLikeId ? "❤️" : "🤍"} {likes.length}
-    </button>
+      <LikeSvg className="w-8 h-8" />
+      <span className="w-8 text-left">{likes.length}</span>
+    </Button>
   );
 }

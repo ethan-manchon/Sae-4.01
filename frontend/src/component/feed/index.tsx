@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Post from "../../ui/post";
 import Error from "../../ui/error";
-import { loadMe } from "../../lib/loader";
+import { loadMe } from "../../lib/UserService";
 
 interface FeedDataProps {
   loader: (page: number) => Promise<{ posts: any[]; next_page: number | null }>;
@@ -91,7 +91,7 @@ export default function Feeds({ loader, refresh, className }: FeedProps) {
             createdAt={post.createdAt}
             userId={post.user.id}
             meId={meId ?? -1}
-            blocked={post.blocked} 
+            banned={post.banned} 
             onDeleted={() => setPosts((prev) => prev.filter((p) => p.id !== post.id))}
           />
         ))}

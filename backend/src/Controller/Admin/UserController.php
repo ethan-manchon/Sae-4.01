@@ -27,7 +27,7 @@ class UserController extends AbstractController
         'pseudo' => $user->getPseudo(),
         'email' => $user->getEmail(),
         'roles' => $user->getRoles(),
-        'blocked' => $user->isBlocked(), 
+        'banned' => $user->isBanned(), 
     ]);
     }
 
@@ -45,7 +45,7 @@ class UserController extends AbstractController
             'id' => $user->getId(),
             'pseudo' => $user->getPseudo(),
             'email' => $user->getEmail(),
-            'blocked' => $user->IsBlocked(),
+            'banned' => $user->isBanned(),
             'roles' => $user->getRoles(),
         ], $paginator);
 
@@ -80,8 +80,8 @@ class UserController extends AbstractController
             $user->setRoles($data['roles']);
         }
     
-        if (isset($data['isBlocked'])) {
-            $user->setIsBlocked((bool) $data['isBlocked']);
+        if (isset($data['isBanned'])) {
+            $user->setIsBanned((bool) $data['isBanned']);
         }
     
         $em->flush();

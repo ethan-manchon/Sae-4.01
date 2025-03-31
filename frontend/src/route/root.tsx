@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { loadMe, loadPosts } from "../lib/loader";
+import { loadMe } from "../lib/UserService";
+import { loadPosts } from "../lib/PostService";
 import NavBar from "../component/navBar";
 import Publish from "../component/publish";
 import Feeds from "../component/feed";
@@ -36,7 +37,7 @@ export default function Root() {
   };
 
   return (
-<div className="min-h-screen bg-bg text-element flex flex-col md:flex-row">
+<div className="min-h-screen bg-white text-element flex flex-col md:flex-row">
   <NavBar user={user} />
 
   <main className="flex-1 md:ml-64 flex flex-col items-center pt-[4.5rem] md:pt-8 px-4">

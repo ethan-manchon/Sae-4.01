@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { loadMe, loadFeedPosts } from "../lib/loader";
+import { loadMe } from "../lib/UserService";
+import { loadFeedPosts } from "../lib/PostService";
 import NavBar from "../component/navBar";
 import Publish from "../component/publish";
 import Feeds from "../component/feed";
@@ -7,14 +8,14 @@ import Button from "../ui/button";
 import Content from "../ui/content";
 
 interface User {
-  refresh: boolean;
+  refresh: number;
   pseudo: string;
   pdp: string;
 }
 
 export default function Feed() {
   const [user, setUser] = useState<User | null>(null);
-  const [reset, setReset] = useState(false);
+  const [refreshFeed, setRefreshFeed] = useState<boolean>(false);
 
   useEffect(() => {
     loadMe().then(setUser);
@@ -24,7 +25,7 @@ export default function Feed() {
     if (user?.refresh) {
       const interval = setInterval(() => {
         console.log("Auto-refresh because user.refresh === true");
-        setReset((prev) => !prev);
+        setRefreshFeed(prev => !prev);
       }, 1000 * 60 * 3); 
 
       return () => clearInterval(interval);
@@ -33,7 +34,7 @@ export default function Feed() {
 
 
   const triggerRefresh = () => {
-    setReset((prev) => !prev);
+    setRefreshFeed(prev => !prev);
   };
 
   return (
@@ -55,7 +56,7 @@ export default function Feed() {
       </div>
 
       <section className="space-y-4">
-      <Feeds refresh={reset} loader={loadFeedPosts} />
+      <Feeds refresh={refreshFeed} loader={loadFeedPosts} />
       </section>
     </div>
   </main>

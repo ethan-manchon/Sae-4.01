@@ -43,7 +43,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private bool $isVerified = false;
 
     #[ORM\Column(type: 'boolean')]
-    private bool $isBlocked = false;
+    private bool $isBanned = false;
     
     /**
      * @var Collection<int, AccessTokens>
@@ -67,9 +67,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $icon = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
     private ?string $pdp = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -78,10 +75,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column (type: Types::BOOLEAN, options: ['default' => true])]
     private ?bool $refresh = true;
 
+    /**
+     * @var Collection<int, Respond>
+     */
+    #[ORM\OneToMany(targetEntity: Respond::class, mappedBy: 'user_id')]
+    private Collection $responds;
+
     public function __construct()
     {
         $this->accessTokens = new ArrayCollection();
         $this->posts = new ArrayCollection();
+        $this->responds = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -279,18 +283,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getIcon(): ?string
-    {
-        return $this->icon;
-    }
-
-    public function setIcon(?string $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
     public function getPdp(): ?string
     {
         return $this->pdp;
@@ -327,14 +319,46 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
     
-    public function isBlocked(): bool
+    public function isBanned(): bool
     {
-        return $this->isBlocked;
+        return $this->isBanned;
     }
     
-    public function setIsBlocked(bool $blocked): self
+    public function setIsBanned(bool $banned): self
     {
-        $this->isBlocked = $blocked;
+        $this->setIsBanned = $banned;
         return $this;
     }
+
+    /**
+     * @return Collection<int, Respond>
+     */
+    public function getResponds(): Collection
+    {
+        return $this->responds;
+    }
+
+    public function addRespond(Respond $respond): static
+    {
+        if (!$this->responds->contains($respond)) {
+            $this->responds->add($respond);
+            $respond->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRespond(Respond $respond): static
+    {
+        if ($this->responds->removeElement($respond)) {
+            // set the owning side to null (unless already changed)
+            if ($respond->getUserId() === $this) {
+                $respond->setUserId(null);
+            }
+        }
+
+        return $this;
+    }
+
+
 }

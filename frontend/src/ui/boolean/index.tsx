@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { loadMe, updateRefreshSetting } from "../../lib/loader";
+import { loadMe, updateUser } from "../../lib/UserService";
 
 export default function BooleanToggle() {
   const [isChecked, setIsChecked] = useState(false);
@@ -22,7 +22,7 @@ export default function BooleanToggle() {
     setIsChecked(newValue);
 
     if (userId) {
-      const res = await updateRefreshSetting(userId, newValue);
+      const res = await updateUser(userId, newValue);
       if (res.error) {
         console.error(res.error);
       }

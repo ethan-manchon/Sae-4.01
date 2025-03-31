@@ -7,9 +7,10 @@
   --color-primary-hover: #0F81C7;
   --color-primary-active: #0F7CBF;
 
+  --color-grey-dark: #E5E8EA;
   --color-grey: #F5F8FA;
-  --color-very-light-grey: #E8E0E2;
-  --color-light-grey: #A3A3A3;
+  --color-grey-light: #A3A3A3;
+  --color-grey-very-light: #E8E0E2;
   --color-dark: #3D6C93;
 
   --color-red: #E0245E;
@@ -20,6 +21,7 @@
   --color-green-ligt: #B8E8D9;
   --color-green-very-light: #D1F0E5;
 
+  --color-white: #FCFCFC;
 
   /* UI Variable */
   --color-error: var(--color-red);
@@ -30,8 +32,8 @@
   --color-success-bg: var(--color-green-very-light);
   --color-success-border: var(--color-green-light);
 
-  --color-border: var(--color-very-light-grey);
-  --color-element: var(--color-light-grey);
+  --color-border: var(--color-grey-very-light);
+  --color-element: var(--color-grey-light);
 
   --color-fg: var(--color-dark);
   --color-bg: var(--color-grey);
@@ -48,6 +50,10 @@
   .indicator-container {
     flex-direction: row;
     display: flex;
+  }
+  .scrollBar {
+    scrollbar-color: var(--color-primary) var(--color-grey-dark);
+    scrollbar-width: thin;
   }
 }
 
