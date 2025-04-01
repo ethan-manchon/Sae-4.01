@@ -30,7 +30,7 @@ export default function Icon({ className, url }: IconProps) {
 
     return (
         <Info className="cursor-pointer" content={url}>
-            <img className="h-8 w-8" src={img} alt={"Icon de " + media} />
+            <img className={`h-8 w-8 ${className}`} src={img} alt={"Icon de " + media} />
         </Info>
     );
 }

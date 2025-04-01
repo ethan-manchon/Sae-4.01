@@ -1,9 +1,11 @@
 import React, { useEffect, useState }from "react";
 import { isUserFollowed } from "../../lib/SubscribeService";
+import { isUserBlocked } from "../../lib/BlockedService";
 import Settings from "../settings/";
 import Icon from "../../ui/icon";
 import Pdp from "../../ui/pdp";
 import Subscribe from "../../ui/subscribe";
+import Block from "../../ui/blocked";
 
 interface UserProps {
   user: {
@@ -21,6 +23,7 @@ interface UserProps {
 export default function ProfilComponent({ user, type }: UserProps) {
 
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
 
   useEffect(() => {
     async function fetchFollowStatus() {
@@ -32,6 +35,15 @@ export default function ProfilComponent({ user, type }: UserProps) {
     fetchFollowStatus();
   }, [user.id]);
 
+  useEffect(() => {
+    async function fetchBlockStatus() {
+      if (type !== "me") {
+        const blocked = await isUserBlocked(user.id);
+        setIsBlocked(blocked);
+      }
+    }
+    fetchBlockStatus();
+  }, [user.id]);
 
   if (user.bio === undefined) {
     return <div></div>;
@@ -46,7 +58,7 @@ export default function ProfilComponent({ user, type }: UserProps) {
     return <div>Default</div>;
   }
 
-  const bannerImage = user.banniere || "default.webp";
+  const bannerImage = "/assets/banner/"+user.banniere || "/assets/banner/default.webp";
 
   const [bioState, setBioState] = useState(!!user.bio);
   const [locateState, setLocateState] = useState(!!user.locate);
@@ -54,11 +66,13 @@ export default function ProfilComponent({ user, type }: UserProps) {
   useEffect(() => {
     setBioState(!!user.bio);
   }, [user.bio]);
+
+ 
   return (
 <div className="w-full bg-white border-b border-border">
   <div className="relative">
     <img
-      src={`/assets/banner/${bannerImage}`}
+      src={`http://localhost:8080/${bannerImage}`}
       alt="Bannière"
       className="w-full h-40 object-cover"
     />
@@ -92,12 +106,19 @@ export default function ProfilComponent({ user, type }: UserProps) {
       {type === "me" ? (
       <Settings />
       ) : (
-      <Subscribe
-        isFollowing={isFollowing}
+        <>
+        <Subscribe
+          isFollowing={isFollowing}
+          userId={user.id}
+          setIsFollowing={setIsFollowing}
+          />
+        <Block
+        isBlocked={isBlocked}
         userId={user.id}
-        setIsFollowing={setIsFollowing}
-      />
-      )}
+        setIsBlocked={setIsBlocked}/>
+        
+      </>
+  )}
     </div>
   </div>
 </div>

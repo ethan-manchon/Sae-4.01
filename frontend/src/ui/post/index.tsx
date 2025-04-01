@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { editPost } from '../../lib/PostService';
 import Content from '../content';
 import Pdp from '../pdp';
 import Like from '../like';
 import Button from '../button';
 import TrashButton from '../trash';
 import Date from '../date';
-import { editPost } from '../../lib/PostService';
 import Answer from '../answer';
 import { EditSvg, AnswerSvg} from "../../assets/svg/svg";
 
@@ -28,7 +28,6 @@ export default function Post({pseudo, post_id, content, createdAt, pdp, userId, 
   const [newContent, setNewContent] = useState(content);
   const [loading, setLoading] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
-  const [answerCount, setAnswerCount] = useState(count);
 
 
 
@@ -76,7 +75,7 @@ export default function Post({pseudo, post_id, content, createdAt, pdp, userId, 
           )}
         </div>
 
-        <div className="mt-6 text-gray-800 text-sm">
+        <div className="mt-6 text-fg text-sm">
           {editing ? (
             <>
               <textarea
@@ -100,12 +99,12 @@ export default function Post({pseudo, post_id, content, createdAt, pdp, userId, 
 
         {!banned && (
           <>
-           <Answer postId={post_id} isReplying={isReplying} setIsReplying={setIsReplying} setAnswerCount={setAnswerCount} />
+           <Answer postId={post_id} isReplying={isReplying} setIsReplying={setIsReplying}/>
             <div className="mt-3 flex items-center justify-end">
               <Button onClick={() => setIsReplying(!isReplying)} variant='transparent' className='text-primary hover:text-red'>
                 <div className="flex items-center space-x-2 transition-colors duration-200 ease-in-out">
                 <AnswerSvg className="w-8 h-8"/>
-                <span className="w-8 text-left">{answerCount}</span>
+                <span className="w-8 text-left">{count}</span>
                 </div >
               </Button>
               <Like postId={post_id} />

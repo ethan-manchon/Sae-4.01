@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import UserList from "../user";
-import { loadUsers } from "../../lib/UserService";
+import { loadUsers, loadUserById } from "../../lib/UserService";
 import Error from "../../ui/error";
 
 interface User {
@@ -55,19 +55,13 @@ export default function UsersList() {
 
     const refreshUser = async (id: number) => {
         try {
-            const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/${id}`, {
-                headers: { Authorization: `Bearer ${token}` },
-            });
-
-            if (response.ok) {
-                const updatedUser = await response.json();
-                setUsers((prev) =>
-                    prev.map((u) => (u.id === id ? { ...u, ...updatedUser } : u))
-                );
-            }
-        } catch (err) {
-            console.error("Erreur lors du rafraîchissement de l'utilisateur", err);
+            const updatedUser = await loadUserById(id);
+            if (!updatedUser) return;
+            setUsers((prevUsers) =>
+                prevUsers.map((user) => (user.id === id ? updatedUser : user))
+            );
+        } catch (error) {
+            console.error("Error refreshing user:", error);
         }
     };
 

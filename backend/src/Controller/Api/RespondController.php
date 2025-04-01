@@ -35,7 +35,6 @@ final class RespondController extends AbstractController
         }, $responds);
     
         return $this->json([
-            'count' => count($data),
             'responses' => $data,
         ]);
     }

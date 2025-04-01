@@ -74,3 +74,22 @@ export async function editPost(postId, data) {
     return { error: error.message };
   }
 }
+
+export async function publishPost(content) {
+  const headers = getTokenHeaders();
+  if (!headers) return { error: "Unauthorized" };
+
+  try {
+    const response = await fetch(API_BASE, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ content }),
+    });
+
+    if (!response.ok) throw new Error("Failed to publish post");
+    return await response.json();
+  } catch (error) {
+    console.error("Error publishing post:", error);
+    return { error: error.message };
+  }
+}

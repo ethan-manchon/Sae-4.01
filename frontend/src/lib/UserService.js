@@ -11,7 +11,6 @@ function getTokenHeaders() {
     : null;
 }
 
-
 export async function loadUsers(page = 1) {
   const headers = getTokenHeaders();
   if (!headers) return { users: [], error: "Unauthorized" };
@@ -26,6 +25,20 @@ export async function loadUsers(page = 1) {
   }
 }
 
+export async function loadUserById(id) {
+  const headers = getTokenHeaders();
+  if (!headers) return null;
+
+  try {
+      const response = await fetch(`${ADMIN_BASE}/${id}`, { headers });
+      if (!response.ok) throw new Error("Unauthorized");
+      return await response.json();
+  } catch (error) {
+      console.error("Error loading user:", error);
+      return null;
+  }
+}
+
 export async function patchUsers(id, patch) {
   const headers = getTokenHeaders();
   if (!headers) return { users: [], error: "Unauthorized" };
@@ -34,7 +47,7 @@ export async function patchUsers(id, patch) {
     const response = await fetch(`${ADMIN_BASE}/${id}`, { 
       method: "PATCH",
       headers,
-      body: JSON.stringify({ patch }),
+      body: JSON.stringify(patch),
     });
     if (!response.ok) throw new Error("Failed to patch user");
     return await response.json();

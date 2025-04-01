@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { publishPost } from "../../lib/PostService";
+import {PaperClip} from "../../assets/svg/svg";
 import Button from "../../ui/button";
 
 interface TweetInputProps {
@@ -9,25 +11,39 @@ export default function Publish({ OnClick }: TweetInputProps) {
     const [text, setText] = useState("");
     const maxChars = 280;
 
-    const token = localStorage.getItem("token");
-    const handlePublish = async () => {
-        if (!text.trim()) return;
-        
-            const response = await fetch("http://localhost:8080/api/posts", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                  },
-                body: JSON.stringify({ content: text }),
-            });
-            
-            if (response.ok) {
-                setText("");
-                OnClick();
-                console.log("Post ajouté avec succès");
-            }
-    };
+    async function handlePublish() {
+        const result = await publishPost(text);
+        if (!result.error) {
+            setText("");
+            OnClick();
+        } else {
+            console.error(result.error);
+        }
+    }
+
+    // function addFiles() {
+    //     const input = document.createElement("input");
+    //     input.type = "file";
+    //     input.accept = "image/*";
+    //     input.multiple = true;
+    //     input.onchange = async (e) => {
+    //         const files = e.target.files;
+    //         if (files) {
+    //             const formData = new FormData();
+    //             for (let i = 0; i < files.length; i++) {
+    //                 formData.append("files", files[i]);
+    //             }
+    //             const result = await publishPost(text, formData);
+    //             if (!result.error) {
+    //                 setText("");
+    //                 OnClick();
+    //             } else {
+    //                 console.error(result.error);
+    //             }
+    //         }
+    //     };
+    //     input.click();
+    // }
 
     return (
         <div className='flex flex-row gap-8 items-center p-4 border shadow border-border rounded-lg w-3/4 md:w-8/9 mx-auto'>
@@ -40,10 +56,11 @@ export default function Publish({ OnClick }: TweetInputProps) {
                 onChange={(e) => setText(e.target.value.slice(0, maxChars))}
             />
             <div
-                className={`text-sm text-right ${text.length === 280 ? "text-red-500" : "text-fg"}`}>
+                className={`text-sm text-right ${text.length === 280 ? "text-red" : "text-fg"}`}>
                 {`${maxChars - text.length} / 280`}
             </div>
             </div>
+            {/* <Button onClick={() => addFiles()} variant="transparent"><PaperClip/></Button> */}
             <Button onClick={() => handlePublish()}>Publier</Button>
         </div>
     );

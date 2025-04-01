@@ -61,7 +61,7 @@ class PostController extends AbstractController
                         'pseudo' => $author->getPseudo(),
                         'pdp' => $author->getPdp(),
                     ],
-                    'banned' => true
+                    'banned' => true,
                 ];
             } else {
                 $postsArray[] = [
@@ -73,7 +73,8 @@ class PostController extends AbstractController
                         'pseudo' => $author->getPseudo(),
                         'pdp' => $author->getPdp(),
                     ],
-                    'banned' => false
+                    'banned' => false,
+                    'count' => count($post->getResponds())
                 ];
             }
         }

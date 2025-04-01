@@ -20,6 +20,7 @@ export default function Answer({ postId, isReplying, setIsReplying }: AnswerProp
     loadResponse(postId)
       .then((data) => {
         setResponses(data || []);
+        console.log('Réponses chargées :', data);
       })
       .catch((error) => {
         console.error('Erreur lors du chargement des réponses :', error);

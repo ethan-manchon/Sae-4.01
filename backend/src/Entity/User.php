@@ -81,11 +81,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Respond::class, mappedBy: 'user_id')]
     private Collection $responds;
 
+    /**
+     * @var Collection<int, Blocked>
+     */
+    #[ORM\OneToMany(targetEntity: Blocked::class, mappedBy: 'user_blocked')]
+    private Collection $blockeds;
+
+    /**
+     * @var Collection<int, Blocked>
+     */
+    #[ORM\OneToMany(targetEntity: Blocked::class, mappedBy: 'user_blocker')]
+    private Collection $blockers;
+
     public function __construct()
     {
         $this->accessTokens = new ArrayCollection();
         $this->posts = new ArrayCollection();
         $this->responds = new ArrayCollection();
+        $this->blockeds = new ArrayCollection();
+        $this->blockers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -360,5 +374,64 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, Blocked>
+     */
+    public function getBlockeds(): Collection
+    {
+        return $this->blockeds;
+    }
+
+    public function addBlocked(Blocked $blocked): static
+    {
+        if (!$this->blockeds->contains($blocked)) {
+            $this->blockeds->add($blocked);
+            $blocked->setUserBlocked($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlocked(Blocked $blocked): static
+    {
+        if ($this->blockeds->removeElement($blocked)) {
+            // set the owning side to null (unless already changed)
+            if ($blocked->getUserBlocked() === $this) {
+                $blocked->setUserBlocked(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Blocked>
+     */
+    public function getBlockers(): Collection
+    {
+        return $this->blockers;
+    }
+
+    public function addBlocker(Blocked $blocker): static
+    {
+        if (!$this->blockers->contains($blocker)) {
+            $this->blockers->add($blocker);
+            $blocker->setUserBlocker($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlocker(Blocked $blocker): static
+    {
+        if ($this->blockers->removeElement($blocker)) {
+            // set the owning side to null (unless already changed)
+            if ($blocker->getUserBlocker() === $this) {
+                $blocker->setUserBlocker(null);
+            }
+        }
+
+        return $this;
+    }
 
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SignUp } from "../../lib/SignService";
 import Pseudo from "../../ui/pseudo/";
 import Mail from "../../ui/mail/";
 import Password from "../../ui/password/";
@@ -51,24 +52,13 @@ export default function RegisterForm() {
             formDataToSend.append("email", formData.email);
             formDataToSend.append("password", formData.password);
             
-            try {
-                const response = await fetch("http://127.0.0.1:8080/register", {
-                    method: "POST",
-                    body: formDataToSend
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    console.log("User registered successsfully:", result);
-                    setSuccess(result.message);
-                    
-                } else {
-                    console.error("Error:", result.error);
-                    setError(result.error);
-                }
-            } catch (error) {
-                console.error("Request failed:", error);
-                setError(error.toString());
+            const result = await SignUp(formDataToSend);
+            if (result.status === 200 || result.status === 201) {
+                setSuccess("Registration successful! Please check your email to confirm your account.");
+                setError("");
+            } else {
+                setError(result.error || "Registration failed.");
+                setSuccess("");
             }
         }
     };
@@ -81,7 +71,7 @@ export default function RegisterForm() {
             <Button variant={(valid.pseudo && valid.email && valid.password) ? "default" : "disabled"}>
             Register
             </Button>
-            {error && (
+            {error && !success && (
                 <Error error={error} />
             )}
             {success && (

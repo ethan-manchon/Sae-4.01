@@ -1,11 +1,37 @@
-<h1>Hi! Please confirm your email!</h1>
-
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
-
-<p>
-    Cheers!
-</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Your Email</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f5f8fa; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">
+    <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px;">
+        <tr>
+            <td align="center" style="padding: 20px 0;">
+                <img src="https://abs.twimg.com/icons/apple-touch-icon-192x192.png" alt="Twitter" style="display: block; width: 48px; height: 48px;">
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 20px; background-color: #ffffff; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h1 style="color: #14171a; font-size: 24px; margin-bottom: 20px;">Hi! Please confirm your email</h1>
+                <p style="color: #657786; font-size: 16px; line-height: 1.5;">
+                    Please confirm your email address by clicking the button below:
+                </p>
+                <p style="margin: 30px 0;">
+                    <a href="{{ signedUrl|raw }}" style="background-color: #1da1f2; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 9999px; font-weight: bold; font-size: 16px;">
+                        Confirm my Email
+                    </a>
+                </p>
+                <p style="color: #657786; font-size: 14px;">
+                    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 20px 0; color: #657786; font-size: 14px;">
+                Cheers!
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

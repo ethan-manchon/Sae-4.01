@@ -15,11 +15,10 @@ export default function Info({ children, content, className }: InfoProps) {
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
-            {/* L’élément cible à survoler (icône) */}
             <div className="w-full h-full">
                 {children}
             </div>
-            {/* Tooltip */}
+
             {isHovered && (
                 <div className="absolute right-0 mt-2 w-auto max-w-xs md:max-w-md bg-bg text-fg text-sm rounded-lg shadow-lg p-3">
                 {content}

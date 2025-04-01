@@ -5,14 +5,18 @@ namespace App\Controller\Api;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
-#[Route('/api')]
+#[Route('/api/users')]
 class UserController extends AbstractController
 {
-    #[Route('/users', name: 'api_me', methods: ['GET'])]
+    #[Route('', name: 'api_me', methods: ['GET'])]
     public function index(): JsonResponse
     {
         $user = $this->getUser();
@@ -35,7 +39,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/users/{pseudo}', name: 'api_profil', methods: ['GET'])]
+    #[Route('/{pseudo}', name: 'api_profil', methods: ['GET'])]
     public function profil(string $pseudo, UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->findOneBy(['pseudo' => $pseudo]);
@@ -58,8 +62,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/users/{id}', name: 'api_user_refresh_update', methods: ['PATCH'])]
-    public function updateRefresh(Request $request, UserRepository $userRepository, EntityManagerInterface $em, int $id): JsonResponse
+    #[Route('/{id}', name: 'api_user_update', methods: ['PATCH'])]
+    public function update(Request $request, UserRepository $userRepository, EntityManagerInterface $em, int $id): JsonResponse
     {
         $user = $userRepository->find($id);
 
@@ -75,8 +79,8 @@ class UserController extends AbstractController
         if (isset($data['bio'])) {
             $user->setBio($data['bio']);
         }
-        if (isset($data['locate'])) {
-            $user->setLocate($data['locate']);
+        if (isset($data['location'])) {
+            $user->setLocate($data['location']);
         }
         if (isset($data['url'])) {
             $user->setUrl($data['url']);
@@ -94,7 +98,7 @@ class UserController extends AbstractController
     }
     
     #[Route('/upload-pdp', name: 'api_upload_pdp', methods: ['POST'])]
-    public function uploadPdp(Request $request): JsonResponse
+    public function uploadPdp(Request $request, EntityManagerInterface $em): JsonResponse
     {
         $file = $request->files->get('file');
     
@@ -105,10 +109,20 @@ class UserController extends AbstractController
         $fileName = uniqid() . '.' . $file->guessExtension();
         $file->move($this->getParameter('kernel.project_dir') . '/public/assets/pdp', $fileName);
     
+        $user = $this->getUser();
+    
+        if (!$user) {
+            return $this->json(['error' => 'User not authenticated'], 401);
+        }
+    
+        $user->setPdp($fileName);
+        $em->flush();
+    
         return $this->json(['filename' => $fileName]);
     }
+
     #[Route('/upload-banner', name: 'api_upload_banner', methods: ['POST'])]
-    public function uploadbanner(Request $request): JsonResponse
+    public function uploadBanner(Request $request): JsonResponse
     {
         $file = $request->files->get('file');
 

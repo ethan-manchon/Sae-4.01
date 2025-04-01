@@ -22,7 +22,7 @@ const buttonVariants = cva("rounded-md font-medium focus:outline-none", {
   variants: {
     variant: {
       default:
-        "bg-primary text-bg shadow-lg hover:bg-primary-hover focus:bg-primary-hover focus:ring-primary-active cursor-pointer focus:underline focus:ring-transparent",
+        "bg-primary text-bg shadow-lg hover:bg-primary-hover focus:bg-primary-hover focus:ring-primary-active cursor-pointer focus:underline",
       disabled: "bg-gray-400 text-light cursor-not-allowed",
       transparent:
         "text-dark hover:underline cursor-pointer focus:underline focus:ring-transparent",

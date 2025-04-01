@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { patchUsers } from "../../lib/UserService";
 import Button from "../../ui/button"; 
 import Ban from "../../ui/banned"; 
 
@@ -33,31 +34,13 @@ export default function UserList({ id, pseudo, email, roles, banned, onUpdated }
     };
 
     const handleSave = async () => {
-        const token = localStorage.getItem("token");
-
-        try {
-            const response = await fetch(`http://localhost:8080/admin/users/${id}`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    pseudo: newPseudo,
-                    email: newEmail,
-                    roles: [newRoles],
-                }),
-            });
-
-            if (response.ok) {
-                setEditMode(false);
-                onUpdated?.();
-            } else {
-                alert("Erreur lors de la mise à jour.");
-            }
-        } catch (error) {
-            alert("Erreur réseau");
+        const result = await patchUsers(id, { pseudo: newPseudo, email: newEmail, roles: newRoles });
+        if (result.error) {
+            alert(result.error);
+            return;
         }
+        if (onUpdated) onUpdated();
+        setEditMode(false);
     };
 
     return (

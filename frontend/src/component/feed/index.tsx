@@ -92,6 +92,7 @@ export default function Feeds({ loader, refresh, className }: FeedProps) {
             userId={post.user.id}
             meId={meId ?? -1}
             banned={post.banned} 
+            count={post.count}
             onDeleted={() => setPosts((prev) => prev.filter((p) => p.id !== post.id))}
           />
         ))}

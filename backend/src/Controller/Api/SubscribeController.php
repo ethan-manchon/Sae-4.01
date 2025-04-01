@@ -10,10 +10,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/api')]
+#[Route('/api/subscribes')]
 class SubscribeController extends AbstractController
 {
-    #[Route('/subscribes/{id}', name: 'api_user_followers', methods: ['GET'])]
+    #[Route('/{id}', name: 'api_user_followers', methods: ['GET'])]
     public function getFollowers(User $user, SubscribeRepository $subscribeRepo): JsonResponse
     {
         $followers = $subscribeRepo->findBy(['following' => $user]);
@@ -40,7 +40,7 @@ class SubscribeController extends AbstractController
         ]);
     }
 
-    #[Route('/subscribes/{id}', name: 'api_subscribe_user', methods: ['POST'])]
+    #[Route('/{id}', name: 'api_subscribe_user', methods: ['POST'])]
     public function subscribe(
         User $user,
         SubscribeRepository $subscribeRepo,
@@ -74,7 +74,7 @@ class SubscribeController extends AbstractController
         return $this->json(['message' => 'Subscribed successfully']);
     }
 
-    #[Route('/subscribes/{id}', name: 'api_unsubscribe_user', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'api_unsubscribe_user', methods: ['DELETE'])]
     public function unsubscribe(
         User $user,
         SubscribeRepository $subscribeRepo,

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { SignIn } from "../../lib/SignService";
 import Mail from "../../ui/mail/";
 import Password from "../../ui/password/";
 import Button from "../../ui/button/";
@@ -47,34 +48,16 @@ export default function LoginForm() {
             formDataToSend.append("email", formData.email);
             formDataToSend.append("password", formData.password);
             
-            try {
-                const response = await fetch("http://127.0.0.1:8080/login", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        email: formData.email,
-                        password: formData.password
-                    })
-                });
+            const response = await SignIn(formDataToSend);
             
-                const contentType = response.headers.get("content-type");
-                let result = await response.json();
-            
-                if (response.ok) {
-                    localStorage.setItem("token", result.token);
-                    console.log("User logged in successfully:", result);
-                    window.location.href = "/";
-                } else {
-                    console.error("Login error:", result);
-                    setError(result.error || "An error occurred");
-                }
-            
-            } catch (error) {
-                console.error("Request failed:", error);
-                setError(error.toString());
+            if (response.status === 200) {
+                window.location.href = "/";
+            } else if (response.status === 401) {
+                setError("Invalid email or password");
+            } else {
+                setError("An error occurred. Please try again.");
             }
+
         }
     };
 
