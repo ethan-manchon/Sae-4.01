@@ -33,7 +33,12 @@ class LikeController extends AbstractController
         if (!$post) {
             return $this->json(['error' => 'Post not found'], 404);
         }
-
+        if ($post->isCensor()) {
+            return $this->json([
+                'likes' => [],
+                'isBlocked' => false,
+            ]);
+        }
         $targetUser = $post->getUser();
 
         $blocked = false;

@@ -22,14 +22,18 @@ class Post extends \App\Entity\Post implements \Doctrine\ORM\Proxy\InternalProxy
     
 
     private const LAZY_OBJECT_PROPERTY_SCOPES = [
+        "\0".parent::class."\0".'censor' => [parent::class, 'censor', null],
         "\0".parent::class."\0".'content' => [parent::class, 'content', null],
         "\0".parent::class."\0".'created_at' => [parent::class, 'created_at', null],
         "\0".parent::class."\0".'id' => [parent::class, 'id', null],
+        "\0".parent::class."\0".'media' => [parent::class, 'media', null],
         "\0".parent::class."\0".'responds' => [parent::class, 'responds', null],
         "\0".parent::class."\0".'user' => [parent::class, 'user', null],
+        'censor' => [parent::class, 'censor', null],
         'content' => [parent::class, 'content', null],
         'created_at' => [parent::class, 'created_at', null],
         'id' => [parent::class, 'id', null],
+        'media' => [parent::class, 'media', null],
         'responds' => [parent::class, 'responds', null],
         'user' => [parent::class, 'user', null],
     ];

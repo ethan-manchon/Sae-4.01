@@ -342,6 +342,13 @@
     <service id="App\Entity" class="App\Entity" abstract="true">
       <tag name="container.excluded" source="in &quot;config/services.yaml&quot;"/>
     </service>
+    <service id="App\Controller\Admin\PostController" class="App\Controller\Admin\PostController" public="true" autowire="true" autoconfigure="true">
+      <tag name="controller.service_arguments"/>
+      <tag name="container.service_subscriber"/>
+      <call method="setContainer">
+        <argument type="service" id=".service_locator.ZyP9f7K.App\Controller\Admin\PostController"/>
+      </call>
+    </service>
     <service id="App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" public="true" autowire="true" autoconfigure="true">
       <tag name="controller.service_arguments"/>
       <tag name="container.service_subscriber"/>
@@ -489,7 +496,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag priority="-50" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.fNB7wuZ"/>
+      <argument type="service" id=".service_locator.LA73gu_"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag priority="-100" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">controller.argument_value_resolver</tag>
@@ -1995,7 +2002,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.fNB7wuZ"/>
+      <argument type="service" id=".service_locator.LA73gu_"/>
     </service>
     <service id="routing.resolver" class="Symfony\Component\Config\Loader\LoaderResolver">
       <call method="addLoader">
@@ -5393,6 +5400,9 @@
       <argument type="service" id="symfonycasts.verify_email.token_generator"/>
       <argument>3600</argument>
     </service>
+    <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Admin\PostController" class="App\Controller\Admin\PostController" autowire="true" abstract="true"/>
+    <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Admin\PostController" class="App\Controller\Admin\PostController" autowire="true" abstract="true"/>
+    <service id=".abstract.instanceof.App\Controller\Admin\PostController" class="App\Controller\Admin\PostController" autowire="true" autoconfigure="true" abstract="true"/>
     <service id=".instanceof.Symfony\Contracts\Service\ServiceSubscriberInterface.0.App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" autowire="true" abstract="true"/>
     <service id=".instanceof.Symfony\Bundle\FrameworkBundle\Controller\AbstractController.0.App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" autowire="true" abstract="true"/>
     <service id=".abstract.instanceof.App\Controller\Admin\UserController" class="App\Controller\Admin\UserController" autowire="true" autoconfigure="true" abstract="true"/>
@@ -5946,6 +5956,45 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.zHyJIs5" method="withContext"/>
     </service>
+    <service id=".service_locator.jcYtTcg" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.jcYtTcg.App\Controller\Admin\PostController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\PostController::index()"/>
+      <argument>App\Controller\Admin\PostController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.jcYtTcg" method="withContext"/>
+    </service>
+    <service id=".service_locator.mlMhPL1" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="post" type="service_closure" id=".errored..service_locator.mlMhPL1.App\Entity\Post"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+        <argument key="tokenStorage" type="service_closure" id="security.token_storage"/>
+      </argument>
+    </service>
+    <service id=".service_locator.mlMhPL1.App\Controller\Admin\PostController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\PostController::delete()"/>
+      <argument>App\Controller\Admin\PostController::delete()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.mlMhPL1" method="withContext"/>
+    </service>
+    <service id=".service_locator.NC3526Z" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="post" type="service_closure" id=".errored..service_locator.NC3526Z.App\Entity\Post"/>
+        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
+      </argument>
+    </service>
+    <service id=".service_locator.NC3526Z.App\Controller\Admin\PostController::patch()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\PostController::patch()"/>
+      <argument>App\Controller\Admin\PostController::patch()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.NC3526Z" method="withContext"/>
+    </service>
     <service id=".service_locator.OzEre6h" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6076,25 +6125,23 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.8ZSKOQS" method="withContext"/>
     </service>
-    <service id=".service_locator.jcYtTcg" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
-      </argument>
-    </service>
     <service id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Api\PostController::index()"/>
       <argument>App\Controller\Api\PostController::index()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.jcYtTcg" method="withContext"/>
     </service>
-    <service id=".service_locator.mlMhPL1" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.Kq27LHM" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
-        <argument key="post" type="service_closure" id=".errored..service_locator.mlMhPL1.App\Entity\Post"/>
         <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
-        <argument key="tokenStorage" type="service_closure" id="security.token_storage"/>
       </argument>
+    </service>
+    <service id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::create()"/>
+      <argument>App\Controller\Api\PostController::create()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.Kq27LHM" method="withContext"/>
     </service>
     <service id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Api\PostController::delete()"/>
@@ -6108,19 +6155,6 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.mlMhPL1" method="withContext"/>
     </service>
-    <service id=".service_locator.BbCY9d." class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
-        <argument key="subscribeRepository" type="service_closure" id="App\Repository\SubscribeRepository"/>
-      </argument>
-    </service>
-    <service id=".service_locator.BbCY9d..App\Controller\Api\PostController::feed()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::feed()"/>
-      <argument>App\Controller\Api\PostController::feed()</argument>
-      <argument type="service" id="service_container"/>
-      <factory service=".service_locator.BbCY9d." method="withContext"/>
-    </service>
     <service id=".service_locator.BEK1cPS" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6133,12 +6167,6 @@
       <argument>App\Controller\Api\RespondController::get()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.BEK1cPS" method="withContext"/>
-    </service>
-    <service id=".service_locator.Kq27LHM" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator"/>
-      <argument type="collection">
-        <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
-      </argument>
     </service>
     <service id=".service_locator.Kq27LHM.App\Controller\Api\RespondController::create()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Api\RespondController::create()"/>
@@ -6273,13 +6301,16 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.g2TMuy3" method="withContext"/>
     </service>
-    <service id=".service_locator.fNB7wuZ" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.LA73gu_" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
         <argument key="App\Kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
         <argument key="kernel::loadRoutes" type="service_closure" id=".service_locator.zHyJIs5.kernel::loadRoutes()"/>
         <argument key="App\Kernel::loadRoutes" type="service_closure" id=".service_locator.zHyJIs5.kernel::loadRoutes()"/>
+        <argument key="App\Controller\Admin\PostController::index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Admin\PostController::index()"/>
+        <argument key="App\Controller\Admin\PostController::delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Admin\PostController::delete()"/>
+        <argument key="App\Controller\Admin\PostController::patch" type="service_closure" id=".service_locator.NC3526Z.App\Controller\Admin\PostController::patch()"/>
         <argument key="App\Controller\Admin\UserController::show" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()"/>
         <argument key="App\Controller\Admin\UserController::index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()"/>
         <argument key="App\Controller\Admin\UserController::update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()"/>
@@ -6292,9 +6323,9 @@
         <argument key="App\Controller\Api\LikeController::indexByPost" type="service_closure" id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()"/>
         <argument key="App\Controller\Api\LikeController::checkIfBlocked" type="service_closure" id=".service_locator.8ZSKOQS.App\Controller\Api\LikeController::checkIfBlocked()"/>
         <argument key="App\Controller\Api\PostController::index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()"/>
+        <argument key="App\Controller\Api\PostController::create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()"/>
         <argument key="App\Controller\Api\PostController::delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
         <argument key="App\Controller\Api\PostController::patch" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::patch()"/>
-        <argument key="App\Controller\Api\PostController::feed" type="service_closure" id=".service_locator.BbCY9d..App\Controller\Api\PostController::feed()"/>
         <argument key="App\Controller\Api\RespondController::get" type="service_closure" id=".service_locator.BEK1cPS.App\Controller\Api\RespondController::get()"/>
         <argument key="App\Controller\Api\RespondController::create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\RespondController::create()"/>
         <argument key="App\Controller\Api\RespondController::delete" type="service_closure" id=".service_locator.egipcEH.App\Controller\Api\RespondController::delete()"/>
@@ -6313,6 +6344,9 @@
         <argument key="App\Controller\SecurityController::login" type="service_closure" id=".service_locator.g2TMuy3.App\Controller\SecurityController::login()"/>
         <argument key="kernel:registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
         <argument key="kernel:loadRoutes" type="service_closure" id=".service_locator.zHyJIs5.kernel::loadRoutes()"/>
+        <argument key="App\Controller\Admin\PostController:index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Admin\PostController::index()"/>
+        <argument key="App\Controller\Admin\PostController:delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Admin\PostController::delete()"/>
+        <argument key="App\Controller\Admin\PostController:patch" type="service_closure" id=".service_locator.NC3526Z.App\Controller\Admin\PostController::patch()"/>
         <argument key="App\Controller\Admin\UserController:show" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()"/>
         <argument key="App\Controller\Admin\UserController:index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()"/>
         <argument key="App\Controller\Admin\UserController:update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()"/>
@@ -6325,9 +6359,9 @@
         <argument key="App\Controller\Api\LikeController:indexByPost" type="service_closure" id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()"/>
         <argument key="App\Controller\Api\LikeController:checkIfBlocked" type="service_closure" id=".service_locator.8ZSKOQS.App\Controller\Api\LikeController::checkIfBlocked()"/>
         <argument key="App\Controller\Api\PostController:index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()"/>
+        <argument key="App\Controller\Api\PostController:create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()"/>
         <argument key="App\Controller\Api\PostController:delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
         <argument key="App\Controller\Api\PostController:patch" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::patch()"/>
-        <argument key="App\Controller\Api\PostController:feed" type="service_closure" id=".service_locator.BbCY9d..App\Controller\Api\PostController::feed()"/>
         <argument key="App\Controller\Api\RespondController:get" type="service_closure" id=".service_locator.BEK1cPS.App\Controller\Api\RespondController::get()"/>
         <argument key="App\Controller\Api\RespondController:create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\RespondController::create()"/>
         <argument key="App\Controller\Api\RespondController:delete" type="service_closure" id=".service_locator.egipcEH.App\Controller\Api\RespondController::delete()"/>
@@ -6626,6 +6660,12 @@
         <argument key="parameter_bag" type="service_closure" id="parameter_bag" on-invalid="ignore"/>
       </argument>
     </service>
+    <service id=".service_locator.ZyP9f7K.App\Controller\Admin\PostController" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Admin\PostController"/>
+      <argument>App\Controller\Admin\PostController</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.ZyP9f7K" method="withContext"/>
+    </service>
     <service id=".service_locator.ZyP9f7K.App\Controller\Admin\UserController" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Admin\UserController"/>
       <argument>App\Controller\Admin\UserController</argument>
@@ -6819,6 +6859,7 @@
       <call method="allowControllers">
         <argument type="collection">
           <argument>App\Kernel</argument>
+          <argument>App\Controller\Admin\PostController</argument>
           <argument>App\Controller\Admin\UserController</argument>
           <argument>App\Controller\Api\BlockedController</argument>
           <argument>App\Controller\Api\LikeController</argument>
@@ -7012,6 +7053,12 @@
     <service id=".errored..service_locator.zHyJIs5.Symfony\Component\Config\Loader\LoaderInterface" class="Symfony\Component\Config\Loader\LoaderInterface">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.zHyJIs5&quot;: it needs an instance of &quot;Symfony\Component\Config\Loader\LoaderInterface&quot; but this type has been excluded from autowiring."/>
     </service>
+    <service id=".errored..service_locator.mlMhPL1.App\Entity\Post" class="App\Entity\Post">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.mlMhPL1&quot;: it needs an instance of &quot;App\Entity\Post&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
+    <service id=".errored..service_locator.NC3526Z.App\Entity\Post" class="App\Entity\Post">
+      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.NC3526Z&quot;: it needs an instance of &quot;App\Entity\Post&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
+    </service>
     <service id=".errored..service_locator.9A0dFU3.App\Entity\User" class="App\Entity\User">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.9A0dFU3&quot;: it needs an instance of &quot;App\Entity\User&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
     </service>
@@ -7023,9 +7070,6 @@
     </service>
     <service id=".errored..service_locator.8ZSKOQS.App\Entity\User" class="App\Entity\User">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.8ZSKOQS&quot;: it needs an instance of &quot;App\Entity\User&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
-    </service>
-    <service id=".errored..service_locator.mlMhPL1.App\Entity\Post" class="App\Entity\Post">
-      <tag name="container.error" message="Cannot autowire service &quot;.service_locator.mlMhPL1&quot;: it needs an instance of &quot;App\Entity\Post&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
     </service>
     <service id=".errored..service_locator.bQhs04o.App\Entity\User" class="App\Entity\User">
       <tag name="container.error" message="Cannot autowire service &quot;.service_locator.bQhs04o&quot;: it needs an instance of &quot;App\Entity\User&quot; but this type has been excluded in &quot;config/services.yaml&quot;."/>
@@ -8003,7 +8047,7 @@
     <service id="SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface" alias="symfonycasts.verify_email.helper"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.pRu6x_4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.fNB7wuZ"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.LA73gu_"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.BxSdgVt"/>
     <service id="Psr\Log\LoggerInterface" alias="logger"/>
@@ -8020,6 +8064,9 @@
     <service id="security.event_dispatcher.main" alias="debug.security.event_dispatcher.main"/>
     <service id="doctrine.orm.default_metadata_driver" alias=".doctrine.orm.default_metadata_driver"/>
     <service id=".service_locator.n_ENPtW" alias=".service_locator.zHyJIs5"/>
+    <service id=".service_locator.gkWRRmJ" alias=".service_locator.jcYtTcg"/>
+    <service id=".service_locator.XhKY4to" alias=".service_locator.mlMhPL1"/>
+    <service id=".service_locator.BcJzW6C" alias=".service_locator.NC3526Z"/>
     <service id=".service_locator.hNMhKaf" alias=".service_locator.OzEre6h"/>
     <service id=".service_locator.gBWxp9p" alias=".service_locator.OA38qqg"/>
     <service id=".service_locator.7sC0q97" alias=".service_locator.9A0dFU3"/>
@@ -8029,11 +8076,8 @@
     <service id=".service_locator.dRKvAm5" alias=".service_locator.n7t1Uis"/>
     <service id=".service_locator.bVgOQZf" alias=".service_locator.7znPbMJ"/>
     <service id=".service_locator.UArOlwz" alias=".service_locator.8ZSKOQS"/>
-    <service id=".service_locator.gkWRRmJ" alias=".service_locator.jcYtTcg"/>
-    <service id=".service_locator.XhKY4to" alias=".service_locator.mlMhPL1"/>
-    <service id=".service_locator.4Pme8Tz" alias=".service_locator.BbCY9d."/>
-    <service id=".service_locator.DiCF8aE" alias=".service_locator.BEK1cPS"/>
     <service id=".service_locator.HQZddX8" alias=".service_locator.Kq27LHM"/>
+    <service id=".service_locator.DiCF8aE" alias=".service_locator.BEK1cPS"/>
     <service id=".service_locator.5Vd5JYV" alias=".service_locator.egipcEH"/>
     <service id=".service_locator.wi7K3Rr" alias=".service_locator.GeaxSsJ"/>
     <service id=".service_locator.gn2qY8M" alias=".service_locator.bQhs04o"/>

@@ -15,13 +15,13 @@ return [
         '/_profiler/phpinfo' => [[['_route' => '_profiler_phpinfo', '_controller' => 'web_profiler.controller.profiler::phpinfoAction'], null, null, null, false, false, null]],
         '/_profiler/xdebug' => [[['_route' => '_profiler_xdebug', '_controller' => 'web_profiler.controller.profiler::xdebugAction'], null, null, null, false, false, null]],
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
+        '/admin/posts' => [[['_route' => 'admin_post_admin_index_post', '_controller' => 'App\\Controller\\Admin\\PostController::index'], null, ['GET' => 0], null, false, false, null]],
         '/admin/users' => [[['_route' => 'admin_users_index', '_controller' => 'App\\Controller\\Admin\\UserController::index'], null, ['GET' => 0], null, false, false, null]],
         '/api/likes' => [[['_route' => 'api_like_create', '_controller' => 'App\\Controller\\Api\\LikeController::create'], null, ['POST' => 0], null, false, false, null]],
         '/api/posts' => [
             [['_route' => 'api_posts_index', '_controller' => 'App\\Controller\\Api\\PostController::index'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'api_posts_create', '_controller' => 'App\\Controller\\Api\\PostController::create'], null, ['POST' => 0], null, false, false, null],
         ],
-        '/api/feed' => [[['_route' => 'api_feed', '_controller' => 'App\\Controller\\Api\\PostController::feed'], null, ['GET' => 0], null, false, false, null]],
         '/api/responds' => [[['_route' => 'app_respond_create', '_controller' => 'App\\Controller\\Api\\RespondController::create'], null, ['POST' => 0], null, false, false, null]],
         '/api/users' => [[['_route' => 'api_me', '_controller' => 'App\\Controller\\Api\\UserController::me'], null, ['GET' => 0], null, false, false, null]],
         '/register' => [[['_route' => 'user.register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, ['POST' => 0], null, false, false, null]],
@@ -49,36 +49,41 @@ return [
                     .')'
                 .')'
                 .'|/a(?'
-                    .'|dmin/users/([^/]++)(?'
-                        .'|(*:229)'
+                    .'|dmin/(?'
+                        .'|posts/([^/]++)(?'
+                            .'|(*:232)'
+                        .')'
+                        .'|users/([^/]++)(?'
+                            .'|(*:258)'
+                        .')'
                     .')'
                     .'|pi/(?'
                         .'|blockeds/([^/]++)(?'
-                            .'|(*:264)'
+                            .'|(*:294)'
                         .')'
                         .'|likes/(?'
                             .'|([^/]++)(?'
-                                .'|(*:293)'
+                                .'|(*:323)'
                             .')'
-                            .'|post/([^/]++)(*:315)'
+                            .'|post/([^/]++)(*:345)'
                         .')'
                         .'|posts/([^/]++)(?'
-                            .'|(*:341)'
+                            .'|(*:371)'
                         .')'
                         .'|responds/([^/]++)(?'
-                            .'|(*:370)'
+                            .'|(*:400)'
                         .')'
                         .'|subscribes/([^/]++)(?'
-                            .'|(*:401)'
+                            .'|(*:431)'
                         .')'
                         .'|users/(?'
                             .'|([^/]++)(?'
-                                .'|(*:430)'
-                                .'|(*:438)'
+                                .'|(*:460)'
+                                .'|(*:468)'
                             .')'
                             .'|upload\\-(?'
-                                .'|pdp(*:461)'
-                                .'|banner(*:475)'
+                                .'|pdp(*:491)'
+                                .'|banner(*:505)'
                             .')'
                         .')'
                     .')'
@@ -94,37 +99,41 @@ return [
         168 => [[['_route' => '_profiler_exception', '_controller' => 'web_profiler.controller.exception_panel::body'], ['token'], null, null, false, false, null]],
         181 => [[['_route' => '_profiler_exception_css', '_controller' => 'web_profiler.controller.exception_panel::stylesheet'], ['token'], null, null, false, false, null]],
         191 => [[['_route' => '_profiler', '_controller' => 'web_profiler.controller.profiler::panelAction'], ['token'], null, null, false, true, null]],
-        229 => [
+        232 => [
+            [['_route' => 'admin_post_delete_post', '_controller' => 'App\\Controller\\Admin\\PostController::delete'], ['id'], ['DELETE' => 0], null, false, true, null],
+            [['_route' => 'admin_post_patch_post', '_controller' => 'App\\Controller\\Admin\\PostController::patch'], ['id'], ['POST' => 0, 'PATCH' => 1], null, false, true, null],
+        ],
+        258 => [
             [['_route' => 'admin_user_show', '_controller' => 'App\\Controller\\Admin\\UserController::show'], ['id'], ['GET' => 0], null, false, true, null],
             [['_route' => 'admin_user_update', '_controller' => 'App\\Controller\\Admin\\UserController::update'], ['id'], ['PATCH' => 0], null, false, true, null],
         ],
-        264 => [
+        294 => [
             [['_route' => 'api_user_blockeds', '_controller' => 'App\\Controller\\Api\\BlockedController::get'], ['id'], ['GET' => 0], null, false, true, null],
             [['_route' => 'api_block_user', '_controller' => 'App\\Controller\\Api\\BlockedController::block'], ['id'], ['POST' => 0], null, false, true, null],
             [['_route' => 'api_unblock_user', '_controller' => 'App\\Controller\\Api\\BlockedController::unblock'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],
-        293 => [
+        323 => [
             [['_route' => 'app_likes_get', '_controller' => 'App\\Controller\\Api\\LikeController::get'], ['id'], ['GET' => 0], null, false, true, null],
             [['_route' => 'api_like_delete', '_controller' => 'App\\Controller\\Api\\LikeController::delete'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],
-        315 => [[['_route' => 'api_like_by_post', '_controller' => 'App\\Controller\\Api\\LikeController::indexByPost'], ['postId'], ['GET' => 0], null, false, true, null]],
-        341 => [
+        345 => [[['_route' => 'api_like_by_post', '_controller' => 'App\\Controller\\Api\\LikeController::indexByPost'], ['postId'], ['GET' => 0], null, false, true, null]],
+        371 => [
             [['_route' => 'delete_post', '_controller' => 'App\\Controller\\Api\\PostController::delete'], ['id'], ['DELETE' => 0], null, false, true, null],
-            [['_route' => 'patch_post', '_controller' => 'App\\Controller\\Api\\PostController::patch'], ['id'], ['PATCH' => 0], null, false, true, null],
+            [['_route' => 'patch_post', '_controller' => 'App\\Controller\\Api\\PostController::patch'], ['id'], ['POST' => 0, 'PATCH' => 1], null, false, true, null],
         ],
-        370 => [
+        400 => [
             [['_route' => 'app_respond_get', '_controller' => 'App\\Controller\\Api\\RespondController::get'], ['id'], ['GET' => 0], null, false, true, null],
             [['_route' => 'app_respond_delete', '_controller' => 'App\\Controller\\Api\\RespondController::delete'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],
-        401 => [
+        431 => [
             [['_route' => 'api_user_subscriptions', '_controller' => 'App\\Controller\\Api\\SubscribeController::get'], ['id'], ['GET' => 0], null, false, true, null],
             [['_route' => 'api_subscribe_user', '_controller' => 'App\\Controller\\Api\\SubscribeController::subscribe'], ['id'], ['POST' => 0], null, false, true, null],
             [['_route' => 'api_unsubscribe_user', '_controller' => 'App\\Controller\\Api\\SubscribeController::unsubscribe'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],
-        430 => [[['_route' => 'api_profil', '_controller' => 'App\\Controller\\Api\\UserController::profil'], ['pseudo'], ['GET' => 0], null, false, true, null]],
-        438 => [[['_route' => 'api_user_update', '_controller' => 'App\\Controller\\Api\\UserController::update'], ['id'], ['PATCH' => 0], null, false, true, null]],
-        461 => [[['_route' => 'api_upload_pdp', '_controller' => 'App\\Controller\\Api\\UserController::uploadPdp'], [], ['POST' => 0], null, false, false, null]],
-        475 => [
+        460 => [[['_route' => 'api_profil', '_controller' => 'App\\Controller\\Api\\UserController::profil'], ['pseudo'], ['GET' => 0], null, false, true, null]],
+        468 => [[['_route' => 'api_user_update', '_controller' => 'App\\Controller\\Api\\UserController::update'], ['id'], ['PATCH' => 0], null, false, true, null]],
+        491 => [[['_route' => 'api_upload_pdp', '_controller' => 'App\\Controller\\Api\\UserController::uploadPdp'], [], ['POST' => 0], null, false, false, null]],
+        505 => [
             [['_route' => 'api_upload_banner', '_controller' => 'App\\Controller\\Api\\UserController::uploadBanner'], [], ['POST' => 0], null, false, false, null],
             [null, null, null, null, false, false, 0],
         ],

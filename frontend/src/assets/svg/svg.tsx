@@ -71,4 +71,15 @@ export function PaperClip({className}:StyleProps){
     )
 }
 
+export function CrossSvg({className}:StyleProps){
+    return (
+        <svg className={className} width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M32.25 22.5V13.5C32.25 11.85 30.9 10.5 29.25 10.5H6.75C5.1 10.5 3.75 11.85 3.75 13.5V22.5C3.75 24.15 5.1 25.5 6.75 25.5H29.25C30.9 25.5 32.25 24.15 32.25 22.5ZM6.75 13.5H29.25V22.5H6.75V13.5Z" fill="currentColor"/>
+            <path d="M28.5 36C32.6421 36 36 32.6421 36 28.5C36 24.3579 32.6421 21 28.5 21C24.3579 21 21 24.3579 21 28.5C21 32.6421 24.3579 36 28.5 36Z" fill="currentColor"/>
+            <path d="M32.4826 30.8857L30.8926 32.4772L24.5288 26.1142L26.1196 24.5227L32.4826 30.8857Z" fill="white"/>
+            <path d="M26.1145 32.4826L24.5229 30.8926L30.886 24.5288L32.4775 26.1196L26.1145 32.4826Z" fill="white"/>
+        </svg>
+
+    )
+}
 

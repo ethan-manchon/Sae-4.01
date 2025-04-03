@@ -6,7 +6,7 @@ interface DateProps {
 export default function DateComponent({ date }: DateProps) {
   const now = new Date();
   const createdDate = new Date(Date.parse(date));
-  createdDate.setHours(createdDate.getHours() + 1);
+  createdDate.setHours(createdDate.getHours() + 2);
   const diffInMs = now.getTime() - createdDate.getTime();
   const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
   const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));

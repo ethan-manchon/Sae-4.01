@@ -36,6 +36,12 @@ class Post
     #[ORM\OneToMany(targetEntity: Respond::class, mappedBy: 'id_post')]
     private Collection $responds;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $media = null;
+
+    #[ORM\Column]
+    private ?bool $censor = null;
+
     public function __construct()
     {
         $this->responds = new ArrayCollection();
@@ -114,6 +120,30 @@ class Post
                 $respond->setIdPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMedia(): ?array
+    {
+        return $this->media;
+    }
+
+    public function setMedia(?array $media): static
+    {
+        $this->media = $media;
+
+        return $this;
+    }
+
+    public function isCensor(): ?bool
+    {
+        return $this->censor;
+    }
+
+    public function setCensor(bool $censor): static
+    {
+        $this->censor = $censor;
 
         return $this;
     }

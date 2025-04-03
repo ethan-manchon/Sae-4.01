@@ -81,7 +81,7 @@ export default function Feeds({ loader, refresh, className }: FeedProps) {
   return (
     <>
       <ul className={`flex flex-col items-center ${className || ""}`}>
-        {posts.map((post) => (
+      {posts.map((post) => (
           <Post
             key={post.id}
             pdp={post.user.pdp}
@@ -93,9 +93,12 @@ export default function Feeds({ loader, refresh, className }: FeedProps) {
             meId={meId ?? -1}
             banned={post.banned} 
             count={post.count}
+            media={post.media} 
+            censored={post.censor}
             onDeleted={() => setPosts((prev) => prev.filter((p) => p.id !== post.id))}
           />
-        ))}
+      ))}
+
       </ul>
       <div ref={lastPostRef} style={{ height: "10px" }} />
       {posts.length > 0 && !nextPage && (

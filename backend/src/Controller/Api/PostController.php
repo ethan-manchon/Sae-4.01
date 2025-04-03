@@ -21,7 +21,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
-#[Route('/api')]
+#[Route('/api/posts')]
 class PostController extends AbstractController
 {
     private Security $security;
@@ -33,24 +33,28 @@ class PostController extends AbstractController
         $this->postService = $postService;
     }
 
-    #[Route('/posts', name: 'api_posts_index', methods: ['GET'])]
+    #[Route('', name: 'api_posts_index', methods: ['GET'])]
     public function index(Request $request, PostRepository $postRepository): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
         $limit = 15;
         $offset = ($page - 1) * $limit;
-
+    
         $paginator = $postRepository->paginateAllOrderedByLatest($offset, $limit);
         $totalPostsCount = $paginator->count();
-
+    
         $previousPage = $page > 1 ? $page - 1 : null;
         $nextPage = ($page * $limit) >= $totalPostsCount ? null : $page + 1;
-
+    
         $postsArray = [];
-
+    
         foreach ($paginator as $post) {
             $author = $post->getUser();
-        
+    
+            if (!$author) {
+                continue;
+            }
+    
             if ($author->isBanned()) {
                 $postsArray[] = [
                     'id' => $post->getId(),
@@ -62,11 +66,16 @@ class PostController extends AbstractController
                         'pdp' => $author->getPdp(),
                     ],
                     'banned' => true,
+                    'media' => [],
+                    'count' => 0,
+                    'censor' => false,
                 ];
             } else {
+                $isCensored = $post->isCensor();
+    
                 $postsArray[] = [
                     'id' => $post->getId(),
-                    'content' => $post->getContent(),
+                    'content' => $isCensored ? 'Ce contenu a été censuré.' : $post->getContent(),
                     'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
                     'user' => [
                         'id' => $author->getId(),
@@ -74,51 +83,85 @@ class PostController extends AbstractController
                         'pdp' => $author->getPdp(),
                     ],
                     'banned' => false,
-                    'count' => count($post->getResponds())
+                    'media' => $isCensored ? [] : $post->getMedia(),
+                    'count' => count($post->getResponds()),
+                    'censor' => $isCensored,
                 ];
             }
         }
-
+    
         return $this->json([
             'posts' => $postsArray,
             'previous_page' => $previousPage,
             'next_page' => $nextPage,
         ]);
     }
-
-    #[Route('/posts', name: 'api_posts_create', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
-    {
-        $user = $this->getUser();
-
-        if ($user->isBanned()) {
-            return $this->json([
-                'error' => 'Votre compte est bloqué. Vous ne pouvez plus interagir avec la plateforme.'
-            ], 403);
-        }
-        $data = json_decode($request->getContent(), true);
-
-        if (!isset($data['content']) || empty(trim($data['content']))) {
-            return new JsonResponse(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $user = $this->security->getUser();
-        if (!$user instanceof User) {
-            return new JsonResponse(['error' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-        }
-
-        $payload = new CreatePostPayload($data['content']);
-        $post = $this->postService->create($payload, $user);
-
-        return new JsonResponse([
-            'message' => 'Post created successfully',
-            'id' => $post->getId(),
-            'content' => $post->getContent(),
-            'createdAt' => $post->getCreatedAt()->format(\DateTime::ATOM),
-        ], Response::HTTP_CREATED);
+    
+    #[Route('', name: 'api_posts_create', methods: ['POST'])]
+public function create(Request $request, EntityManagerInterface $em): JsonResponse
+{
+    $user = $this->getUser();
+    if (!$user instanceof \App\Entity\User) {
+        return $this->json(['error' => 'Unauthorized'], 401);
+    }
+    if ($user->isBanned()) {
+        return $this->json([
+            'error' => 'Votre compte est bloqué. Vous ne pouvez plus interagir avec la plateforme.'
+        ], 403);
     }
 
-    #[Route('/posts/{id}', name: 'delete_post', methods: ['DELETE'])]
+    $content = $request->request->get('content');
+    if (empty(trim($content))) {
+        return new JsonResponse(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
+    }
+
+    $mediaFiles = $request->files->get('media');
+    $mediaPaths = [];
+    $uploadDir = $this->getParameter('kernel.project_dir') . '/public/assets/post';
+
+    if ($mediaFiles) {
+        if (!is_array($mediaFiles)) {
+            $mediaFiles = [$mediaFiles];
+        }
+
+        foreach ($mediaFiles as $file) {
+            if ($file->isValid()) {
+                $newFilename = uniqid() . '.' . $file->guessExtension();
+
+                try {
+                    $file->move($uploadDir, $newFilename);
+                    $mediaPaths[] = '/assets/post/' . $newFilename;
+                } catch (FileException $e) {
+                    return new JsonResponse(['error' => 'Échec de l\'upload du fichier : ' . $e->getMessage()], 500);
+                }
+            }
+        }
+    }
+    $post = new Post();
+    $post->setContent($content);
+    $post->setCreatedAt(new \DateTime());
+    $post->setUser($user);
+    $post->setMedia($mediaPaths);
+
+    $em->persist($post);
+    $em->flush();
+
+    return new JsonResponse([
+        'message' => 'Post publié avec succès.',
+        'post' => [
+            'id' => $post->getId(),
+            'text' => $post->getContent(),
+            'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
+            'user' => [
+                'id' => $post->getUser()->getId(),
+                'pseudo' => $post->getUser()->getPseudo(),
+                'pdp' => $post->getUser()->getPdp(),
+            ],
+            'media' => $post->getMedia()
+        ]
+    ]);
+}  
+    #[Route('/{id}', name: 'delete_post', methods: ['DELETE'])]
     public function delete(Post $post, EntityManagerInterface $em, TokenStorageInterface $tokenStorage): JsonResponse
     {
         $user = $tokenStorage->getToken()->getUser();
@@ -149,90 +192,61 @@ class PostController extends AbstractController
             return new JsonResponse(['success' => true]);
     }
     
-    #[Route('/posts/{id}', name: 'patch_post', methods: ['PATCH'])]
-    public function patch(Post $post, EntityManagerInterface $em, Request $request, TokenStorageInterface $tokenStorage): JsonResponse
-    {
+    #[Route('/{id}', name: 'patch_post', methods: ['POST', 'PATCH'])]
+    public function patch(Post $post, EntityManagerInterface $em, Request $request, TokenStorageInterface $tokenStorage): JsonResponse {
         $user = $tokenStorage->getToken()->getUser();
-
-        $data = json_decode($request->getContent(), true);
-
-
-        if (!isset($data['content']) || empty(trim($data['content']))) {
+        if (!$user instanceof \App\Entity\User) {
+            return new JsonResponse(['error' => 'Unauthorized'], 401);
+        }
+        if ($post->getUser()->getId() !== $user->getId()) {
+            return new JsonResponse(['error' => 'Vous n’êtes pas autorisé à modifier ce post'], 403);
+        }
+        
+        $content = $request->request->get('content') ?: $request->get('content');
+        if (empty(trim($content))) {
             return new JsonResponse(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
-
-        $post->setContent($data['content']);
-        $em->flush();
-
-        return new JsonResponse(['success' => true]);
-    }
-
-    #[Route('/feed', name: 'api_feed', methods: ['GET'])]
-    public function feed(
-        Request $request,
-        PostRepository $postRepository,
-        SubscribeRepository $subscribeRepository
-    ): JsonResponse {
-        $user = $this->getUser();
-    
-        $page = $request->query->getInt('page', 1);
-        $limit = 10;
-        $offset = ($page - 1) * $limit;
-    
-        $subscriptions = $subscribeRepository->findBy(['follower' => $user]);
-        $followedUsers = array_map(fn($sub) => $sub->getFollowing(), $subscriptions);
-    
-        $posts = $postRepository->findBy(
-            ['user' => $followedUsers],
-            ['created_at' => 'DESC'],
-            $limit,
-            $offset
-        );
-    
-        $total = $postRepository->count(['user' => $followedUsers]);
-    
-        $postsArray = [];
-    
-        foreach ($posts as $post) {
-            $author = $post->getUser();
+        $post->setContent($content);
         
-            if ($author->isBanned()) {
-                $postsArray[] = [
-                    'id' => $post->getId(),
-                    'content' => 'Ce compte a été bloqué pour non respect des conditions d’utilisation.',
-                    'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
-                    'user' => [
-                        'id' => $author->getId(),
-                        'pseudo' => $author->getPseudo(),
-                        'pdp' => $author->getPdp(),
-                    ],
-                    'banned' => true 
-                ];
-            } else {
-                $postsArray[] = [
-                    'id' => $post->getId(),
-                    'content' => $post->getContent(),
-                    'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
-                    'user' => [
-                        'id' => $author->getId(),
-                        'pseudo' => $author->getPseudo(),
-                        'pdp' => $author->getPdp(),
-                    ],
-                    'banned' => false
-                ];
+        $mediaFiles = $request->files->get('media');
+        $currentMedia = $post->getMedia() ?: [];
+        
+        if ($mediaFiles) {
+            if (!is_array($mediaFiles)) {
+                $mediaFiles = [$mediaFiles];
+            }
+            $uploadDir = $this->getParameter('kernel.project_dir') . '/public/assets/post';
+            foreach ($mediaFiles as $file) {
+                if ($file->isValid()) {
+                    $newFilename = uniqid() . '.' . $file->guessExtension();
+                    try {
+                        $file->move($uploadDir, $newFilename);
+                        $currentMedia[] = '/assets/post/' . $newFilename;
+                    } catch (FileException $e) {
+                        return new JsonResponse(['error' => 'Échec de l\'upload du fichier : ' . $e->getMessage()], 500);
+                    }
+                }
             }
         }
         
-        $previousPage = $page > 1 ? $page - 1 : null;
-        $nextPage = ($page * $limit) < $total ? $page + 1 : null;
-    
-        return $this->json([
-            'posts' => $postsArray,
-            'previous_page' => $previousPage,
-            'next_page' => $nextPage,
-            'total' => $total,
-        ]);
-    }
-    
+        $removedMedia = $request->request->get('removedMedia');
+        if ($removedMedia) {
+            $removedMedia = json_decode($removedMedia, true);
+            if (is_array($removedMedia)) {
+                $currentMedia = array_filter($currentMedia, function ($mediaUrl) use ($removedMedia) {
+                    return !in_array($mediaUrl, $removedMedia);
+                });
+                $currentMedia = array_values($currentMedia);
+            }
+        }
 
+        if ($request->request->has('censor')) {
+            $post->setCensor(filter_var($request->request->get('censor'), FILTER_VALIDATE_BOOLEAN));
+        }
+
+        $post->setMedia($currentMedia);
+        $em->flush();
+        
+        return new JsonResponse(['success' => true]);
+    }
 }

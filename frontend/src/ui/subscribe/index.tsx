@@ -11,7 +11,7 @@ export default function Subscribe({ userId }: SubscribeProps) {
 
     useEffect(() => {
       async function fetchFollowStatus() {
-        const followStatus = await isUserFollowed(userId);
+        const followStatus = await isUserFollowed(userId);  
         setFollow(followStatus.follower);
         setBlocked(followStatus.isBlocked);
         console.log("État blocked :", followStatus.isBlocked);
