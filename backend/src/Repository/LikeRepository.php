@@ -29,5 +29,13 @@ class LikeRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
         
-}
+    }
+    public function findAllByIdPost(int $id): array
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.post = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult();
+    }
 }

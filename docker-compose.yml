@@ -29,6 +29,8 @@ services:
       - "9000:9000"
     volumes:
       - ./backend:/app/backend
+      - ./php.ini:/usr/local/etc/php/php.ini
+
 
   sae-mysql:
     image: mysql:8

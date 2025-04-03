@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { loadMe } from "../../lib/UserService";
-import { loadLikes, likePost, deleteLike } from "../../lib/LikeService";
+import { loadLikes, postLike, deleteLike } from "../../lib/LikeService";
 import Button from "../button";
 import { LikeSvg } from "../../assets/svg/svg";
 
@@ -9,57 +9,54 @@ interface LikeButtonProps {
 }
 
 export default function LikeButton({ postId }: LikeButtonProps) {
-  interface Like {
-    id: number;
-    user: number;
-  }
-
-  const [likes, setLikes] = useState<Like[]>([]);
+  const [likes, setLikes] = useState<any[]>([]);
   const [meId, setMeId] = useState<number | null>(null);
-  const [myLikeId, setMyLikeId] = useState<number | null>(null);
+  const [blocked, setBlocked] = useState<boolean>(false);
+
+  const refreshLikes = () => {
+    loadLikes(postId)
+      .then((data) => {
+        setLikes(data.likes || []);
+        setBlocked(data.isBlocked);
+      })
+      .catch((error) => {
+        console.error("Erreur lors du chargement des likes :", error);
+      });
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      const me = await loadMe();
-      if (!me) return;
-
-      setMeId(me.id);
-
-      const postLikes = await loadLikes(postId);
-      setLikes(postLikes);
-
-      const myLike = postLikes.find(like => like.user === me.id);
-      setMyLikeId(myLike ? myLike.id : null);
-    }
-
-    fetchData();
+    refreshLikes();
   }, [postId]);
 
-  const toggleLike = async () => {
-    if (!meId) return;
+  useEffect(() => {
+    loadMe()
+      .then((me) => {
+        if (me) {
+          setMeId(me.id);
+        }
+      })
+      .catch(console.error);
+  }, []);
 
-    if (myLikeId) {
-      const res = await deleteLike(myLikeId);
-      if (!res.error) {
-        setLikes(likes.filter(l => l.id !== myLikeId));
-        setMyLikeId(null);
-      }
+  const toggleLike = async () => {
+    if (!meId || blocked) return;
+    const userLike = likes.find((like) => like.user.id === meId);
+    if (userLike) {
+      const res = await deleteLike(userLike.id);
+      if (!res.error) refreshLikes();
     } else {
-      const res = await likePost(postId);
-      if (!res.error) {
-        const updatedLikes = await loadLikes(postId);
-        const myNewLike = updatedLikes.find(l => l.user === meId);
-        setLikes(updatedLikes);
-        setMyLikeId(myNewLike ? myNewLike.id : null);
-      }
+      const res = await postLike(postId);
+      if (!res.error) refreshLikes();
     }
   };
+
+  const userHasLiked = likes.some((like) => like.user.id === meId);
 
   return (
     <Button
       onClick={toggleLike}
       variant="transparent"
-      className={`flex items-center space-x-2 transition-colors duration-200 ease-in-out ${myLikeId ? "text-red" : "text-element"} hover:text-red-light`}
+      className={`flex items-center space-x-2 transition-colors duration-200 ease-in-out ${userHasLiked ? "text-red" : "text-element"} ${blocked ? "cursor-not-allowed" : "cursor-pointer"}`}
     >
       <LikeSvg className="w-8 h-8" />
       <span className="w-8 text-left">{likes.length}</span>

@@ -15,18 +15,20 @@ export default function Answer({ postId, isReplying, setIsReplying }: AnswerProp
   const [replyContent, setReplyContent] = useState('');
   const [loading, setLoading] = useState(false);
   const [meId, setMeId] = useState<number | null>(null);
+  const [blocked, setBlocked] = useState<boolean>(false);
 
   const refreshResponses = () => {
     loadResponse(postId)
       .then((data) => {
-        setResponses(data || []);
-        console.log('Réponses chargées :', data);
+        setResponses(data.responses);
+        setBlocked(data.isBlocked);
+
       })
       .catch((error) => {
         console.error('Erreur lors du chargement des réponses :', error);
       });
   };
-
+  
   useEffect(() => {
     refreshResponses();
   }, [postId]);
@@ -63,8 +65,9 @@ export default function Answer({ postId, isReplying, setIsReplying }: AnswerProp
 
   return (
     <div className="px-4 pb-4">
-  {isReplying && (
+  {isReplying && ( 
     <>
+    { !blocked && (
       <div className="mt-2 p-3 border rounded-lg bg-grey-dark">
         <input
           type="text"
@@ -83,12 +86,11 @@ export default function Answer({ postId, isReplying, setIsReplying }: AnswerProp
           </button>
         </div>
       </div>
+    )}
       <div className={`mt-4 space-y-2 scrollBar pr-4 ${responses.length > 3 ? 'max-h-72 overflow-y-auto' : ''}`}>
-        {responses
-          .filter(resp => resp && resp.id)
-          .map((resp) => (
+        {responses.filter(resp => resp && resp.id).map((resp) => (
             <div key={resp.id} className="relative ">
-              <Comment comment={resp} />
+               <Comment comment={resp} />
               {meId && resp.user.id === meId && (
                 <Trash postId={resp.id} type="response" onDeleted={refreshResponses} className="absolute top-0 right-0"/>
               )}

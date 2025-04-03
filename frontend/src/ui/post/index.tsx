@@ -29,8 +29,6 @@ export default function Post({pseudo, post_id, content, createdAt, pdp, userId, 
   const [loading, setLoading] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
 
-
-
   const handleDeleted = () => {
     setDisappearing(true);
     setTimeout(() => {

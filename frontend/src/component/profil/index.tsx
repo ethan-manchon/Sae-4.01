@@ -1,6 +1,4 @@
 import React, { useEffect, useState }from "react";
-import { isUserFollowed } from "../../lib/SubscribeService";
-import { isUserBlocked } from "../../lib/BlockedService";
 import Settings from "../settings/";
 import Icon from "../../ui/icon";
 import Pdp from "../../ui/pdp";
@@ -21,29 +19,6 @@ interface UserProps {
 }
 
 export default function ProfilComponent({ user, type }: UserProps) {
-
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [isBlocked, setIsBlocked] = useState(false);
-
-  useEffect(() => {
-    async function fetchFollowStatus() {
-      if (type !== "me") {
-        const followed = await isUserFollowed(user.id);
-        setIsFollowing(followed);
-      }
-    }
-    fetchFollowStatus();
-  }, [user.id]);
-
-  useEffect(() => {
-    async function fetchBlockStatus() {
-      if (type !== "me") {
-        const blocked = await isUserBlocked(user.id);
-        setIsBlocked(blocked);
-      }
-    }
-    fetchBlockStatus();
-  }, [user.id]);
 
   if (user.bio === undefined) {
     return <div></div>;
@@ -66,8 +41,10 @@ export default function ProfilComponent({ user, type }: UserProps) {
   useEffect(() => {
     setBioState(!!user.bio);
   }, [user.bio]);
+  useEffect(() => {
+    setLocateState(!!user.locate);
+  }, [user.locate]);
 
- 
   return (
 <div className="w-full bg-white border-b border-border">
   <div className="relative">
@@ -108,15 +85,9 @@ export default function ProfilComponent({ user, type }: UserProps) {
       ) : (
         <>
         <Subscribe
-          isFollowing={isFollowing}
-          userId={user.id}
-          setIsFollowing={setIsFollowing}
-          />
+          userId={user.id}/>
         <Block
-        isBlocked={isBlocked}
-        userId={user.id}
-        setIsBlocked={setIsBlocked}/>
-        
+          userId={user.id}/>
       </>
   )}
     </div>

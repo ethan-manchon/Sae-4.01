@@ -11,36 +11,35 @@ function getTokenHeaders() {
 }
 
 export async function loadLikes(postId) {
-    const headers = getTokenHeaders();
-    if (!headers) return [];
-  
-    try {
-      const response = await fetch(`${API_BASE}`, { headers });
-      if (!response.ok) throw new Error("Failed to load likes");
-      const allLikes = await response.json();
-      return allLikes.filter(like => like.post === postId);
-    } catch (error) {
-      console.error("Error loading likes:", error);
-      return [];
-    }
+  const headers = getTokenHeaders();
+  if (!headers) return [];
+
+  try {
+    const response = await fetch(`${API_BASE}/${postId}`, { headers });
+    if (!response.ok) throw new Error("Failed to load responds");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error loading responses:", error);
+    return [];
   }
+}
+
   
-  export async function likePost(postId) {
+  export async function postLike(postId) {
     const token = localStorage.getItem("token");
     if (!token) return { error: "Unauthorized" };
   
     const headers = {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
     };
-  
-    const formData = new FormData();
-    formData.append("post_id", postId);
   
     try {
       const response = await fetch(`${API_BASE}`, {
         method: "POST",
         headers,
-        body: formData,
+        body: JSON.stringify({ post_id: postId })
       });
   
       const json = await response.json();

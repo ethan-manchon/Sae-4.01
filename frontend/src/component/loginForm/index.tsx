@@ -54,8 +54,10 @@ export default function LoginForm() {
                 window.location.href = "/";
             } else if (response.status === 401) {
                 setError("Invalid email or password");
+            } else if (response.status === 403) {
+                setError(response.data?.error || "Your account has been blocked.");
             } else {
-                setError("An error occurred. Please try again.");
+                setError(response.data?.error || response.error || "An unexpected error occurred");
             }
 
         }

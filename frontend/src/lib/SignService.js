@@ -2,7 +2,6 @@ const BASE = "http://localhost:8080";
 
 export async function SignIn(formData) {
     try {
-        // Convert FormData to a plain object
         const data = {
             email: formData.get("email"),
             password: formData.get("password")

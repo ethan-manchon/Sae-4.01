@@ -44,7 +44,7 @@ export default function Button({ variant = "default", size = "default", classNam
   if (link) {
     return (
       <Link
-        to={link} // Assure que `to` reçoit toujours une string valide
+        to={link} 
         className={cn(buttonVariants({ variant, size }), className)}
         {...props}
       >

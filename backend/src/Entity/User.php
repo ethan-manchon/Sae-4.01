@@ -381,6 +381,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->blockeds;
     }
+    public function getBlocked(): Collection
+    {
+        return $this->blockeds;
+    }
 
     public function addBlocked(Blocked $blocked): static
     {
@@ -433,5 +437,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-
+    public function hasBlocked(User $other): bool
+    {
+        foreach ($this->getBlockers() as $block) {
+            if ($block->getUserBlocked()->getId() === $other->getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -16,9 +16,8 @@ export async function loadResponse(postId) {
   
     try {
       const response = await fetch(`${API_BASE}/${postId}`, { headers });
-      if (!response.ok) throw new Error("Failed to load responds");
       const data = await response.json();
-      return data.responses ? data.responses : [];
+      return data;
     } catch (error) {
       console.error("Error loading responses:", error);
       return [];

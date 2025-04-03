@@ -55,23 +55,20 @@ export async function unsubscribeFromUser(userId) {
   }
 }
 
-export async function isUserFollowed(userId) {
-  const headers = getTokenHeaders();
-  if (!headers) return false;
+export async function isUserFollowed(targetUserId) {
+    const headers = getTokenHeaders();
+    if (!headers) return false;
 
-  try {
-    const response = await fetch(`${API_BASE}/${userId}`, { headers });
-    if (!response.ok) throw new Error("Failed to fetch followers");
-    const followers = await response.json();
-    const meResponse = await fetch(`http://localhost:8080/api/users`, { headers });
-    if (!meResponse.ok) throw new Error("Failed to fetch current user");
-    const me = await meResponse.json();
-
-    return followers.some(f => f.id === me.id);
-  } catch (error) {
-    console.error("Error checking follow status:", error);
-    return false;
-  }
+    try {
+        const response = await fetch(`${API_BASE}/${targetUserId}`, { headers });
+        if (!response.ok) throw new Error("Failed to fetch blocked users");
+        const data = await response.json();
+        // console.log("Fetched data:", data);
+        return data;
+    } catch (error) {
+        console.error("Error checking block status:", error);
+        return false;
+    }
 }
 
 export async function loadSubscriptions(userId) {

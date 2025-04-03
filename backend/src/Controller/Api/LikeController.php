@@ -6,100 +6,126 @@ use App\Entity\Like;
 use App\Entity\Post;
 use App\Entity\User;
 use App\Repository\LikeRepository;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Security\BlockCheckerTrait;
 
-#[Route('/api')]
+
+#[Route('/api/likes')]
 class LikeController extends AbstractController
 {
-    #[Route('/likes', name: 'app_likes_index', methods: ['GET'])]
-    public function index(LikeRepository $likeRepository): JsonResponse
-    {
-        $likes = $likeRepository->findAll();
-        
-        $data = [];
-    
-        foreach ($likes as $like) {
-            $post = $like->getPost();
-            $author = $post->getUser();
-    
-            if ($author->isBanned()) {
-                continue; 
-            }
-    
-            $data[] = [
-                'id' => $like->getId(),
-                'post' => $post->getId(),
-                'user' => $like->getUser()->getId(),
-            ];
-        }
-    
-        return $this->json($data);
-    }
+    use BlockCheckerTrait;
 
-    #[Route('/likes/{id}', name: 'like_get', methods: ['GET'])]
-    public function get(Like $like): JsonResponse
+    #[Route('/{id}', name: 'app_likes_get', methods: ['GET'])]
+    public function get(int $id, LikeRepository $likeRepository, EntityManagerInterface $entityManager): JsonResponse
     {
-        return $this->json([
-            'id' => $like->getId(),
-            'post' => $like->getPost()->getId(),
-            'user' => $like->getUser()->getId(),
-        ]);
-    }
 
-    #[Route('/likes', name: 'api_like_create', methods: ['POST'])]
-    public function create(Request $request, EntityManagerInterface $em, LikeRepository $likeRepo): JsonResponse
-    {
-        $user = $this->getUser();
-
-        if ($user->isBanned()) {
-            return $this->json([
-                'error' => 'Votre compte est bloqué. Vous ne pouvez plus interagir avec la plateforme.'
-            ], 403);
-        }
-        
-        if (!$user instanceof User) {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User) {
             return $this->json(['error' => 'Unauthorized'], 401);
         }
-        
-        $data = json_decode($request->getContent(), true);
-        $postId = $data['post_id'] ?? $request->request->get('post_id');
     
+        $post = $entityManager->getRepository(Post::class)->find($id);
+        if (!$post) {
+            return $this->json(['error' => 'Post not found'], 404);
+        }
+
+        $targetUser = $post->getUser();
+
+        $blocked = false;
+
+        if ($targetUser->getId() !== $currentUser->getId()) {
+            if ($this->checkIfBlocked($targetUser, $currentUser)) {
+                $blocked = true;
+            }
+        }
+
+        $likes = $likeRepository->findAllByIdPost($id);
+        $data = array_map(function (Like $like) use ($blocked) {
+                $user = $like->getUser();
+                return [
+                    'id' => $like->getId(),
+                    'post' => $like->getPost()->getId(),
+                    'user' => [
+                        'id' => $user->getId(),
+                        'pseudo' => $user->getPseudo(),
+                    ],
+                ];
+            }, $likes);
+        return $this->json([
+            'likes' => $data,
+            'isBlocked' => $blocked,
+            ]
+        );
+    }
+
+    #[Route('', name: 'api_like_create', methods: ['POST'])]
+    public function create(Request $request, EntityManagerInterface $em, LikeRepository $likeRepo): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User) {
+            return $this->json(['error' => 'Unauthorized'], 401);
+        }
+        if ($currentUser->isBanned()) {
+            return $this->json(['error' => 'Votre compte est bloqué.'], 403);
+        }
+    
+        // Récupération du JSON depuis la requête
+        $data = json_decode($request->getContent(), true);
+        if (!$data) {
+            return $this->json([
+                'error' => 'JSON invalide',
+                'content_received' => $request->getContent()
+            ], 400);
+        }
+        
+        $postId = $data['post_id'] ?? $request->request->get('post_id');
         if (!$postId) {
             return $this->json([
                 'error' => 'Missing post_id',
                 'body' => $request->getContent()
             ], 400);
         }
-    
+        
         $post = $em->getRepository(Post::class)->find($postId);
         if (!$post) {
             return $this->json(['error' => 'Post not found'], 404);
         }
-    
-        if ($likeRepo->isPostLikedByUser($post, $user)) {
-            return $this->json(['message' => 'Already liked'], 200);
+        
+        $targetUser = $post->getUser();
+        if ($targetUser->getId() !== $currentUser->getId()) {
+            $blockResponse = $this->checkIfBlocked($targetUser, $currentUser);
+            if ($blockResponse !== null) {
+                return $blockResponse;
+            }
         }
-    
+        
+        if ($likeRepo->isPostLikedByUser($post, $currentUser)) {
+            return $this->json(['message' => 'Déjà liké'], 200);
+        }
+        
         $like = new Like();
-        $like->setUser($user);
+        $like->setUser($currentUser);
         $like->setPost($post);
+        
         $em->persist($like);
         $em->flush();
-    
-        return $this->json(['message' => 'Like created', 'id' => $like->getId()], 201);
+        
+        return $this->json(['message' => 'Like créé', 'id' => $like->getId()], 201);
     }
     
+    
 
-    #[Route('/likes/{id}', name: 'api_like_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'api_like_delete', methods: ['DELETE'])]
     public function delete(Like $like, EntityManagerInterface $em): JsonResponse
     {
-        $user = $this->getUser();
+        $currentUser = $this->getUser();
 
-        if (!$user instanceof User || $like->getUser() !== $user) {
+        if (!$currentUser instanceof User || $like->getUser() !== $currentUser) {
             return $this->json(['error' => 'Forbidden'], 403);
         }
 
@@ -109,8 +135,9 @@ class LikeController extends AbstractController
         return $this->json(['message' => 'Like deleted']);
     }
 
-    #[Route('/likes/post/{postId}', name: 'api_like_by_post', methods: ['GET'])]
-    public function indexByPost( int $postId, LikeRepository $likeRepo, EntityManagerInterface $em ): JsonResponse {
+    #[Route('/post/{postId}', name: 'api_like_by_post', methods: ['GET'])]
+    public function indexByPost(int $postId, LikeRepository $likeRepo, EntityManagerInterface $em): JsonResponse
+    {
         $post = $em->getRepository(Post::class)->find($postId);
         if (!$post) {
             return $this->json(['error' => 'Post not found'], 404);
