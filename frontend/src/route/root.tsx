@@ -54,7 +54,7 @@ export default function Root() {
       </div>
 
       <section className="space-y-4">
-      <Feeds refresh={reset} loader={loadPosts} />
+      <Feeds refresh={reset} loader={loadPosts} subscribe={false} />
       </section>
     </div>
   </main>

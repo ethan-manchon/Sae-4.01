@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { loadMe } from "../lib/UserService";
-import { loadFeedPosts } from "../lib/PostService";
+import { loadPosts } from "../lib/PostService";
 import NavBar from "../component/navBar";
 import Publish from "../component/publish";
 import Feeds from "../component/feed";
@@ -56,7 +56,7 @@ export default function Feed() {
       </div>
 
       <section className="space-y-4">
-      <Feeds refresh={refreshFeed} loader={loadFeedPosts} />
+      <Feeds loader={loadPosts} subscribe={false} />
       </section>
     </div>
   </main>

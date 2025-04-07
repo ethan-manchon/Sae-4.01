@@ -4,8 +4,9 @@ import Error from "../../ui/error";
 import { loadMe } from "../../lib/UserService";
 
 interface FeedDataProps {
-  loader: (page: number) => Promise<{ posts: any[]; next_page: number | null }>;
+  loader: (page: number, subscribe?: boolean) => Promise<{ posts: any[]; next_page: number | null }>;
   refresh?: boolean;
+  subscribe?: boolean;
 }
 interface FeedStyleProps {
   className?: string;
@@ -13,7 +14,7 @@ interface FeedStyleProps {
 
 type FeedProps = FeedDataProps & FeedStyleProps;
 
-export default function Feeds({ loader, refresh, className }: FeedProps) {
+export default function Feeds({ loader, refresh, className, subscribe }: FeedProps) {
   const [posts, setPosts] = useState<any[]>([]);
   const [error, setError] = useState("");
   const [nextPage, setNextPage] = useState<number | null>(1);
@@ -23,7 +24,7 @@ export default function Feeds({ loader, refresh, className }: FeedProps) {
 
   const fetchPosts = useCallback(async (page: number) => {
     try {
-      const data = await loader(page);
+      const data = await loader(page, subscribe);
       setPosts((prev) => {
         const existingIds = new Set(prev.map((post) => post.id));
         const newPosts = data.posts?.filter((post) => !existingIds.has(post.id)) || [];

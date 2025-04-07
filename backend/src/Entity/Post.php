@@ -40,7 +40,7 @@ class Post
     private ?array $media = null;
 
     #[ORM\Column]
-    private ?bool $censor = null;
+    private ?bool $censor = false;
 
     public function __construct()
     {

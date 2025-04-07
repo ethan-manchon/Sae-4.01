@@ -79,7 +79,6 @@ class LikeController extends AbstractController
             return $this->json(['error' => 'Votre compte est bloqué.'], 403);
         }
     
-        // Récupération du JSON depuis la requête
         $data = json_decode($request->getContent(), true);
         if (!$data) {
             return $this->json([

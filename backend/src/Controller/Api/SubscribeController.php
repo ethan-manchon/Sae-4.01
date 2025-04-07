@@ -18,38 +18,39 @@ use App\Security\BlockCheckerTrait;
 class SubscribeController extends AbstractController
 {
     use BlockCheckerTrait;
-
-    #[Route('', name: 'api_user_subscriptions', methods: ['GET'])]
-    public function index(SubscribeRepository $subscribeRepo, Request $request): JsonResponse
+    
+    #[Route('', name: 'api_index_subscriptions', methods: ['GET'])]
+    public function index(SubscribeRepository $subscribeRepo): JsonResponse
     {
         $currentUser = $this->getUser();
         if (!$currentUser instanceof User) {
             return $this->json(['error' => 'Unauthorized'], 401);
-        }
-        
+        }   
         $followers = $subscribeRepo->findBy(['following' => $currentUser]);
         $dataFollowers = array_map(function (Subscribe $sub) {
+            $follower = $sub->getFollower();
             return [
-                'id' => $sub->getFollower()->getId(),
-                'pseudo' => $sub->getFollower()->getPseudo(),
+                'id' => $follower->getId(),
+                'pseudo' => $follower->getPseudo(),
+                'pdp' => $follower->getPdp(), 
             ];
-        }, $followers);
-
+        }, $followers); 
         $following = $subscribeRepo->findBy(['follower' => $currentUser]);
         $dataFollowing = array_map(function (Subscribe $sub) {
+            $followed = $sub->getFollowing();
             return [
-                'id' => $sub->getFollowing()->getId(),
-                'pseudo' => $sub->getFollowing()->getPseudo(),
+                'id' => $followed->getId(),
+                'pseudo' => $followed->getPseudo(),
+                'pdp' => $followed->getPdp(),
             ];
-        }, $following);
-
+        }, $following); 
         return $this->json([
             'followers' => $dataFollowers,
             'following' => $dataFollowing,
         ]);
     }
-
-    #[Route('/{id}', name: 'api_user_subscriptions', methods: ['GET'])]
+    
+    #[Route('/{id}', name: 'api_get_subscriptions', methods: ['GET'])]
     public function get(User $user, SubscribeRepository $subscribeRepo, TokenStorageInterface $tokenStorage): JsonResponse {
         $token = $tokenStorage->getToken();
         if (!$token) {

@@ -73,30 +73,17 @@ export async function adminDeletePost(postId) {
 
 
 
-export async function loadPosts(page = 1) {
+export async function loadPosts(page = 1, subscribe) {
   const headers = getTokenHeaders();
   if (!headers) return { posts: [], error: "Unauthorized" };
+  const body = { 'subscribe': subscribe };
 
   try {
-    const response = await fetch(`${API_BASE}?page=${page}`, { headers });
+    const response = await fetch(`${API_BASE}?page=${page}&subscribe=${subscribe}`, { method: 'GET', headers});
     if (!response.ok) throw new Error("Failed to load posts");
     return await response.json();
   } catch (error) {
     console.error("Error loading posts:", error);
-    return { posts: [], previous_page: null, next_page: null, error: error.message };
-  }
-}
-
-export async function loadFeedPosts(page = 1) {
-  const headers = getTokenHeaders();
-  if (!headers) return { posts: [], error: "Unauthorized" };
-
-  try {
-    const response = await fetch(`http://localhost:8080/api/feed?page=${page}`, { headers });
-    if (!response.ok) throw new Error("Failed to load feed posts");
-    return await response.json();
-  } catch (error) {
-    console.error("Error loading feed posts:", error);
     return { posts: [], previous_page: null, next_page: null, error: error.message };
   }
 }

@@ -106,6 +106,8 @@ export async function updateUser(userId, data) {
 }
 
 export async function uploadImage(file, type) {
+  console.log("Uploading image", file);
+  console.log("Type", type);
   const formData = new FormData();
   formData.append('file', file);
 

@@ -15,7 +15,42 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/blockeds')]   
 class BlockedController extends AbstractController
 {
-    #[Route('/{id}', name: 'api_user_blockeds', methods: ['GET'])]
+
+    #[Route('', name: 'api_index_blocked', methods: ['GET'])]
+    public function index(BlockedRepository $blockedRepo): JsonResponse
+    {
+        $currentUser = $this->getUser();
+        if (!$currentUser instanceof User) {
+            return $this->json(['error' => 'Unauthorized'], 401);
+        }   
+        
+        $blockedUsers = $blockedRepo->findBy(['user_blocker' => $currentUser]);
+        $dataBlocked = array_map(function (Blocked $block) {
+            $blockedUser = $block->getUserBlocked();
+            return [
+                'id' => $blockedUser->getId(),
+                'pseudo' => $blockedUser->getPseudo(),
+                'pdp' => $blockedUser->getPdp(), 
+            ];
+        }, $blockedUsers); 
+        
+        $blockedBy = $blockedRepo->findBy(['user_blocked' => $currentUser]);
+        $dataBlockedBy = array_map(function (Blocked $block) {
+            $blockerUser = $block->getUserBlocker();
+            return [
+                'id' => $blockerUser->getId(),
+                'pseudo' => $blockerUser->getPseudo(),
+                'pdp' => $blockerUser->getPdp(),
+            ];
+        }, $blockedBy); 
+        
+        return $this->json([
+            'blocked_users' => $dataBlocked,
+            'blocked_by' => $dataBlockedBy,
+        ]);
+    }
+    
+    #[Route('/{id}', name: 'api_get_blockeds', methods: ['GET'])]
     public function get(User $user, BlockedRepository $blockedRepo, TokenStorageInterface $tokenStorage): JsonResponse {
         $token = $tokenStorage->getToken();
         if (!$token) {
@@ -34,8 +69,8 @@ class BlockedController extends AbstractController
         return $this->json(['blocked' => $block !== null]);
     }
 
-    #[Route('/{id}', name: 'api_block_user', methods: ['POST'])]
-    public function block(User $user, BlockedRepository $blockedRepo, EntityManagerInterface $em): JsonResponse
+    #[Route('/{id}', name: 'api_post_user', methods: ['POST'])]
+    public function post(User $user, BlockedRepository $blockedRepo, EntityManagerInterface $em): JsonResponse
     {
         $currentUser = $this->getUser();
 

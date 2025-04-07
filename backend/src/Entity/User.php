@@ -93,6 +93,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Blocked::class, mappedBy: 'user_blocker')]
     private Collection $blockers;
 
+    #[ORM\Column]
+    private ?bool $readOnly = null;
+
     public function __construct()
     {
         $this->accessTokens = new ArrayCollection();
@@ -445,5 +448,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             }
         }
         return false;
+    }
+
+    public function isReadOnly(): ?bool
+    {
+        return $this->readOnly;
+    }
+
+    public function setReadOnly(bool $readOnly): static
+    {
+        $this->readOnly = $readOnly;
+
+        return $this;
     }
 }

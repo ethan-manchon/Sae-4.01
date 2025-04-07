@@ -55,7 +55,7 @@ export default function ProfilComponent({ user, type }: UserProps) {
     />
 
     <div className="absolute -bottom-4 left-6">
-      <Pdp pdp={user.pdp} className="w-24 h-24 rounded-full border-4 border-white shadow-lg" />
+      <Pdp pdp={user.pdp} className="w-24 h-24 rounded-full border-4 bg-white shadow-lg" />
     </div>
   </div>
 

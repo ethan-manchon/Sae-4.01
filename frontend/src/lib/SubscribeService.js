@@ -10,6 +10,21 @@ function getTokenHeaders() {
     : null;
 }
 
+export async function loadSubscriptions(  ) {
+  const headers = getTokenHeaders();
+  if (!headers) return [];
+
+  try {
+    const response = await fetch(`${API_BASE}`, { headers });
+    if (!response.ok) throw new Error("Failed to load subscriptions");
+
+    return await response.json(); 
+  } catch (error) {
+    console.error("Error loading subscriptions:", error);
+    return [];
+  }
+}
+
 export async function loadFollowers(userId) {
   const headers = getTokenHeaders();
   if (!headers) return [];
@@ -63,24 +78,9 @@ export async function isUserFollowed(targetUserId) {
         const response = await fetch(`${API_BASE}/${targetUserId}`, { headers });
         if (!response.ok) throw new Error("Failed to fetch blocked users");
         const data = await response.json();
-        // console.log("Fetched data:", data);
         return data;
     } catch (error) {
         console.error("Error checking block status:", error);
         return false;
     }
-}
-
-export async function loadSubscriptions(userId) {
-  const headers = getTokenHeaders();
-  if (!headers) return [];
-
-  try {
-    const response = await fetch(`${API_BASE}/${userId}`, { headers });
-    if (!response.ok) throw new Error("Failed to load subscriptions");
-    return await response.json();
-  } catch (error) {
-    console.error("Error loading subscriptions:", error);
-    return [];
-  }
 }

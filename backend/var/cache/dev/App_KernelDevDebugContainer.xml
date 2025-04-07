@@ -496,7 +496,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag priority="-50" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator.LA73gu_"/>
+      <argument type="service" id=".service_locator.P5x230C"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag priority="-100" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">controller.argument_value_resolver</tag>
@@ -2002,7 +2002,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator.LA73gu_"/>
+      <argument type="service" id=".service_locator.P5x230C"/>
     </service>
     <service id="routing.resolver" class="Symfony\Component\Config\Loader\LoaderResolver">
       <call method="addLoader">
@@ -6026,6 +6026,18 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.OA38qqg" method="withContext"/>
     </service>
+    <service id=".service_locator.D.h5FOk" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="blockedRepo" type="service_closure" id="App\Repository\BlockedRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.D.h5FOk.App\Controller\Api\BlockedController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\BlockedController::index()"/>
+      <argument>App\Controller\Api\BlockedController::index()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.D.h5FOk" method="withContext"/>
+    </service>
     <service id=".service_locator.9A0dFU3" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6048,9 +6060,9 @@
         <argument key="em" type="service_closure" id="doctrine.orm.default_entity_manager"/>
       </argument>
     </service>
-    <service id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::block()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\Api\BlockedController::block()"/>
-      <argument>App\Controller\Api\BlockedController::block()</argument>
+    <service id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::post()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\BlockedController::post()"/>
+      <argument>App\Controller\Api\BlockedController::post()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.u8r71Yf" method="withContext"/>
     </service>
@@ -6125,11 +6137,18 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.8ZSKOQS" method="withContext"/>
     </service>
-    <service id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.BbCY9d." class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
+        <argument key="subscribeRepository" type="service_closure" id="App\Repository\SubscribeRepository"/>
+      </argument>
+    </service>
+    <service id=".service_locator.BbCY9d..App\Controller\Api\PostController::index()" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator_context" id="App\Controller\Api\PostController::index()"/>
       <argument>App\Controller\Api\PostController::index()</argument>
       <argument type="service" id="service_container"/>
-      <factory service=".service_locator.jcYtTcg" method="withContext"/>
+      <factory service=".service_locator.BbCY9d." method="withContext"/>
     </service>
     <service id=".service_locator.Kq27LHM" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
@@ -6301,7 +6320,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.g2TMuy3" method="withContext"/>
     </service>
-    <service id=".service_locator.LA73gu_" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.P5x230C" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
@@ -6314,15 +6333,16 @@
         <argument key="App\Controller\Admin\UserController::show" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()"/>
         <argument key="App\Controller\Admin\UserController::index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()"/>
         <argument key="App\Controller\Admin\UserController::update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()"/>
+        <argument key="App\Controller\Api\BlockedController::index" type="service_closure" id=".service_locator.D.h5FOk.App\Controller\Api\BlockedController::index()"/>
         <argument key="App\Controller\Api\BlockedController::get" type="service_closure" id=".service_locator.9A0dFU3.App\Controller\Api\BlockedController::get()"/>
-        <argument key="App\Controller\Api\BlockedController::block" type="service_closure" id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::block()"/>
+        <argument key="App\Controller\Api\BlockedController::post" type="service_closure" id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::post()"/>
         <argument key="App\Controller\Api\BlockedController::unblock" type="service_closure" id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::unblock()"/>
         <argument key="App\Controller\Api\LikeController::get" type="service_closure" id=".service_locator.mV.2Uzz.App\Controller\Api\LikeController::get()"/>
         <argument key="App\Controller\Api\LikeController::create" type="service_closure" id=".service_locator.RJ3ocas.App\Controller\Api\LikeController::create()"/>
         <argument key="App\Controller\Api\LikeController::delete" type="service_closure" id=".service_locator.n7t1Uis.App\Controller\Api\LikeController::delete()"/>
         <argument key="App\Controller\Api\LikeController::indexByPost" type="service_closure" id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()"/>
         <argument key="App\Controller\Api\LikeController::checkIfBlocked" type="service_closure" id=".service_locator.8ZSKOQS.App\Controller\Api\LikeController::checkIfBlocked()"/>
-        <argument key="App\Controller\Api\PostController::index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()"/>
+        <argument key="App\Controller\Api\PostController::index" type="service_closure" id=".service_locator.BbCY9d..App\Controller\Api\PostController::index()"/>
         <argument key="App\Controller\Api\PostController::create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()"/>
         <argument key="App\Controller\Api\PostController::delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
         <argument key="App\Controller\Api\PostController::patch" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::patch()"/>
@@ -6350,15 +6370,16 @@
         <argument key="App\Controller\Admin\UserController:show" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::show()"/>
         <argument key="App\Controller\Admin\UserController:index" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Admin\UserController::index()"/>
         <argument key="App\Controller\Admin\UserController:update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Admin\UserController::update()"/>
+        <argument key="App\Controller\Api\BlockedController:index" type="service_closure" id=".service_locator.D.h5FOk.App\Controller\Api\BlockedController::index()"/>
         <argument key="App\Controller\Api\BlockedController:get" type="service_closure" id=".service_locator.9A0dFU3.App\Controller\Api\BlockedController::get()"/>
-        <argument key="App\Controller\Api\BlockedController:block" type="service_closure" id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::block()"/>
+        <argument key="App\Controller\Api\BlockedController:post" type="service_closure" id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::post()"/>
         <argument key="App\Controller\Api\BlockedController:unblock" type="service_closure" id=".service_locator.u8r71Yf.App\Controller\Api\BlockedController::unblock()"/>
         <argument key="App\Controller\Api\LikeController:get" type="service_closure" id=".service_locator.mV.2Uzz.App\Controller\Api\LikeController::get()"/>
         <argument key="App\Controller\Api\LikeController:create" type="service_closure" id=".service_locator.RJ3ocas.App\Controller\Api\LikeController::create()"/>
         <argument key="App\Controller\Api\LikeController:delete" type="service_closure" id=".service_locator.n7t1Uis.App\Controller\Api\LikeController::delete()"/>
         <argument key="App\Controller\Api\LikeController:indexByPost" type="service_closure" id=".service_locator.7znPbMJ.App\Controller\Api\LikeController::indexByPost()"/>
         <argument key="App\Controller\Api\LikeController:checkIfBlocked" type="service_closure" id=".service_locator.8ZSKOQS.App\Controller\Api\LikeController::checkIfBlocked()"/>
-        <argument key="App\Controller\Api\PostController:index" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::index()"/>
+        <argument key="App\Controller\Api\PostController:index" type="service_closure" id=".service_locator.BbCY9d..App\Controller\Api\PostController::index()"/>
         <argument key="App\Controller\Api\PostController:create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()"/>
         <argument key="App\Controller\Api\PostController:delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
         <argument key="App\Controller\Api\PostController:patch" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::patch()"/>
@@ -8047,7 +8068,7 @@
     <service id="SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface" alias="symfonycasts.verify_email.helper"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.pRu6x_4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator.LA73gu_"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.P5x230C"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.BxSdgVt"/>
     <service id="Psr\Log\LoggerInterface" alias="logger"/>
@@ -8069,6 +8090,7 @@
     <service id=".service_locator.BcJzW6C" alias=".service_locator.NC3526Z"/>
     <service id=".service_locator.hNMhKaf" alias=".service_locator.OzEre6h"/>
     <service id=".service_locator.gBWxp9p" alias=".service_locator.OA38qqg"/>
+    <service id=".service_locator.7RBaPiQ" alias=".service_locator.D.h5FOk"/>
     <service id=".service_locator.7sC0q97" alias=".service_locator.9A0dFU3"/>
     <service id=".service_locator.hi._Z2N" alias=".service_locator.u8r71Yf"/>
     <service id=".service_locator.lJhhyuP" alias=".service_locator.mV.2Uzz"/>
@@ -8076,6 +8098,7 @@
     <service id=".service_locator.dRKvAm5" alias=".service_locator.n7t1Uis"/>
     <service id=".service_locator.bVgOQZf" alias=".service_locator.7znPbMJ"/>
     <service id=".service_locator.UArOlwz" alias=".service_locator.8ZSKOQS"/>
+    <service id=".service_locator.4Pme8Tz" alias=".service_locator.BbCY9d."/>
     <service id=".service_locator.HQZddX8" alias=".service_locator.Kq27LHM"/>
     <service id=".service_locator.DiCF8aE" alias=".service_locator.BEK1cPS"/>
     <service id=".service_locator.5Vd5JYV" alias=".service_locator.egipcEH"/>

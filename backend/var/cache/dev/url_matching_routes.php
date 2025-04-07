@@ -17,12 +17,14 @@ return [
         '/_profiler/open' => [[['_route' => '_profiler_open_file', '_controller' => 'web_profiler.controller.profiler::openAction'], null, null, null, false, false, null]],
         '/admin/posts' => [[['_route' => 'admin_post_admin_index_post', '_controller' => 'App\\Controller\\Admin\\PostController::index'], null, ['GET' => 0], null, false, false, null]],
         '/admin/users' => [[['_route' => 'admin_users_index', '_controller' => 'App\\Controller\\Admin\\UserController::index'], null, ['GET' => 0], null, false, false, null]],
+        '/api/blockeds' => [[['_route' => 'api_index_blocked', '_controller' => 'App\\Controller\\Api\\BlockedController::index'], null, ['GET' => 0], null, false, false, null]],
         '/api/likes' => [[['_route' => 'api_like_create', '_controller' => 'App\\Controller\\Api\\LikeController::create'], null, ['POST' => 0], null, false, false, null]],
         '/api/posts' => [
             [['_route' => 'api_posts_index', '_controller' => 'App\\Controller\\Api\\PostController::index'], null, ['GET' => 0], null, false, false, null],
             [['_route' => 'api_posts_create', '_controller' => 'App\\Controller\\Api\\PostController::create'], null, ['POST' => 0], null, false, false, null],
         ],
         '/api/responds' => [[['_route' => 'app_respond_create', '_controller' => 'App\\Controller\\Api\\RespondController::create'], null, ['POST' => 0], null, false, false, null]],
+        '/api/subscribes' => [[['_route' => 'api_index_subscriptions', '_controller' => 'App\\Controller\\Api\\SubscribeController::index'], null, ['GET' => 0], null, false, false, null]],
         '/api/users' => [[['_route' => 'api_me', '_controller' => 'App\\Controller\\Api\\UserController::me'], null, ['GET' => 0], null, false, false, null]],
         '/register' => [[['_route' => 'user.register', '_controller' => 'App\\Controller\\RegistrationController::register'], null, ['POST' => 0], null, false, false, null]],
         '/register/verify/email' => [[['_route' => 'app_verify_email', '_controller' => 'App\\Controller\\RegistrationController::verifyUserEmail'], null, null, null, false, false, null]],
@@ -108,8 +110,8 @@ return [
             [['_route' => 'admin_user_update', '_controller' => 'App\\Controller\\Admin\\UserController::update'], ['id'], ['PATCH' => 0], null, false, true, null],
         ],
         294 => [
-            [['_route' => 'api_user_blockeds', '_controller' => 'App\\Controller\\Api\\BlockedController::get'], ['id'], ['GET' => 0], null, false, true, null],
-            [['_route' => 'api_block_user', '_controller' => 'App\\Controller\\Api\\BlockedController::block'], ['id'], ['POST' => 0], null, false, true, null],
+            [['_route' => 'api_get_blockeds', '_controller' => 'App\\Controller\\Api\\BlockedController::get'], ['id'], ['GET' => 0], null, false, true, null],
+            [['_route' => 'api_post_user', '_controller' => 'App\\Controller\\Api\\BlockedController::post'], ['id'], ['POST' => 0], null, false, true, null],
             [['_route' => 'api_unblock_user', '_controller' => 'App\\Controller\\Api\\BlockedController::unblock'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],
         323 => [
@@ -126,7 +128,7 @@ return [
             [['_route' => 'app_respond_delete', '_controller' => 'App\\Controller\\Api\\RespondController::delete'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],
         431 => [
-            [['_route' => 'api_user_subscriptions', '_controller' => 'App\\Controller\\Api\\SubscribeController::get'], ['id'], ['GET' => 0], null, false, true, null],
+            [['_route' => 'api_get_subscriptions', '_controller' => 'App\\Controller\\Api\\SubscribeController::get'], ['id'], ['GET' => 0], null, false, true, null],
             [['_route' => 'api_subscribe_user', '_controller' => 'App\\Controller\\Api\\SubscribeController::subscribe'], ['id'], ['POST' => 0], null, false, true, null],
             [['_route' => 'api_unsubscribe_user', '_controller' => 'App\\Controller\\Api\\SubscribeController::unsubscribe'], ['id'], ['DELETE' => 0], null, false, true, null],
         ],

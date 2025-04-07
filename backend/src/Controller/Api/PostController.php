@@ -34,21 +34,49 @@ class PostController extends AbstractController
     }
 
     #[Route('', name: 'api_posts_index', methods: ['GET'])]
-    public function index(Request $request, PostRepository $postRepository): JsonResponse
-    {
+    public function index( Request $request, PostRepository $postRepository, SubscribeRepository $subscribeRepository): JsonResponse {
         $page = $request->query->getInt('page', 1);
         $limit = 15;
         $offset = ($page - 1) * $limit;
     
-        $paginator = $postRepository->paginateAllOrderedByLatest($offset, $limit);
-        $totalPostsCount = $paginator->count();
+        $subscribe = $request->query->getBoolean('subscribe', false);
+        $posts = [];
+        $totalPostsCount = 0;
+    
+        if ($subscribe) {
+            $user = $this->getUser();
+    
+            // On récupère les abonnements de l'utilisateur
+            $subscriptions = $subscribeRepository->findBy(['follower' => $user]);
+            $followedUsers = array_map(fn($sub) => $sub->getFollowing(), $subscriptions);
+    
+            if (!empty($followedUsers)) {
+                // Posts uniquement des abonnements
+                $posts = $postRepository->findBy(
+                    ['user' => $followedUsers],
+                    ['created_at' => 'DESC'],
+                    $limit,
+                    $offset
+                );
+                $totalPostsCount = $postRepository->count(['user' => $followedUsers]);
+            } else {
+                // Aucun abonnement → aucun post
+                $posts = [];
+                $totalPostsCount = 0;
+            }
+        } else {
+            // Tous les posts
+            $paginator = $postRepository->paginateAllOrderedByLatest($offset, $limit);
+            $posts = iterator_to_array($paginator);
+            $totalPostsCount = $paginator->count();
+        }
     
         $previousPage = $page > 1 ? $page - 1 : null;
         $nextPage = ($page * $limit) >= $totalPostsCount ? null : $page + 1;
     
         $postsArray = [];
     
-        foreach ($paginator as $post) {
+        foreach ($posts as $post) {
             $author = $post->getUser();
     
             if (!$author) {
@@ -94,6 +122,7 @@ class PostController extends AbstractController
             'posts' => $postsArray,
             'previous_page' => $previousPage,
             'next_page' => $nextPage,
+            'total' => $totalPostsCount,
         ]);
     }
     
