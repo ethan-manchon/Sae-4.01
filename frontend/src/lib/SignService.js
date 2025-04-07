@@ -1,4 +1,5 @@
-const BASE = "http://localhost:8080";
+const API_URL = import.meta.env.VITE_API_URL;
+const BASE = API_URL;
 
 export async function SignIn(formData) {
     const data = {

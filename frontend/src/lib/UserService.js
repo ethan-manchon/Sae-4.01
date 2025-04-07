@@ -1,5 +1,6 @@
-const API_BASE = "http://localhost:8080/api/users";
-const ADMIN_BASE = "http://localhost:8080/admin/users";
+const API_URL = import.meta.env.VITE_API_URL;
+const API_BASE = API_URL + "/api/users";
+const ADMIN_BASE =  API_URL + "/admin/users";
 
 function getTokenHeaders() {
   const token = localStorage.getItem("token");
