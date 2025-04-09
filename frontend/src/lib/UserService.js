@@ -1,13 +1,13 @@
 const API_URL = import.meta.env.VITE_API_URL;
 const API_BASE = API_URL + "/api/users";
-const ADMIN_BASE =  API_URL + "/admin/users";
+const ADMIN_BASE = API_URL + "/admin/users";
 
 function getTokenHeaders() {
   const token = localStorage.getItem("token");
   return token
     ? {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }
     : null;
 }
@@ -31,12 +31,12 @@ export async function loadUserById(id) {
   if (!headers) return null;
 
   try {
-      const response = await fetch(`${ADMIN_BASE}/${id}`, { headers });
-      if (!response.ok) throw new Error("Unauthorized");
-      return await response.json();
+    const response = await fetch(`${ADMIN_BASE}/${id}`, { headers });
+    if (!response.ok) throw new Error("Unauthorized");
+    return await response.json();
   } catch (error) {
-      console.error("Error loading user:", error);
-      return null;
+    console.error("Error loading user:", error);
+    return null;
   }
 }
 
@@ -45,7 +45,7 @@ export async function patchUsers(id, patch) {
   if (!headers) return { users: [], error: "Unauthorized" };
 
   try {
-    const response = await fetch(`${ADMIN_BASE}/${id}`, { 
+    const response = await fetch(`${ADMIN_BASE}/${id}`, {
       method: "PATCH",
       headers,
       body: JSON.stringify(patch),
@@ -91,18 +91,18 @@ export async function updateUser(userId, data) {
   if (!headers) return { error: "Unauthorized" };
 
   try {
-      const response = await fetch(`${API_BASE}/${userId}`, {
-          method: "PATCH",
-          headers,
-          body: JSON.stringify(data),
-      });
+    const response = await fetch(`${API_BASE}/${userId}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+    console.log(data);
+    if (!response.ok) throw new Error("Failed to update user");
 
-      if (!response.ok) throw new Error("Failed to update user");
-
-      return await response.json();
+    return await response.json();
   } catch (error) {
-      console.error("Error updating user:", error);
-      return { error: error.message };
+    console.error("Error updating user:", error);
+    return { error: error.message };
   }
 }
 
@@ -110,28 +110,29 @@ export async function uploadImage(file, type) {
   console.log("Uploading image", file);
   console.log("Type", type);
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append("file", file);
 
-  const endpoint = type === 'pdp' ? `${API_BASE}/upload-pdp` : `${API_BASE}/upload-banner`;
+  const endpoint =
+    type === "pdp" ? `${API_BASE}/upload-pdp` : `${API_BASE}/upload-banner`;
 
   const res = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      body: formData,
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    body: formData,
   });
 
   const text = await res.text();
   let data;
 
   try {
-      data = JSON.parse(text);
+    data = JSON.parse(text);
   } catch (err) {
-      throw new Error("Le serveur n'a pas retourné un JSON valide.");
+    throw new Error("Le serveur n'a pas retourné un JSON valide.");
   }
 
-  if (!res.ok) throw new Error(data.error || 'Upload failed');
+  if (!res.ok) throw new Error(data.error || "Upload failed");
 
-  return data; 
+  return data;
 }

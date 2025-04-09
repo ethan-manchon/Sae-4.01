@@ -42,9 +42,20 @@ class Post
     #[ORM\Column]
     private ?bool $censor = false;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $pin = null;
+
+    /**
+     * @var Collection<int, Repost>
+     */
+    #[ORM\OneToMany(targetEntity: Repost::class, mappedBy: 'post_id')]
+    private Collection $reposts;
+
+
     public function __construct()
     {
         $this->responds = new ArrayCollection();
+        $this->reposts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -148,6 +159,47 @@ class Post
         return $this;
     }
 
+    public function isPin(): ?bool
+    {
+        return $this->pin;
+    }
+
+    public function setPin(?bool $pin): static
+    {
+        $this->pin = $pin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Repost>
+     */
+    public function getReposts(): Collection
+    {
+        return $this->reposts;
+    }
+
+    public function addRepost(Repost $repost): static
+    {
+        if (!$this->reposts->contains($repost)) {
+            $this->reposts->add($repost);
+            $repost->setPostId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRepost(Repost $repost): static
+    {
+        if ($this->reposts->removeElement($repost)) {
+            // set the owning side to null (unless already changed)
+            if ($repost->getPostId() === $this) {
+                $repost->setPostId(null);
+            }
+        }
+
+        return $this;
+    }
 }
 
 

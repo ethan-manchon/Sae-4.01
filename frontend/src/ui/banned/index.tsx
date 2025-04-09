@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { patchUsers } from "../../lib/UserService";
 import Button from "../button";
-import {PadlockCloseSvg, PadlockOpenSvg} from "../../assets/svg/svg";
+import { PadlockCloseSvg, PadlockOpenSvg } from "../../assets/svg/svg";
 
 interface BanProps {
   id: number;
@@ -22,17 +22,27 @@ export default function Ban({ id, ban = false, onUpdated }: BanProps) {
     if (!confirm("Déban cet utilisateur ?")) return;
     setIsBanned(false);
     const res = await patchUsers(id, { patch: isBanned });
-    };
+  };
 
   return (
     <div className="ml-2">
-      {isBanned ? ( 
-        <Button size="sm" variant="transparent" className=" text-red" onClick={handleUnblock}>
-          <PadlockCloseSvg/>
+      {isBanned ? (
+        <Button
+          size="sm"
+          variant="transparent"
+          className="text-red"
+          onClick={handleUnblock}
+        >
+          <PadlockCloseSvg />
         </Button>
       ) : (
-        <Button size="sm" variant="transparent" className=" text-green" onClick={handleBlock}>
-          <PadlockOpenSvg/>
+        <Button
+          size="sm"
+          variant="transparent"
+          className="text-green"
+          onClick={handleBlock}
+        >
+          <PadlockOpenSvg />
         </Button>
       )}
     </div>

@@ -33,6 +33,7 @@ class UserController extends AbstractController
             'url' => $user->getUrl(),
             'refresh' => $user->isRefresh(),
             'roles' => $user->getRoles(),
+            'readonly' => $user->isReadOnly(),
         ]);
     }
 
@@ -78,7 +79,8 @@ class UserController extends AbstractController
         if (isset($data['url'])) $currentUser->setUrl($data['url']);
         if (isset($data['pdp'])) $currentUser->setPdp($data['pdp']);
         if (isset($data['banniere'])) $currentUser->setBanniere($data['banniere']);
-
+        if (isset($data['readonly']))$currentUser->setReadOnly($data['readonly'] );
+        
         $em->flush();
 
         return $this->json(['message' => 'Profil mis à jour']);

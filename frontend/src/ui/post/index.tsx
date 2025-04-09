@@ -1,15 +1,18 @@
-import React, { useState, useRef } from 'react';
-import { editPost } from '../../lib/PostService';
-import Content from '../content';
-import Pdp from '../pdp';
-import Like from '../like';
-import Button from '../button';
-import TrashButton from '../trash';
-import Date from '../date';
-import Answer from '../answer';
-import { EditSvg, AnswerSvg } from "../../assets/svg/svg";
+import React, { useState, useRef } from "react";
+import { editPost } from "../../lib/PostService";
+import Content from "../content";
+import Pdp from "../pdp";
+import Like from "../like";
+import Button from "../button";
+import TrashButton from "../trash";
+import Date from "../date";
+import Answer from "../answer";
+import Pin from "../pin";
+import { EditSvg, AnswerSvg, PinSvg } from "../../assets/svg/svg";
+import { usePopover } from "../popover/context";
+import Retweet from "../retweet";
 
-interface PostProps { 
+interface PostProps {
   pseudo: string;
   pdp: string;
   post_id: number;
@@ -21,10 +24,29 @@ interface PostProps {
   count: number;
   media: string[];
   censored?: boolean;
+  readOnly?: boolean;
+  pinned?: boolean;
   onDeleted?: () => void;
 }
 
-export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId,  meId,  banned,  count, media, onDeleted, censored }: PostProps) {
+export default function Post({
+  pseudo,
+  post_id,
+  content,
+  createdAt,
+  pdp,
+  userId,
+  meId,
+  banned,
+  count,
+  media,
+  onDeleted,
+  censored,
+  readOnly,
+  pinned,
+}: PostProps) {
+  const { showPopover } = usePopover();
+
   const [disappearing, setDisappearing] = useState(false);
   const [editing, setEditing] = useState(false);
   const [newContent, setNewContent] = useState(content);
@@ -36,6 +58,9 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [localCount, setLocalCount] = useState<number>(count);
   const [censor, setCensor] = useState<boolean>(censored || false);
+  const [noComment, setNoComment] = useState<boolean>(readOnly || false);
+  const [pinnedState, setPinnedState] = useState<boolean>(pinned || false);
+  const [readOnlyState, setReadOnlyState] = useState<boolean>(readOnly || false);
 
   const handleDeleted = () => {
     setDisappearing(true);
@@ -64,7 +89,8 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
   };
 
   const handleSave = async () => {
-    if (!newContent.trim()) return alert("Le contenu ne peut pas être vide.");
+    if (!newContent.trim())
+      return showPopover("Le contenu ne peut pas être vide.", "error");
 
     setLoading(true);
     const formData = new FormData();
@@ -83,66 +109,91 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
       setEditing(false);
       window.location.reload();
     } else {
-      alert("Erreur lors de l'édition : " + res.error);
+      showPopover("Erreur lors de l'édition : " + res.error);
     }
   };
 
   return (
-    <li className={`w-full bg-bg shadow-lg hover:shadow-xl max-w-xl mx-auto border border-border rounded-lg transition transform duration-150 ease-out ${disappearing ? 'opacity-0 scale-95' : ''} my-4`}>
+    <li
+      className={`mx-auto w-full max-w-xl transform rounded-lg border border-border bg-bg shadow-lg transition duration-150 ease-out hover:shadow-xl ${disappearing ? "scale-95 opacity-0" : ""} my-4`}
+    >
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
+            {pinned && userId !== meId && <PinSvg className="cursor-default hover:text-primary" />}
             <Pdp pdp={pdp} pseudo={pseudo} link={`/profil/${pseudo}`} />
             <Date date={createdAt} />
           </div>
           {userId === meId && (
             <div className="flex items-center space-x-2">
-              <div className="flex items-center justify-center w-8 h-8">
-                <TrashButton postId={post_id} type="post" onDeleted={handleDeleted} />
+              <div className="flex h-8 w-8 items-center justify-center">
+                <TrashButton
+                  postId={post_id}
+                  type="post"
+                  onDeleted={handleDeleted}
+                />
               </div>
-              <Button onClick={handleEdit} variant="transparent" className="w-8 h-8 p-0 flex items-center justify-center text-primary hover:text-red">
-                <EditSvg className="w-8 h-8" />
+              <Button
+                onClick={editing ? () => setEditing(false) : handleEdit}
+                variant="transparent"
+                className="flex items-center justify-center"
+              >
+                <EditSvg color={editing ? "active" : "default"} />
               </Button>
+              {pinned !== undefined ? <Pin postId={post_id} pinned={pinnedState}/> : ""}
             </div>
           )}
         </div>
 
-        <div className="mt-6 text-fg text-sm">
+        <div className="mt-6 text-sm text-fg">
           {editing ? (
             <>
               <textarea
-                className="w-full h-24 border rounded p-2"
+                className="h-24 w-full rounded border p-2"
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
               />
               <div className="mt-4">
-                <p className="font-bold mb-2">Médias existants :</p>
                 {currentMedia.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {currentMedia.map((url, index) => (
-                      <div key={index} className="relative">
-                        {url.match(/\.(mp4|webm|ogg)$/i) ? (
-                          <video src={`http://localhost:8080/${url}`} controls className="w-full h-auto rounded" />
-                        ) : (
-                          <img src={`http://localhost:8080/${url}`} alt={`media-${index}`} className="w-full h-auto object-cover rounded" />
-                        )}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveCurrentMedia(url)}
-                          className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
-                        >
-                          X
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <p className="mb-2 font-bold">Médias existants :</p>
+                    <div className="grid grid-cols-2 gap-2">
+                      {currentMedia.map((url, index) => (
+                        <div key={index} className="relative">
+                          {url.match(/\.(mp4|webm|ogg)$/i) ? (
+                            <video
+                              src={`http://localhost:8080/${url}`}
+                              controls
+                              className="h-auto w-full rounded"
+                            />
+                          ) : (
+                            <img
+                              src={`http://localhost:8080/${url}`}
+                              alt={`media-${index}`}
+                              className="h-auto w-full rounded object-cover"
+                            />
+                          )}
+                          <Button
+                            variant="transparent"
+                            onClick={() => handleRemoveCurrentMedia(url)}
+                            className="absolute top-0 right-0 items-center rounded-full bg-red text-white"
+                          >
+                            X
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 ) : (
-                  <p>Aucun média associé.</p>
+                  <></>
                 )}
                 <div className="mt-4">
-                  <Button onClick={triggerFileInput} variant="transparent">
+                  <button
+                    onClick={triggerFileInput}
+                    className="relative cursor-pointer rounded-lg border-2 border-dashed border-border p-4 text-center transition hover:border-primary-hover"
+                  >
                     Ajouter des médias
-                  </Button>
+                  </button>
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -154,24 +205,36 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
                 </div>
                 {newMediaFiles.length > 0 && (
                   <div className="mt-4">
-                    <p className="font-bold mb-2">Nouveaux médias ajoutés :</p>
+                    <p className="mb-2 font-bold">Nouveaux médias ajoutés :</p>
                     <div className="grid grid-cols-2 gap-2">
                       {newMediaFiles.map((file, index) => {
                         const previewUrl = URL.createObjectURL(file);
                         return (
                           <div key={index} className="relative">
                             {file.type.startsWith("video/") ? (
-                              <video src={previewUrl} controls className="w-full h-auto rounded" />
+                              <video
+                                src={previewUrl}
+                                controls
+                                className="h-auto w-full rounded"
+                              />
                             ) : (
-                              <img src={previewUrl} alt={`new-media-${index}`} className="w-full h-auto object-cover rounded" />
+                              <img
+                                src={previewUrl}
+                                alt={`new-media-${index}`}
+                                className="h-auto w-full rounded object-cover"
+                              />
                             )}
-                            <button
-                              type="button"
-                              onClick={() => setNewMediaFiles((prev) => prev.filter((_, i) => i !== index))}
-                              className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                            <Button
+                              onClick={() =>
+                                setNewMediaFiles((prev) =>
+                                  prev.filter((_, i) => i !== index),
+                                )
+                              }
+                              variant="transparent"
+                              className="absolute top-0 right-0 items-center rounded-full bg-red text-white"
                             >
                               X
-                            </button>
+                            </Button>
                           </div>
                         );
                       })}
@@ -180,7 +243,7 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
                 )}
               </div>
 
-              <div className="flex space-x-2 mt-2">
+              <div className="mt-2 flex space-x-2">
                 <Button onClick={handleSave}>
                   {loading ? "Saving..." : "Save"}
                 </Button>
@@ -190,7 +253,9 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
               </div>
             </>
           ) : (
-            <Content className={banned ? "text-element" : ""}>{newContent}</Content>
+            <Content className={banned ? "text-element" : ""}>
+              {newContent}
+            </Content>
           )}
         </div>
 
@@ -199,32 +264,57 @@ export default function Post({ pseudo,  post_id, content, createdAt, pdp, userId
             {currentMedia.map((url, index) => {
               if (url.match(/\.(mp4|webm|ogg)$/i)) {
                 return (
-                  <video key={index} src={`http://localhost:8080/${url}`} controls className="w-full h-auto rounded" />
+                  <video
+                    key={index}
+                    src={`http://localhost:8080/${url}`}
+                    controls
+                    className="h-auto w-full rounded"
+                  />
                 );
               }
               return (
-                <img key={index} src={`http://localhost:8080/${url}`} alt={`media-${index}`} className="w-full h-auto object-cover rounded" />
+                <img
+                  key={index}
+                  src={`http://localhost:8080/${url}`}
+                  alt={`media-${index}`}
+                  className="h-auto w-full rounded object-cover"
+                />
               );
             })}
           </div>
         )}
 
-        {!banned && !editing && !censor && (
+        {!banned && !censor && !noComment && !readOnlyState ? (
           <>
-            <Answer postId={post_id} isReplying={isReplying} setIsReplying={setIsReplying} onCountChange={setLocalCount} />
-            <div className="mt-3 flex items-center justify-end">
-              <Button onClick={() => setIsReplying(!isReplying)} variant='transparent' className='text-primary hover:text-red'>
+            <div className="mt-2 flex items-center justify-end">
+              <Button
+                onClick={() => setIsReplying(!isReplying)}
+                variant="transparent"
+              >
                 <div className="flex items-center space-x-2 transition-colors duration-200 ease-in-out">
-                  <AnswerSvg className="w-8 h-8" />
+                  <AnswerSvg color={isReplying ? "active" : "default"} />
                   <span className="w-8 text-left">{localCount}</span>
                 </div>
               </Button>
               <Like postId={post_id} />
+              <Retweet postId={post_id} />
             </div>
+            <Answer
+              postId={post_id}
+              isReplying={isReplying}
+              setIsReplying={setIsReplying}
+              onCountChange={setLocalCount}
+            />
           </>
+        ) : (
+          !banned &&
+          !censor && (
+            <div className="mt-3 flex items-center justify-end">
+              <Like postId={post_id} />
+            </div>
+          )
         )}
       </div>
     </li>
   );
 }
- 

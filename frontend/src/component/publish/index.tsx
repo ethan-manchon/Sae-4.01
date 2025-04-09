@@ -139,7 +139,6 @@ export default function Publish({ OnClick }: TweetInputProps) {
         <Button onClick={addFiles} variant="transparent">
           <PaperClip />
         </Button>
-        {/* Input file caché */}
         <input
           type="file"
           ref={fileInputRef}

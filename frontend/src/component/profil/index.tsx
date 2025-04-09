@@ -1,4 +1,4 @@
-import React, { useEffect, useState }from "react";
+import React, { useEffect, useState } from "react";
 import Settings from "../settings/";
 import Icon from "../../ui/icon";
 import Pdp from "../../ui/pdp";
@@ -7,7 +7,7 @@ import Block from "../../ui/blocked";
 
 interface UserProps {
   user: {
-    id: number; 
+    id: number;
     pdp: any;
     pseudo: string;
     bio: string;
@@ -19,7 +19,6 @@ interface UserProps {
 }
 
 export default function ProfilComponent({ user, type }: UserProps) {
-
   if (user.bio === undefined) {
     return <div></div>;
   }
@@ -33,7 +32,8 @@ export default function ProfilComponent({ user, type }: UserProps) {
     return <div>Default</div>;
   }
 
-  const bannerImage = "/assets/banner/"+user.banniere || "/assets/banner/default.webp";
+  const bannerImage =
+    "/assets/banner/" + user.banniere || "/assets/banner/default.webp";
 
   const [bioState, setBioState] = useState(!!user.bio);
   const [locateState, setLocateState] = useState(!!user.locate);
@@ -46,53 +46,56 @@ export default function ProfilComponent({ user, type }: UserProps) {
   }, [user.locate]);
 
   return (
-<div className="w-full bg-white border-b border-border">
-  <div className="relative">
-    <img
-      src={`http://localhost:8080/${bannerImage}`}
-      alt="Bannière"
-      className="w-full h-40 object-cover"
-    />
+    <div className="w-full border-b border-border bg-white">
+      <div className="relative">
+        <img
+          src={`http://localhost:8080/${bannerImage}`}
+          alt="Bannière"
+          className="h-40 w-full object-cover"
+        />
 
-    <div className="absolute -bottom-4 left-6">
-      <Pdp pdp={user.pdp} className="w-24 h-24 rounded-full border-4 bg-white shadow-lg" />
+        <div className="absolute -bottom-4 left-6">
+          <Pdp
+            pdp={user.pdp}
+            className="h-24 w-24 rounded-full border-4 bg-white shadow-lg"
+          />
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[600px] px-6 pt-16 pb-6">
+        <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <h2 className="text-xl font-semibold text-primary">{user.pseudo}</h2>
+          {user.url && (
+            <a
+              href={user.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-primary hover:underline"
+            >
+              <Icon url={user.url} className="h-6 w-6" />
+            </a>
+          )}
+        </div>
+
+        {bioState && <p className="mb-2 text-sm text-fg">{user.bio}</p>}
+
+        {locateState && (
+          <p className="mb-4 flex items-center justify-end gap-1 text-sm text-fg">
+            {user.locate}
+          </p>
+        )}
+
+        <div className="flex justify-end">
+          {type === "me" ? (
+            <Settings />
+          ) : (
+            <>
+              <Subscribe userId={user.id} />
+              <Block userId={user.id} />
+            </>
+          )}
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div className="pt-16 px-6 pb-6 max-w-[600px] mx-auto">
-    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-      <h2 className="text-xl font-semibold text-primary">{user.pseudo}</h2>
-      {user.url && (
-        <a href={user.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-primary hover:underline" >
-          <Icon url={user.url} className="w-6 h-6" />
-        </a>
-      )}
-    </div>
-
-    {bioState && (
-      <p className="text-sm text-fg mb-2">{user.bio}</p>
-    )}
-
-    {locateState && (
-      <p className="text-sm text-fg mb-4 flex items-center justify-end gap-1">
-        {user.locate}
-      </p>
-    )}
-
-    <div className="flex justify-end">
-      {type === "me" ? (
-      <Settings />
-      ) : (
-        <>
-        <Subscribe
-          userId={user.id}/>
-        <Block
-          userId={user.id}/>
-      </>
-  )}
-    </div>
-  </div>
-</div>
   );
-
 }

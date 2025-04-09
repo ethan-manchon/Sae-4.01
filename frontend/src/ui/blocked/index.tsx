@@ -9,16 +9,14 @@ interface BlockedProps {
 export default function BlockButton({ userId }: BlockedProps) {
   const [blocked, setBlocked] = useState<boolean>(false);
 
-
-    useEffect(() => {
-      async function fetchBlockStatus() {
-        const BlockStatus = await isUserBlocked(userId);
-        setBlocked(BlockStatus.blocked);
-        console.log("État blocked :", blocked);
-
-      }
-      fetchBlockStatus();
-    }, [userId]);
+  useEffect(() => {
+    async function fetchBlockStatus() {
+      const BlockStatus = await isUserBlocked(userId);
+      setBlocked(BlockStatus.blocked);
+      console.log("État blocked :", blocked);
+    }
+    fetchBlockStatus();
+  }, [userId]);
 
   useEffect(() => {
     console.log("État blocked mis à jour :", blocked);
@@ -45,8 +43,10 @@ export default function BlockButton({ userId }: BlockedProps) {
   return (
     <button
       onClick={toggleBlock}
-      className={`px-4 py-2 rounded-full font-medium transition-colors text-bg ${
-        blocked ? "bg-red hover:bg-red-light" : "bg-primary hover:bg-primary-hover"
+      className={`rounded-full px-4 py-2 font-medium text-bg transition-colors ${
+        blocked
+          ? "bg-red hover:bg-red-light"
+          : "bg-primary hover:bg-primary-hover"
       }`}
     >
       {blocked ? "Débloquer" : "Bloquer"}

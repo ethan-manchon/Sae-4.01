@@ -6,6 +6,7 @@ import Button from "../../ui/button";
 import Icon from "../../ui/icon";
 import Boolean from "../../ui/boolean";
 import SubscribeList from "../../ui/subscribeList";
+import { usePopover } from "../../ui/popover/context";
 
 export default function Settings() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -16,18 +17,16 @@ export default function Settings() {
   const [pdp, setPdp] = useState("");
   const [banner, setBanner] = useState("");
   const [confirmation, setConfirmation] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [userId, setUserId] = useState<number | null>(null);
 
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
   const [blocked, setBlocked] = useState([]);
-
+  const { showPopover } = usePopover();
   useEffect(() => {
     async function fetchMe() {
       const me = await loadMe();
       if (me) {
-        setIsChecked(me.refresh);
         setUserId(me.id);
         setBio(me.bio || "");
         setLocation(me.locate || "");
@@ -84,10 +83,9 @@ export default function Settings() {
       url,
       pdp,
       banner,
-      refresh: isChecked,
     });
     if (res.error) {
-      alert("Erreur lors de la mise à jour : " + res.error);
+      showPopover("Erreur lors de la mise à jour : " + res.error);
     } else {
       setConfirmation(true);
       setTimeout(() => setConfirmation(false), 3000);
@@ -102,6 +100,7 @@ export default function Settings() {
       <Button onClick={toggleSettings}>Mon compte</Button>
 
       {confirmation && (
+        // mettre le popover
         <div className="fixed right-4 bottom-4 rounded bg-green px-4 py-2 text-white shadow">
           Modifications enregistrées !
         </div>
@@ -112,13 +111,13 @@ export default function Settings() {
           <div className="h-7/8 w-2/3 space-y-4 overflow-y-auto rounded bg-white p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
               <button
-                className="text-xl font-bold"
+                className="cursor-pointer text-xl font-bold"
                 onClick={() => setIsSettingsOpen(true)}
               >
                 Paramètres
               </button>
               <button
-                className="text-xl font-bold"
+                className="cursor-pointer text-xl font-bold"
                 onClick={() => setIsSettingsOpen(false)}
               >
                 Abonnements
@@ -131,8 +130,8 @@ export default function Settings() {
               </Button>
             </div>
             {isSettingsOpen ? (
-              <div className="max-h-[80vh] overflow-y-auto p-6">
-                <h1 className="mb-6 text-center text-2xl font-bold text-primary">
+              <div className="h-7/8 overflow-y-auto p-6">
+                <h1 className="text-primary-border-primary-hover mb-6 text-center text-2xl font-bold">
                   Modifier mon profil
                 </h1>
                 <div>
@@ -170,7 +169,7 @@ export default function Settings() {
                   <label className="mb-2 block font-semibold">
                     Photo de profil (PDP)
                   </label>
-                  <div className="relative rounded-lg border-2 border-dashed border-gray-300 p-4 text-center transition hover:border-blue-500">
+                  <div className="relative rounded-lg border-2 border-dashed border-border p-4 text-center transition hover:border-primary-hover">
                     <input
                       type="file"
                       accept="image/*"
@@ -180,7 +179,7 @@ export default function Settings() {
                     />
                     <label
                       htmlFor="pdp-upload"
-                      className="cursor-pointer text-sm text-gray-500"
+                      className="cursor-pointer text-sm text-element"
                     >
                       Cliquez ici pour importer une image
                     </label>
@@ -196,7 +195,7 @@ export default function Settings() {
 
                 <div className="mt-6">
                   <label className="mb-2 block font-semibold">Bannière</label>
-                  <div className="relative rounded-lg border-2 border-dashed border-gray-300 p-4 text-center transition hover:border-blue-500">
+                  <div className="relative rounded-lg border-2 border-dashed border-border p-4 text-center transition hover:border-primary-hover">
                     <input
                       type="file"
                       accept="image/*"
@@ -206,7 +205,7 @@ export default function Settings() {
                     />
                     <label
                       htmlFor="banner-upload"
-                      className="cursor-pointer text-sm text-gray-500"
+                      className="cursor-pointer text-sm text-element"
                     >
                       Cliquez ici pour importer une bannière
                     </label>
@@ -220,7 +219,8 @@ export default function Settings() {
                   )}
                 </div>
 
-                <Boolean />
+                <Boolean type="refresh" />
+                <Boolean type="readOnly" />
 
                 <div className="mt-6 flex justify-end gap-2">
                   <Button

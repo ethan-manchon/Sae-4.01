@@ -43,6 +43,10 @@ final class RespondController extends AbstractController
         if ($targetUser->hasBlocked($currentUser)) {
             $blocked = true;
         }
+
+        if ($targetUser->isReadOnly()) {
+            return $this->json(['Le compte est en lecture seule'], 200);
+        }
     
         $responds = $respondRepository->findAllByIdPost($id);
         $data = array_map(function (Respond $respond) use ($blocked) {

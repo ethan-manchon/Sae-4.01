@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { patchUsers } from "../../lib/UserService";
 import Button from "../../ui/button"; 
 import Ban from "../../ui/banned"; 
+import { usePopover } from "../../ui/popover/context"; 
 
 
 interface UserListProps {
@@ -21,6 +22,7 @@ export default function UserList({ id, pseudo, email, roles, banned, onUpdated }
     const initialRole = Array.isArray(roles) ? roles[0] : roles;
     const [newRoles, setNewRoles] = useState(initialRole);
 
+    const { showPopover } = usePopover();
     const roleLabels: Record<string, string> = {
         ROLE_USER: "USER",
         ROLE_ADMIN: "ADMIN",
@@ -36,7 +38,7 @@ export default function UserList({ id, pseudo, email, roles, banned, onUpdated }
     const handleSave = async () => {
         const result = await patchUsers(id, { pseudo: newPseudo, email: newEmail, roles: newRoles });
         if (result.error) {
-            alert(result.error);
+            showPopover(result.error);
             return;
         }
         if (onUpdated) onUpdated();

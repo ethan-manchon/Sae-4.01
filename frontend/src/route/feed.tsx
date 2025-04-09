@@ -41,8 +41,8 @@ export default function Feed() {
 <div className="min-h-screen bg-bg text-element flex flex-col md:flex-row">
   <NavBar user={user} />
 
-  <main className="flex-1 md:ml-64 flex flex-col items-center pt-[4.5rem] md:pt-8 px-4">
-    <div className="w-full max-w-[600px]">
+  <main className="flex-1 md:ml-64 flex flex-col items-center pt-16 md:pt-8 px-4">
+    <div className="w-full">
       <section className="mb-6">
         <Publish OnClick={triggerRefresh} />
       </section>
@@ -56,7 +56,7 @@ export default function Feed() {
       </div>
 
       <section className="space-y-4">
-      <Feeds loader={loadPosts} subscribe={false} />
+      <Feeds loader={loadPosts} subscribe={true} />
       </section>
     </div>
   </main>

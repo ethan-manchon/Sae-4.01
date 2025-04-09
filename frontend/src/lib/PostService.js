@@ -7,7 +7,7 @@ function getTokenHeaders() {
   return token
     ? {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }
     : null;
 }
@@ -22,7 +22,12 @@ export async function adminLoadPosts(page = 1) {
     return await response.json();
   } catch (error) {
     console.error("Error loading admin posts:", error);
-    return { posts: [], previous_page: null, next_page: null, error: error.message };
+    return {
+      posts: [],
+      previous_page: null,
+      next_page: null,
+      error: error.message,
+    };
   }
 }
 
@@ -42,6 +47,7 @@ export async function adminEditPost(postId, data) {
   }
 
   try {
+    console.log(data);
     const response = await fetch(`${API_ADMIN}/${postId}`, {
       method: "POST",
       headers,
@@ -72,20 +78,57 @@ export async function adminDeletePost(postId) {
   }
 }
 
+export async function togglePin(postId, pin) {
+  console.log("Toggling pin for post:", postId, pin);
+  const headers = getTokenHeaders();
+  if (!headers) return { success: false, error: "Unauthorized" };
+  const body = new URLSearchParams();
+  body.append("pin", pin.toString()); 
+  try {
+    const response = await fetch(`${API_BASE}/${postId}`, {
+      method: "POST", 
+      headers: { 
+        ...headers, 
+        Accept: "application/json", 
+        "Content-Type": "application/x-www-form-urlencoded"  
+      },
+      body: body.toString(),
+    });
 
+    if (!response.ok) throw new Error("Failed to toggle pin", error);
+    const data = await response.json();
+    return { success: true, pinned: data.pin };
+  } catch (error) {
+    console.error("Error toggling pin:", error);
+    return { success: false, error: error.message };
+  }
+}
 
-export async function loadPosts(page = 1, subscribe) {
+export async function loadPosts(page = 1, subscribe = false, userId) {
   const headers = getTokenHeaders();
   if (!headers) return { posts: [], error: "Unauthorized" };
-  const body = { 'subscribe': subscribe };
+
+  let url = `${API_BASE}?page=${page}&subscribe=${subscribe}`;
+  if (userId) {
+    url += `&userId=${userId}`;
+  }
 
   try {
-    const response = await fetch(`${API_BASE}?page=${page}&subscribe=${subscribe}`, { method: 'GET', headers});
+    const response = await fetch(url, {
+      method: "GET",
+      headers
+    });
     if (!response.ok) throw new Error("Failed to load posts");
-    return await response.json();
+
+    const result = await response.json();
+
+    return {
+      posts: result.items,
+      next_page: result.items.length === 10 ? page + 1 : null
+    };
   } catch (error) {
     console.error("Error loading posts:", error);
-    return { posts: [], previous_page: null, next_page: null, error: error.message };
+    return { posts: [], next_page: null, error: error.message };
   }
 }
 
@@ -142,7 +185,6 @@ export async function publishPost(data) {
   if (!tokenHeaders) return { error: "Unauthorized" };
 
   let body, headers;
-  // Si data est un FormData, on laisse le navigateur gérer le header Content-Type
   if (data instanceof FormData) {
     body = data;
     headers = { ...tokenHeaders };

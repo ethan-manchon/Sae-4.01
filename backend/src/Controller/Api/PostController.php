@@ -2,24 +2,22 @@
 
 namespace App\Controller\Api;
 
-use App\Entity\User;
 use App\Entity\Post;
+use App\Entity\Repost;
 use App\Entity\Like;
-use App\Entity\Respond;
-use App\Service\PostService;
-use App\Repository\SubscribeRepository;
-use App\Repository\UserRepository;
 use App\Repository\PostRepository;
-use App\Dto\Payload\CreatePostPayload;
+use App\Repository\RepostRepository;
+use App\Repository\UserRepository;
+use App\Repository\SubscribeRepository;
+use App\Service\PostService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/api/posts')]
 class PostController extends AbstractController
@@ -34,48 +32,60 @@ class PostController extends AbstractController
     }
 
     #[Route('', name: 'api_posts_index', methods: ['GET'])]
-    public function index( Request $request, PostRepository $postRepository, SubscribeRepository $subscribeRepository): JsonResponse {
-        $page = $request->query->getInt('page', 1);
-        $limit = 15;
-        $offset = ($page - 1) * $limit;
-    
+    #[IsGranted('IS_AUTHENTICATED_FULLY')]
+    public function index(
+        Request $request,
+        PostRepository $postRepo,
+        RepostRepository $repostRepo,
+        UserRepository $userRepo,
+        SubscribeRepository $subscribeRepo
+    ): JsonResponse {
+        $user = $this->getUser();
+
+        $userId = $request->query->get('userId');
         $subscribe = $request->query->getBoolean('subscribe', false);
-        $posts = [];
-        $totalPostsCount = 0;
-    
-        if ($subscribe) {
-            $user = $this->getUser();
-    
-            // On récupère les abonnements de l'utilisateur
-            $subscriptions = $subscribeRepository->findBy(['follower' => $user]);
-            $followedUsers = array_map(fn($sub) => $sub->getFollowing(), $subscriptions);
-    
-            if (!empty($followedUsers)) {
-                // Posts uniquement des abonnements
-                $posts = $postRepository->findBy(
-                    ['user' => $followedUsers],
-                    ['created_at' => 'DESC'],
-                    $limit,
-                    $offset
-                );
-                $totalPostsCount = $postRepository->count(['user' => $followedUsers]);
-            } else {
-                // Aucun abonnement → aucun post
-                $posts = [];
-                $totalPostsCount = 0;
+        $page = $request->query->getInt('page', 1);
+        $limit = 10;
+        $offset = ($page - 1) * $limit;
+
+        $usersToInclude = [];
+
+        if ($userId) {
+            $profileUser = $userRepo->find($userId);
+            if (!$profileUser) {
+                return $this->json(['error' => 'User not found'], 404);
             }
+            $usersToInclude[] = $profileUser;
+        } elseif ($subscribe) {
+            $subscriptions = $subscribeRepo->findBy(['subscriber' => $user]);
+            foreach ($subscriptions as $sub) {
+                $usersToInclude[] = $sub->getFollowed();
+            }
+            $usersToInclude[] = $user;
         } else {
-            // Tous les posts
-            $paginator = $postRepository->paginateAllOrderedByLatest($offset, $limit);
-            $posts = iterator_to_array($paginator);
-            $totalPostsCount = $paginator->count();
+            $usersToInclude = $userRepo->findAll();
         }
-    
-        $previousPage = $page > 1 ? $page - 1 : null;
-        $nextPage = ($page * $limit) >= $totalPostsCount ? null : $page + 1;
-    
-        $postsArray = [];
-    
+
+        $posts = $postRepo->createQueryBuilder('p')
+            ->where('p.user IN (:users)')
+            ->setParameter('users', $usersToInclude)
+            ->orderBy('p.created_at', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        $reposts = $repostRepo->createQueryBuilder('r')
+            ->where('r.user IN (:users)')
+            ->setParameter('users', $usersToInclude)
+            ->orderBy('r.created_at', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+
+        $feedItems = [];
+
         foreach ($posts as $post) {
             $author = $post->getUser();
     
@@ -84,10 +94,11 @@ class PostController extends AbstractController
             }
     
             if ($author->isBanned()) {
-                $postsArray[] = [
+                $feedItems[] = [
+                    'type' => 'post',
                     'id' => $post->getId(),
                     'content' => 'Ce compte a été bloqué pour non respect des conditions d’utilisation.',
-                    'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
+                    'created_at' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
                     'user' => [
                         'id' => $author->getId(),
                         'pseudo' => $author->getPseudo(),
@@ -101,10 +112,11 @@ class PostController extends AbstractController
             } else {
                 $isCensored = $post->isCensor();
     
-                $postsArray[] = [
+                $feedItems[] = [
+                    'type' => 'post',
                     'id' => $post->getId(),
                     'content' => $isCensored ? 'Ce contenu a été censuré.' : $post->getContent(),
-                    'createdAt' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
+                    'created_at' => $post->getCreatedAt()->format('Y-m-d H:i:s'),
                     'user' => [
                         'id' => $author->getId(),
                         'pseudo' => $author->getPseudo(),
@@ -114,21 +126,61 @@ class PostController extends AbstractController
                     'media' => $isCensored ? [] : $post->getMedia(),
                     'count' => count($post->getResponds()),
                     'censor' => $isCensored,
+                    'readOnly' => $author->isReadOnly(),
+                    'pinned' =>  $post->isPin(),
                 ];
             }
         }
-    
+        foreach ($reposts as $repost) {
+            
+            $original = $repost->getPostId();
+            $isCensored = $original->isCensor();
+            $feedItems[] = [
+                'type' => 'repost',
+                'created_at' => $repost->getCreatedAt()->format('Y-m-d H:i:s'),
+                'repost_id' => $repost->getId(),
+                'user' => $repost->getUserId()->getPseudo(),
+                'pdp' => $repost->getUserId()->getPdp(),
+                'user_id' => $repost->getUserId()->getId(),
+                'comment' => $repost->getComment(),
+                'original_post' => [
+                    'post_id' => $original->getId(),
+                    'author' => $original->getUser()->getPseudo(),
+                    'user_id' => $post->getUser()->getId(),
+                    'pdp' => $original->getUser()->getPdp(),
+                    'content' =>  $isCensored ? 'Ce contenu a été censuré.' : $original->getContent(),
+                    'media' => $isCensored ? [] : $original->getMedia(),
+                    'created_at' => $original->getCreatedAt()->format('Y-m-d H:i:s'),
+                    'censor' => $isCensored,
+                ]
+            ];
+        }
+
+        if ($userId) {         
+            usort($feedItems, function($a, $b) {
+                $aPinned = $a['type'] === 'post' && isset($a['pinned']) ? $a['pinned'] : false;
+                $bPinned = $b['type'] === 'post' && isset($b['pinned']) ? $b['pinned'] : false;
+                
+                if ($aPinned !== $bPinned) {
+                    return $bPinned <=> $aPinned; 
+                }
+                
+                return strtotime($b['created_at']) <=> strtotime($a['created_at']);
+            });
+        } else {
+            usort($feedItems, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
+        }
+
         return $this->json([
-            'posts' => $postsArray,
-            'previous_page' => $previousPage,
-            'next_page' => $nextPage,
-            'total' => $totalPostsCount,
+            'items' => array_slice($feedItems, 0, $limit),
+            'page' => $page,
+            'limit' => $limit
         ]);
     }
     
     #[Route('', name: 'api_posts_create', methods: ['POST'])]
-public function create(Request $request, EntityManagerInterface $em): JsonResponse
-{
+    public function create(Request $request, EntityManagerInterface $em): JsonResponse
+    {
     $user = $this->getUser();
     if (!$user instanceof \App\Entity\User) {
         return $this->json(['error' => 'Unauthorized'], 401);
@@ -222,24 +274,40 @@ public function create(Request $request, EntityManagerInterface $em): JsonRespon
     }
     
     #[Route('/{id}', name: 'patch_post', methods: ['POST', 'PATCH'])]
-    public function patch(Post $post, EntityManagerInterface $em, Request $request, TokenStorageInterface $tokenStorage): JsonResponse {
+    public function patch(
+        Post $post,
+        EntityManagerInterface $em,
+        Request $request,
+        TokenStorageInterface $tokenStorage
+    ): JsonResponse {
         $user = $tokenStorage->getToken()->getUser();
+    
         if (!$user instanceof \App\Entity\User) {
             return new JsonResponse(['error' => 'Unauthorized'], 401);
         }
+    
         if ($post->getUser()->getId() !== $user->getId()) {
             return new JsonResponse(['error' => 'Vous n’êtes pas autorisé à modifier ce post'], 403);
         }
+    
+        if ($request->get('pin') !== null) {
+            $newPin = filter_var($request->get('pin'), FILTER_VALIDATE_BOOLEAN);
+            $post->setPin($newPin);
+            $em->flush();
+            
+            return new JsonResponse(['success' => true, 'pin' => $post->isPin()]);
+        }
         
+    
         $content = $request->request->get('content') ?: $request->get('content');
         if (empty(trim($content))) {
             return new JsonResponse(['error' => 'Content cannot be empty'], Response::HTTP_BAD_REQUEST);
         }
+    
         $post->setContent($content);
-        
         $mediaFiles = $request->files->get('media');
         $currentMedia = $post->getMedia() ?: [];
-        
+    
         if ($mediaFiles) {
             if (!is_array($mediaFiles)) {
                 $mediaFiles = [$mediaFiles];
@@ -257,25 +325,24 @@ public function create(Request $request, EntityManagerInterface $em): JsonRespon
                 }
             }
         }
-        
+    
         $removedMedia = $request->request->get('removedMedia');
         if ($removedMedia) {
             $removedMedia = json_decode($removedMedia, true);
             if (is_array($removedMedia)) {
-                $currentMedia = array_filter($currentMedia, function ($mediaUrl) use ($removedMedia) {
-                    return !in_array($mediaUrl, $removedMedia);
-                });
+                $currentMedia = array_filter($currentMedia, fn($url) => !in_array($url, $removedMedia));
                 $currentMedia = array_values($currentMedia);
             }
         }
-
+    
         if ($request->request->has('censor')) {
             $post->setCensor(filter_var($request->request->get('censor'), FILTER_VALIDATE_BOOLEAN));
         }
-
+    
         $post->setMedia($currentMedia);
         $em->flush();
-        
+    
         return new JsonResponse(['success' => true]);
     }
 }
+    

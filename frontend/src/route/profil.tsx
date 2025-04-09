@@ -23,14 +23,13 @@ export default function ProfilPage() {
 
   const loadMyPosts = async (page: number) => {
     if (!user) return { posts: [], next_page: null };
-
-    const data = await loadPosts(page, false);
+  
+    const data = await loadPosts(page, false, user.id);
     return {
-      posts: data.posts.filter((post) => post.user.id === user.id),
+      posts: data.posts,
       next_page: data.next_page,
     };
   };
-
   useEffect(() => {
     const fetchData = async () => {
       try {

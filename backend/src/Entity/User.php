@@ -96,6 +96,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?bool $readOnly = null;
 
+    /**
+     * @var Collection<int, Reposts>
+     */
+    #[ORM\OneToMany(targetEntity: Repost::class, mappedBy: 'user')]
+    private Collection $reposts;
+
     public function __construct()
     {
         $this->accessTokens = new ArrayCollection();
@@ -103,6 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->responds = new ArrayCollection();
         $this->blockeds = new ArrayCollection();
         $this->blockers = new ArrayCollection();
+        $this->reposts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -461,4 +468,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+/**
+ * @return Collection<int, Repost>
+ */
+
+
+public function getReposts(): Collection
+{
+    return $this->reposts;
+}
+
+public function addRepost(Repost $repost): static
+{
+    if (!$this->reposts->contains($repost)) {
+        $this->reposts->add($repost);
+        $repost->setUser($this);
+    }
+
+    return $this;
+}
+
+public function removeRepost(Repost $repost): static
+{
+    if ($this->reposts->removeElement($repost)) {
+        if ($repost->getUser() === $this) {
+            $repost->setUser(null);
+        }
+    }
+    return $this;
+}
+
 }
