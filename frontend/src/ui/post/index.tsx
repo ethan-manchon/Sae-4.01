@@ -11,6 +11,7 @@ import Pin from "../pin";
 import { EditSvg, AnswerSvg, PinSvg } from "../../assets/svg/svg";
 import { usePopover } from "../popover/context";
 import Retweet from "../retweet";
+import { parseContent } from "../parseContent"; 
 
 interface PostProps {
   pseudo: string;
@@ -171,6 +172,7 @@ export default function Post({
                               src={`http://localhost:8080/${url}`}
                               alt={`media-${index}`}
                               className="h-auto w-full rounded object-cover"
+                              loading="lazy"
                             />
                           )}
                           <Button
@@ -254,7 +256,7 @@ export default function Post({
             </>
           ) : (
             <Content className={banned ? "text-element" : ""}>
-              {newContent}
+              {parseContent(content)}
             </Content>
           )}
         </div>

@@ -13,8 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/users')]
 class UserController extends AbstractController
 {
-    #[Route('', name: 'api_me', methods: ['GET'])]
-    public function me(): JsonResponse
+    #[Route('', name: 'api_index_user', methods: ['GET'])]
+    public function index(): JsonResponse
     {
         $user = $this->getUser();
 
@@ -37,8 +37,8 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{pseudo}', name: 'api_profil', methods: ['GET'])]
-    public function profil(string $pseudo, UserRepository $userRepository): JsonResponse
+    #[Route('/{pseudo}', name: 'api_get_user', methods: ['GET'])]
+    public function get(string $pseudo, UserRepository $userRepository): JsonResponse
     {
         $user = $userRepository->findOneBy(['pseudo' => $pseudo]);
 
@@ -59,7 +59,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'api_user_update', methods: ['PATCH'])]
+    #[Route('/{id}', name: 'api_update_user', methods: ['PATCH'])]
     public function update(Request $request, UserRepository $userRepository, EntityManagerInterface $em, int $id): JsonResponse
     {
         $currentUser = $this->getUser();

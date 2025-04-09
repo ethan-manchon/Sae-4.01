@@ -507,7 +507,7 @@
     </service>
     <service id="argument_resolver.service" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">
       <tag priority="-50" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\ServiceValueResolver">controller.argument_value_resolver</tag>
-      <argument type="service" id=".service_locator._O.8ZCV"/>
+      <argument type="service" id=".service_locator.rItB5JL"/>
     </service>
     <service id="argument_resolver.default" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">
       <tag priority="-100" name="Symfony\Component\HttpKernel\Controller\ArgumentResolver\DefaultValueResolver">controller.argument_value_resolver</tag>
@@ -2013,7 +2013,7 @@
     </service>
     <service id="argument_resolver.not_tagged_controller" class="Symfony\Component\HttpKernel\Controller\ArgumentResolver\NotTaggedControllerValueResolver">
       <tag name="controller.argument_value_resolver" priority="-200"/>
-      <argument type="service" id=".service_locator._O.8ZCV"/>
+      <argument type="service" id=".service_locator.rItB5JL"/>
     </service>
     <service id="routing.resolver" class="Symfony\Component\Config\Loader\LoaderResolver">
       <call method="addLoader">
@@ -6192,6 +6192,26 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.mlMhPL1" method="withContext"/>
     </service>
+    <service id=".service_locator.jcYtTcg.App\Controller\Api\PostController::searchByHashtag()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::searchByHashtag()"/>
+      <argument>App\Controller\Api\PostController::searchByHashtag()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.jcYtTcg" method="withContext"/>
+    </service>
+    <service id=".service_locator.hLvJhZ4" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator"/>
+      <argument type="collection">
+        <argument key="postRepository" type="service_closure" id="App\Repository\PostRepository"/>
+        <argument key="repostRepository" type="service_closure" id="App\Repository\RepostRepository"/>
+        <argument key="security" type="service_closure" id="security.helper"/>
+      </argument>
+    </service>
+    <service id=".service_locator.hLvJhZ4.App\Controller\Api\PostController::searchPosts()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\PostController::searchPosts()"/>
+      <argument>App\Controller\Api\PostController::searchPosts()</argument>
+      <argument type="service" id="service_container"/>
+      <factory service=".service_locator.hLvJhZ4" method="withContext"/>
+    </service>
     <service id=".service_locator.TlmNs2r" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
@@ -6327,9 +6347,9 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.8ZSKOQS" method="withContext"/>
     </service>
-    <service id=".service_locator.OzEre6h.App\Controller\Api\UserController::profil()" class="Symfony\Component\DependencyInjection\ServiceLocator">
-      <tag name="container.service_locator_context" id="App\Controller\Api\UserController::profil()"/>
-      <argument>App\Controller\Api\UserController::profil()</argument>
+    <service id=".service_locator.OzEre6h.App\Controller\Api\UserController::get()" class="Symfony\Component\DependencyInjection\ServiceLocator">
+      <tag name="container.service_locator_context" id="App\Controller\Api\UserController::get()"/>
+      <argument>App\Controller\Api\UserController::get()</argument>
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.OzEre6h" method="withContext"/>
     </service>
@@ -6384,7 +6404,7 @@
       <argument type="service" id="service_container"/>
       <factory service=".service_locator.g2TMuy3" method="withContext"/>
     </service>
-    <service id=".service_locator._O.8ZCV" class="Symfony\Component\DependencyInjection\ServiceLocator">
+    <service id=".service_locator.rItB5JL" class="Symfony\Component\DependencyInjection\ServiceLocator">
       <tag name="container.service_locator"/>
       <argument type="collection">
         <argument key="kernel::registerContainerConfiguration" type="service_closure" id=".service_locator.zHyJIs5.kernel::registerContainerConfiguration()"/>
@@ -6410,6 +6430,8 @@
         <argument key="App\Controller\Api\PostController::create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()"/>
         <argument key="App\Controller\Api\PostController::delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
         <argument key="App\Controller\Api\PostController::patch" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::patch()"/>
+        <argument key="App\Controller\Api\PostController::searchByHashtag" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::searchByHashtag()"/>
+        <argument key="App\Controller\Api\PostController::searchPosts" type="service_closure" id=".service_locator.hLvJhZ4.App\Controller\Api\PostController::searchPosts()"/>
         <argument key="App\Controller\Api\RepostController::get" type="service_closure" id=".service_locator.TlmNs2r.App\Controller\Api\RepostController::get()"/>
         <argument key="App\Controller\Api\RepostController::create" type="service_closure" id=".service_locator.8mF5PJs.App\Controller\Api\RepostController::create()"/>
         <argument key="App\Controller\Api\RepostController::delete" type="service_closure" id=".service_locator.Lssp7VG.App\Controller\Api\RepostController::delete()"/>
@@ -6423,7 +6445,7 @@
         <argument key="App\Controller\Api\SubscribeController::subscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::subscribe()"/>
         <argument key="App\Controller\Api\SubscribeController::unsubscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::unsubscribe()"/>
         <argument key="App\Controller\Api\SubscribeController::checkIfBlocked" type="service_closure" id=".service_locator.8ZSKOQS.App\Controller\Api\SubscribeController::checkIfBlocked()"/>
-        <argument key="App\Controller\Api\UserController::profil" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\UserController::profil()"/>
+        <argument key="App\Controller\Api\UserController::get" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\UserController::get()"/>
         <argument key="App\Controller\Api\UserController::update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Api\UserController::update()"/>
         <argument key="App\Controller\Api\UserController::uploadPdp" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\UserController::uploadPdp()"/>
         <argument key="App\Controller\Api\UserController::uploadBanner" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\UserController::uploadBanner()"/>
@@ -6451,6 +6473,8 @@
         <argument key="App\Controller\Api\PostController:create" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\PostController::create()"/>
         <argument key="App\Controller\Api\PostController:delete" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::delete()"/>
         <argument key="App\Controller\Api\PostController:patch" type="service_closure" id=".service_locator.mlMhPL1.App\Controller\Api\PostController::patch()"/>
+        <argument key="App\Controller\Api\PostController:searchByHashtag" type="service_closure" id=".service_locator.jcYtTcg.App\Controller\Api\PostController::searchByHashtag()"/>
+        <argument key="App\Controller\Api\PostController:searchPosts" type="service_closure" id=".service_locator.hLvJhZ4.App\Controller\Api\PostController::searchPosts()"/>
         <argument key="App\Controller\Api\RepostController:get" type="service_closure" id=".service_locator.TlmNs2r.App\Controller\Api\RepostController::get()"/>
         <argument key="App\Controller\Api\RepostController:create" type="service_closure" id=".service_locator.8mF5PJs.App\Controller\Api\RepostController::create()"/>
         <argument key="App\Controller\Api\RepostController:delete" type="service_closure" id=".service_locator.Lssp7VG.App\Controller\Api\RepostController::delete()"/>
@@ -6464,7 +6488,7 @@
         <argument key="App\Controller\Api\SubscribeController:subscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::subscribe()"/>
         <argument key="App\Controller\Api\SubscribeController:unsubscribe" type="service_closure" id=".service_locator.1vFMvPs.App\Controller\Api\SubscribeController::unsubscribe()"/>
         <argument key="App\Controller\Api\SubscribeController:checkIfBlocked" type="service_closure" id=".service_locator.8ZSKOQS.App\Controller\Api\SubscribeController::checkIfBlocked()"/>
-        <argument key="App\Controller\Api\UserController:profil" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\UserController::profil()"/>
+        <argument key="App\Controller\Api\UserController:get" type="service_closure" id=".service_locator.OzEre6h.App\Controller\Api\UserController::get()"/>
         <argument key="App\Controller\Api\UserController:update" type="service_closure" id=".service_locator.OA38qqg.App\Controller\Api\UserController::update()"/>
         <argument key="App\Controller\Api\UserController:uploadPdp" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\UserController::uploadPdp()"/>
         <argument key="App\Controller\Api\UserController:uploadBanner" type="service_closure" id=".service_locator.Kq27LHM.App\Controller\Api\UserController::uploadBanner()"/>
@@ -8148,7 +8172,7 @@
     <service id="SymfonyCasts\Bundle\VerifyEmail\VerifyEmailHelperInterface" alias="symfonycasts.verify_email.helper"/>
     <service id="container.env_var_processors_locator" alias=".service_locator.pRu6x_4" public="true"/>
     <service id="twig.loader.filesystem" alias="twig.loader.native_filesystem"/>
-    <service id="argument_resolver.controller_locator" alias=".service_locator._O.8ZCV"/>
+    <service id="argument_resolver.controller_locator" alias=".service_locator.rItB5JL"/>
     <service id="twig.loader" alias="twig.loader.native_filesystem"/>
     <service id="doctrine.id_generator_locator" alias=".service_locator.BxSdgVt"/>
     <service id="Psr\Log\LoggerInterface" alias="logger"/>
@@ -8180,6 +8204,7 @@
     <service id=".service_locator.UArOlwz" alias=".service_locator.8ZSKOQS"/>
     <service id=".service_locator.4ucJ3up" alias=".service_locator.dAnfuH_"/>
     <service id=".service_locator.HQZddX8" alias=".service_locator.Kq27LHM"/>
+    <service id=".service_locator.ZWJopSm" alias=".service_locator.hLvJhZ4"/>
     <service id=".service_locator.ZPL.HTI" alias=".service_locator.TlmNs2r"/>
     <service id=".service_locator.yUdn9WP" alias=".service_locator.8mF5PJs"/>
     <service id=".service_locator.ZPP_WkU" alias=".service_locator.Lssp7VG"/>

@@ -207,3 +207,67 @@ export async function publishPost(data) {
     return { error: error.message };
   }
 }
+
+export async function searchByHashtag(tag, page = 1) {
+  console.log("Tag:", tag);
+  console.log("Page:", page);
+  const headers = getTokenHeaders();
+  if (!headers) return { posts: [], error: "Unauthorized" };
+
+  try {
+    const response = await fetch(`${API_BASE}/hashtag/${tag}?page=${page}`, {
+      method: "GET",
+      headers
+    });
+    if (!response.ok) throw new Error("Failed to search posts by hashtag");
+
+    const result = await response.json();
+    
+    return {
+      posts: result.items || [],
+      next_page: result.items && result.items.length === 10 ? page + 1 : null
+    };
+  } catch (error) {
+    console.error("Error searching posts by hashtag:", error);
+    return { posts: [], next_page: null, error: error.message };
+  }
+}
+
+export async function searchPosts({
+  page = 1,
+  query = "",
+  user = "",
+  type = "",
+  date = "",
+}) {
+  const params = new URLSearchParams({ page: String(page) });
+
+  if (query?.trim()) params.append("query", query.trim());
+  if (user) params.append("user", user);
+  if (type) params.append("type", type);
+  if (date) params.append("date", date);
+
+  try {
+    const token = localStorage.getItem("token");
+    const res = await fetch(`${API_BASE}/search?${params.toString()}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
+    });
+
+    if (!res.ok) throw new Error("Erreur lors de la recherche des posts");
+
+    const result = await res.json();
+
+    return {
+      posts: result.items || [],
+      next_page: result.items.length === 10 ? page + 1 : null,
+    };
+  } catch (e) {
+    console.error("Erreur searchPosts :", e.message);
+    return { posts: [], next_page: null, error: e.message };
+  }
+}
+

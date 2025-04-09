@@ -3,7 +3,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../lib/utils";
 
 interface ContentDataProps {
-    children?: string;
+    children?:  React.ReactNode;
 }
 
 interface ContentStyleProps {

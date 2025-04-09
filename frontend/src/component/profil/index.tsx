@@ -32,8 +32,12 @@ export default function ProfilComponent({ user, type }: UserProps) {
     return <div>Default</div>;
   }
 
-  const bannerImage =
-    "/assets/banner/" + user.banniere || "/assets/banner/default.webp";
+  let bannerImage ;
+  if (user.banniere === null || user.banniere === "" || user.banniere === undefined) {
+    bannerImage = "/assets/banner/default.webp"
+  } else {
+    bannerImage = "/assets/banner/" + user.banniere
+  }
 
   const [bioState, setBioState] = useState(!!user.bio);
   const [locateState, setLocateState] = useState(!!user.locate);

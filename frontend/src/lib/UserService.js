@@ -2,6 +2,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 const API_BASE = API_URL + "/api/users";
 const ADMIN_BASE = API_URL + "/admin/users";
 
+let cachedMe = null;
+
 function getTokenHeaders() {
   const token = localStorage.getItem("token");
   return token
@@ -59,13 +61,17 @@ export async function patchUsers(id, patch) {
 }
 
 export async function loadMe() {
+  if (cachedMe) return cachedMe;
+  
   const headers = getTokenHeaders();
   if (!headers) return null;
-
+  
   try {
     const response = await fetch(`${API_BASE}`, { headers });
-    if (!response.ok) throw new Error("Unauthorized");
-    return await response.json();
+    if (!response.ok) throw new Error("Erreur de chargement de profil");
+    const user = await response.json();
+    cachedMe = user;
+    return user;
   } catch (error) {
     console.error("Error loading user:", error);
     return null;

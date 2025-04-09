@@ -39,6 +39,7 @@ class PostController extends AbstractController
         RepostRepository $repostRepo,
         UserRepository $userRepo,
         SubscribeRepository $subscribeRepo
+
     ): JsonResponse {
         $user = $this->getUser();
 
@@ -56,13 +57,14 @@ class PostController extends AbstractController
                 return $this->json(['error' => 'User not found'], 404);
             }
             $usersToInclude[] = $profileUser;
-        } elseif ($subscribe) {
-            $subscriptions = $subscribeRepo->findBy(['subscriber' => $user]);
-            foreach ($subscriptions as $sub) {
-                $usersToInclude[] = $sub->getFollowed();
-            }
-            $usersToInclude[] = $user;
-        } else {
+        } else if ($subscribe) {
+            $user = $this->getUser();
+    
+            $subscriptions = $subscribeRepo->findBy(['follower' => $user]);
+            $followedUsers = array_map(fn($sub) => $sub->getFollowing(), $subscriptions);
+
+            $usersToInclude = array_merge($followedUsers);
+         } else {
             $usersToInclude = $userRepo->findAll();
         }
 
@@ -146,7 +148,7 @@ class PostController extends AbstractController
                 'original_post' => [
                     'post_id' => $original->getId(),
                     'author' => $original->getUser()->getPseudo(),
-                    'user_id' => $post->getUser()->getId(),
+                    'user_id' => $original->getUser()->getId(),
                     'pdp' => $original->getUser()->getPdp(),
                     'content' =>  $isCensored ? 'Ce contenu a été censuré.' : $original->getContent(),
                     'media' => $isCensored ? [] : $original->getMedia(),
@@ -344,5 +346,181 @@ class PostController extends AbstractController
     
         return new JsonResponse(['success' => true]);
     }
+    #[Route('/hashtag/{tag}', name: 'api_hashtag', methods: ['GET'])]
+public function searchByHashtag(PostRepository $postRepository, string $tag, Request $request): JsonResponse
+{
+    $page = max(1, (int) $request->query->get('page', 1));
+    $limit = 10;
+    $offset = ($page - 1) * $limit;
+
+    $queryBuilder = $postRepository->createQueryBuilder('p')
+        ->where('p.content LIKE :tag')
+        ->setParameter('tag', '%#' . $tag . '%')
+        ->orderBy('p.created_at', 'DESC')
+        ->setFirstResult($offset)
+        ->setMaxResults($limit);
+
+    $posts = $queryBuilder->getQuery()->getResult();
+
+    $items = array_map(function ($post) {
+        return [
+            'id' => $post->getId(),
+            'content' => $post->getContent(),
+            'created_at' => $post->getCreatedAt()->format('c'),
+            'user' => [
+                'id' => $post->getUser()->getId(),
+                'pseudo' => $post->getUser()->getPseudo(),
+                'pdp' => $post->getUser()->getPdp()
+            ],
+            'media' => $post->getMedia(), 
+            'censor' => $post->isCensor(),
+            'banned' => $post->getUser()->isBanned(),
+        ];
+    }, $posts);
+
+    return $this->json([
+        'items' => $items
+    ]);
+}
+#[Route('/search', name: 'api_posts_search', methods: ['GET'])]
+public function searchPosts(
+    Request $request,
+    PostRepository $postRepository,
+    RepostRepository $repostRepository,
+    Security $security
+): JsonResponse {
+    $query = $request->query->get('query', '');
+    $userFilter = $request->query->get('user', '');
+    $typeFilter = $request->query->get('type', '');
+    $dateFilter = $request->query->get('date', '');
+    $page = max(1, (int)$request->query->get('page', 1));
+    $limit = 10;
+    $offset = ($page - 1) * $limit;
+
+    $user = $security->getUser();
+
+    $items = [];
+
+    if ($typeFilter === '' || $typeFilter === 'post') {
+        $posts = $postRepository->createQueryBuilder('p')
+            ->leftJoin('p.user', 'u')
+            ->addSelect('u')
+            ->where('p.censor = false')
+            ->orderBy('p.created_at', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        if ($query) {
+            $posts->andWhere('p.content LIKE :query')
+                ->setParameter('query', '%' . $query . '%');
+        }
+
+        if ($userFilter === 'me' && $user) {
+            $posts->andWhere('p.user = :me')->setParameter('me', $user);
+        } elseif ($userFilter === 'other' && $user) {
+            $posts->andWhere('p.user != :me')->setParameter('me', $user);
+        }
+
+        if ($dateFilter) {
+            $start = \DateTime::createFromFormat('Y-m-d', $dateFilter);
+            if ($start) {
+                $end = (clone $start)->modify('+1 day');
+                $posts->andWhere('p.created_at >= :start AND p.created_at < :end')
+                      ->setParameter('start', $start)
+                      ->setParameter('end', $end);
+            }
+        }
+        
+
+        foreach ($posts->getQuery()->getResult() as $post) {
+            $u = $post->getUser();
+            if ($u?->isBanned()) continue;
+
+            $items[] = [
+                'type' => 'post',
+                'id' => $post->getId(),
+                'content' => $post->getContent(),
+                'created_at' => $post->getCreatedAt()?->format('c'),
+                'censor' => $post->isCensor(),
+                'media' => $post->getMedia(),
+                'user' => [
+                    'id' => $u->getId(),
+                    'pseudo' => $u->getPseudo(),
+                    'pdp' => $u->getPdp(),
+                    'banned' => $u->isBanned(),
+                    'readOnly' => $user->isReadOnly(),
+                ]
+            ];
+        }
+    }
+
+    if ($typeFilter === '' || $typeFilter === 'repost') {
+        $reposts = $repostRepository->createQueryBuilder('r')
+            ->leftJoin('r.user', 'u')
+            ->leftJoin('r.post', 'o')
+            ->leftJoin('o.user', 'ou')
+            ->addSelect('u', 'o', 'ou')
+            ->orderBy('r.created_at', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        if ($query) {
+            $reposts->andWhere('r.content LIKE :query')
+                ->setParameter('query', '%' . $query . '%');
+        }
+
+        if ($userFilter === 'me' && $user) {
+            $reposts->andWhere('r.user = :me')->setParameter('me', $user);
+        } elseif ($userFilter === 'other' && $user) {
+            $reposts->andWhere('r.user != :me')->setParameter('me', $user);
+        }
+
+        if ($dateFilter) {
+            $start = \DateTime::createFromFormat('Y-m-d', $dateFilter);
+            if ($start) {
+                $end = (clone $start)->modify('+1 day');
+                $posts->andWhere('r.created_at >= :start AND r.created_at < :end')
+                      ->setParameter('start', $start)
+                      ->setParameter('end', $end);
+            }
+        }
+        
+        foreach ($reposts->getQuery()->getResult() as $r) {
+            $author = $r->getUserId();
+            $original = $r->getPostId();
+            $originalUser = $original?->getUser();
+
+            if (!$original || !$originalUser || $author?->isBanned() || $originalUser->isBanned()) continue;
+
+            $items[] = [
+                'type' => 'repost',
+                'repost_id' => $r->getId(),
+                'user_id' => $author->getId(),
+                'user' => $author->getPseudo(),
+                'pdp' => $author->getPdp(),
+                'comment' => $r->getComment(),
+                'created_at' => $r->getCreatedAt()?->format('c'),
+                'original_post' => [
+                    'post_id' => $original->getId(),
+                    'author' => $originalUser->getPseudo(),
+                    'user_id' => $originalUser->getId(),
+                    'pdp' => $originalUser->getPdp(),
+                    'content' => $original->getContent(),
+                    'created_at' => $original->getCreatedAt()?->format('c'),
+                    'media' => $original->getMedia(),
+                    'censor' => $original->isCensor(),
+                ]
+            ];
+        }
+    }
+
+    usort($items, fn($a, $b) => strtotime($b['created_at']) <=> strtotime($a['created_at']));
+
+    $items = array_slice($items, 0, $limit);
+
+    return $this->json(['items' => $items]);
+}
+
+
 }
     

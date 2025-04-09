@@ -14,7 +14,7 @@ export default function Picture({ pdp, pseudo, link, className }: PictureProps) 
 
     return ( 
         <Button variant="transparent" link={link} className={`flex items-center gap-2 h-12 }`}>
-            <img src={`http://localhost:8080/${profilePicture}`} alt="Photo de profil" className={`w-12 h-12 rounded-full border-2 shadow-md ${className}`}/>
+            <img src={`http://localhost:8080/${profilePicture}`} alt="Photo de profil" className={`w-12 h-12 rounded-full border-2 shadow-md ${className}`} loading="lazy"/>
             <Content>{pseudo}</Content>
         </Button>
     );

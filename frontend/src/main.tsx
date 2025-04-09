@@ -8,6 +8,7 @@ import Login from "./route/login.tsx";
 import BackOffice from "./route/backoffice.tsx";
 import Profil from "./route/profil.tsx";
 import Feed from "./route/feed.tsx";
+import Search from "./route/search.tsx";
 
 import ProtectedRoute from "./component/protectedRoute/index.tsx";
 import ProtectedRouteAdmin from "./component/protectedRouteAdmin/index.tsx";
@@ -50,6 +51,16 @@ const router = createBrowserRouter([
       <ProtectedRoute>
         <PopoverProvider>
           <Profil />
+        </PopoverProvider>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/search/:tag",
+    element: (
+      <ProtectedRoute>
+        <PopoverProvider>
+          <Search />
         </PopoverProvider>
       </ProtectedRoute>
     ),

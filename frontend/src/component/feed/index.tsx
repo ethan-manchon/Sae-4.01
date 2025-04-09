@@ -1,157 +1,174 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import Post from "../../ui/post/index";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import Repost from "../../ui/repost";
-import Error from "../../ui/error";
+import Post from "../../ui/post";
+import ErrorMessage from "../../ui/error";  // Renommé 'Error' en 'ErrorMessage' pour éviter toute confusion
 import { loadMe } from "../../lib/UserService";
 
 interface FeedDataProps {
-  loader: (
-    page: number,
-    subscribe?: boolean,
-  ) => Promise<{ posts: any[]; next_page: number | null }>;
+  loader: (page: number, subscribe?: boolean) => Promise<{ posts: any[]; next_page: number | null }>;
   refresh?: boolean;
   subscribe?: boolean;
 }
-
 interface FeedStyleProps {
   className?: string;
 }
-
 type FeedProps = FeedDataProps & FeedStyleProps;
 
-export default function Feeds({
-  loader,
-  refresh,
-  className,
-  subscribe,
-}: FeedProps) {
+export default function Feed({ loader, refresh = false, subscribe = false, className = "" }: FeedProps) {
   const [posts, setPosts] = useState<any[]>([]);
-  const [error, setError] = useState("");
   const [nextPage, setNextPage] = useState<number | null>(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
   const [meId, setMeId] = useState<number | null>(null);
-  const observer = useRef<IntersectionObserver | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   const fetchPosts = useCallback(
     async (page: number) => {
       try {
         const data = await loader(page, subscribe);
-        setPosts((prev) => {
-          const existingIds = new Set(prev.map((post) => post.id));
-          const newPosts =
-            data.posts?.filter((post) => !existingIds.has(post.id)) || [];
-          return [...prev, ...newPosts];
+        setPosts(prevPosts => {
+          const prevIds = new Set(prevPosts.map(p => p.id));
+          const newPosts = data.posts?.filter(p => !prevIds.has(p.id)) || [];
+          return [...prevPosts, ...newPosts];
         });
         setNextPage(data.next_page);
       } catch (err: any) {
-        console.error("Loading error:", err);
-        setError("Error loading posts: " + err.message);
+        console.error("Erreur chargement posts:", err);
+        setError(`Erreur lors du chargement des posts : ${err.message}`);
+        setNextPage(null);
       } finally {
         setLoading(false);
       }
     },
-    [loader],
+    [loader, subscribe] 
   );
 
   useEffect(() => {
-    if (nextPage === 1) {
-      fetchPosts(1);
-    }
-  }, [fetchPosts, nextPage]);
+    let ignore = false;
+  
+    const load = async () => {
+      setError("");
+      setLoading(true);
+      const data = await loader(1, subscribe);
+      if (!ignore) {
+        setPosts(data.posts);
+        setNextPage(data.next_page);
+        setLoading(false);
+      }
+    };
+  
+    load();
+  
+    return () => {
+      ignore = true;
+      if (observerRef.current) observerRef.current.disconnect();
+    };
+  }, [loader, subscribe]);
+  
 
   useEffect(() => {
     if (refresh) {
-      setPosts([]);
-      setNextPage(1);
-      setLoading(true);
+      const load = async () => {
+        setError("");
+        setLoading(true);
+        const data = await loader(1, subscribe);
+        setPosts(data.posts);
+        setNextPage(data.next_page);
+        setLoading(false);
+      };
+      load();
     }
-  }, [refresh]);
+  }, [refresh, fetchPosts]);
 
   useEffect(() => {
-    async function fetchMe() {
-      const me = await loadMe();
-      setMeId(me.id);
-    }
+    let mounted = true;
+    loadMe().then(me => {
+      if (mounted && me) {
+        setMeId(me.id);
+      }
+    }).catch(err => {
+      console.error("Erreur chargement profil:", err);
+    });
+    return () => { mounted = false; };
+  }, []);  // une seule fois au montage
 
-    fetchMe();
-  }, []);
-
-  const lastPostRef = useCallback(
-    (node) => {
-      if (loading || !nextPage) return;
-      if (observer.current) observer.current.disconnect();
-
-      observer.current = new IntersectionObserver((entries) => {
+  const lastPostRef = useCallback((node: HTMLDivElement | null) => {
+    if (loading) return;
+    if (observerRef.current) observerRef.current.disconnect();
+    if (node && nextPage) {
+      observerRef.current = new IntersectionObserver(entries => {
         if (entries[0].isIntersecting) {
           fetchPosts(nextPage);
         }
       });
-
-      if (node) observer.current.observe(node);
-    },
-    [loading, nextPage, fetchPosts],
-  );
+      observerRef.current.observe(node);
+    }
+  }, [loading, nextPage, fetchPosts]);
 
   return (
-    <>
-      <ul className={`flex flex-col items-center ${className || ""}`}>
-        {meId === null ? (
-          <p className="text-center text-fg">Chargement de votre profil...</p>
-        ) : posts.length > 0 ? (
-          posts.map((item, index) =>
-            item.type === "repost" ? (
-              <Repost
-                key={`repost-${item.original_post.post_id}-${index}`}
-                repostUser={{ pseudo: item.user, pdp: item.pdp, id: item.user_id}}
-                comment={item.comment}
-                created_at={item.created_at}
-                postId={item.original_post.post_id}
-                pdp={item.original_post.pdp}
-                repost_id={item.repost_id}
-                post_id={item.original_post.post_id}
-                pseudo={item.original_post.author}
-                content={item.original_post.content}
-                createdAt={item.original_post.created_at}
-                userId={item.original_post.user_id}
-                meId={meId ?? -1}
-                banned={false}
-                count={1}
-                media={item.original_post.media}
-                censored={item.original_post.censor}
-                onDeleted={() => setPosts((prev) => prev.filter((p) => p.id !== item.original_post.post_id))}
-              />
-            ) : (
-              <Post
-                key={`post-${item.post_id}-${index}`}
-                pdp={item.user.pdp}
-                post_id={item.id}
-                pseudo={item.user.pseudo}
-                content={item.content}
-                createdAt={item.created_at}
-                userId={item.user.id}
-                meId={meId ?? -1}
-                banned={item.banned}
-                count={item.count}
-                media={item.media}                
-                censored={item.censor}
-                readOnly={item.readOnly}
-                pinned={item.pinned}
-                onDeleted={() => setPosts((prev) => prev.filter((p) => p.id !== item.id))}
-              />
-            )
+    <div className={`feed-container ${className}`}>
+      <ul className="feed-list flex flex-col items-center w-full">
+        {posts.map(item => (
+          item.type === "repost" ? (
+            <Repost
+              key={`repost-${item.repost_id}`}
+              repostUser={{ pseudo: item.user, pdp: item.pdp, id: item.user_id }}
+              comment={item.comment}
+              created_at={item.created_at}
+              postId={item.original_post.post_id}
+              pdp={item.original_post.pdp}
+              repost_id={item.repost_id}
+              post_id={item.original_post.post_id}
+              pseudo={item.original_post.author}
+              content={item.original_post.content}
+              createdAt={item.original_post.created_at}
+              userId={item.original_post.user_id}
+              meId={meId ?? -1}
+              banned={false}
+              count={1}
+              media={item.original_post.media}
+              censored={item.original_post.censor}
+              onDeleted={() => setPosts(prev => prev.filter(p => p.id !== item.original_post.post_id))}
+            />
+          ) : (
+            <Post
+              key={`post-${item.id}`}
+              post_id={item.id}
+              pdp={item.user.pdp}
+              pseudo={item.user.pseudo}
+              content={item.content}
+              createdAt={item.created_at}
+              userId={item.user.id}
+              meId={meId ?? -1}
+              banned={item.banned}
+              count={item.count}
+              media={item.media}
+              censored={item.censor}
+              readOnly={item.readOnly}
+              pinned={item.pinned}
+              onDeleted={() => setPosts(prev => prev.filter(p => p.id !== item.id))}
+            />
           )
-        ) : (
-          <p className="text-center text-gray-500">Aucune publication.</p>
+        ))}
+        {!loading && posts.length === 0 && !error && (  /* Aucun post à afficher */
+          <li className="text-center text-gray-500">Aucune publication.</li>
         )}
       </ul>
-      <div ref={lastPostRef} style={{ height: "10px" }} />
-      {posts.length > 0 && !nextPage && (
-        <p className="pb-4 text-center text-element">
-          Vous avez atteint la fin des posts.
-        </p>
+
+      <div ref={lastPostRef} style={{ height: 1 }} />
+
+      {posts.length > 0 && nextPage === null && (
+        <p className="py-2 text-center text-element">Vous avez atteint la fin des posts.</p>
       )}
-      {loading && <p className="text-center text-fg">Chargement...</p>}
-      {error && <Error error={error} />}
-    </>
+
+      {loading && (
+        <p className="py-2 text-center text-fg">Chargement en cours...</p>
+      )}
+
+      {error && (
+        <ErrorMessage error={error} />
+      )}
+    </div>
   );
-}
+};
+
