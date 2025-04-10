@@ -43,35 +43,34 @@ export default function Root() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-element md:flex-row">
-    <NavBar user={user} />
-  
-    <main className="flex flex-1 flex-col items-center px-4 pt-[4.5rem] md:ml-64 md:pt-8">
-      <Publish OnClick={triggerRefresh} />        
-      <div className="w-full max-w-[600px] mt-8 border border-border rounded-lg bg-white shadow-md p-4">
-        
-        <div className="flex flex-col gap-4 mb-6 md:flex-row md:items-center md:justify-between">
-          <Search
-            search={search}
-            setSearch={setSearch}
-            filterUser={filterUser}
-            setFilterUser={setFilterUser}
-            filterType={filterType}
-            setFilterType={setFilterType}
-            filterDate={filterDate}
-            setFilterDate={setFilterDate}
-          />
-  
-          <Button
-            onClick={triggerRefresh}
-            className="self-end md:self-auto w-full md:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary-hover text-white font-semibold py-2 px-4 rounded shadow"
-          >
-            🔄 <span className="hidden md:inline">Rafraîchir</span>
-          </Button>
-        </div>
+    <div className="flex min-h-screen flex-col bg-white text-element lg:flex-row">
+      <NavBar user={user} />
+
+      <main className="flex flex-1 flex-col items-center px-4 pt-[4.5rem] lg:ml-64 lg:pt-8">
+        <Publish OnClick={triggerRefresh} />
+        <div className="mt-8 w-full max-w-[600px] rounded-lg border border-border bg-white p-4 shadow-md">
+          <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <Search
+              search={search}
+              setSearch={setSearch}
+              filterUser={filterUser}
+              setFilterUser={setFilterUser}
+              filterType={filterType}
+              setFilterType={setFilterType}
+              filterDate={filterDate}
+              setFilterDate={setFilterDate}
+            />
+
+            <Button
+              onClick={triggerRefresh}
+              className="flex w-full items-center justify-center gap-2 self-end rounded bg-primary px-4 py-2 font-semibold text-white shadow hover:bg-primary-hover lg:w-auto lg:self-auto"
+            >
+              🔄 <span className="hidden lg:inline">Rafraîchir</span>
+            </Button>
+          </div>
         </div>
 
-        <section className="space-y-4">
+        <section className="w-full space-y-4">
           <Feeds
             refresh={reset}
             loader={(page) =>
@@ -85,8 +84,7 @@ export default function Root() {
             }
           />
         </section>
-    </main>
-  </div>
-  
+      </main>
+    </div>
   );
 }

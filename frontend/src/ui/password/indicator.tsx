@@ -6,7 +6,7 @@ const colors = {
   2: "#D44949",
   3: "#DCA02D",
   4: "#387F95",
-  5: "#48AE65"
+  5: "#48AE65",
 };
 
 const getColor = (power, index) => {
@@ -19,7 +19,7 @@ const getColor = (power, index) => {
 const indicatorIndexes = [0, 1, 2, 3, 4];
 
 const Indicators = ({ score }: { score: number }) => (
-  <div className="mt-2 indicator-container">
+  <div className="indicator-container mt-2">
     {indicatorIndexes.map((indicatorIndex) => (
       <div
         className="indicator"

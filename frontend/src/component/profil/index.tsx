@@ -32,11 +32,15 @@ export default function ProfilComponent({ user, type }: UserProps) {
     return <div>Default</div>;
   }
 
-  let bannerImage ;
-  if (user.banniere === null || user.banniere === "" || user.banniere === undefined) {
-    bannerImage = "/assets/banner/default.webp"
+  let bannerImage;
+  if (
+    user.banniere === null ||
+    user.banniere === "" ||
+    user.banniere === undefined
+  ) {
+    bannerImage = "/assets/banner/default.webp";
   } else {
-    bannerImage = "/assets/banner/" + user.banniere
+    bannerImage = "/assets/banner/" + user.banniere;
   }
 
   const [bioState, setBioState] = useState(!!user.bio);
@@ -67,7 +71,7 @@ export default function ProfilComponent({ user, type }: UserProps) {
       </div>
 
       <div className="mx-auto max-w-[600px] px-6 pt-16 pb-6">
-        <div className="mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <h2 className="text-xl font-semibold text-primary">{user.pseudo}</h2>
           {user.url && (
             <a

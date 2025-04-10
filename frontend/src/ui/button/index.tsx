@@ -9,11 +9,10 @@ interface BtnDataProps {
   onClick?: () => void;
 }
 
-interface BtnStyleProps  {
+interface BtnStyleProps {
   className?: string;
   variant?: "default" | "transparent" | "disabled";
   size?: "default" | "sm" | "lg";
-
 }
 
 type BtnProps = BtnDataProps & BtnStyleProps;
@@ -22,10 +21,10 @@ const buttonVariants = cva("rounded-md font-medium focus:outline-none", {
   variants: {
     variant: {
       default:
-        "bg-primary text-bg shadow-lg hover:bg-primary-hover focus:bg-primary-hover focus:ring-primary-active cursor-pointer focus:underline",
-      disabled: "bg-gray-400 text-light cursor-not-allowed",
+        "cursor-pointer bg-primary text-bg shadow-lg hover:bg-primary-hover focus:bg-primary-hover focus:underline focus:ring-primary-active",
+      disabled: "text-light cursor-not-allowed bg-gray-400",
       transparent:
-        "text-dark hover:underline cursor-pointer focus:underline focus:ring-transparent",
+        "cursor-pointer text-dark hover:underline focus:underline focus:ring-transparent",
     },
     size: {
       default: "h-10 px-4 py-2",
@@ -39,12 +38,18 @@ const buttonVariants = cva("rounded-md font-medium focus:outline-none", {
   },
 });
 
-
-export default function Button({ variant = "default", size = "default", className, children, link, ...props }: BtnProps) {
+export default function Button({
+  variant = "default",
+  size = "default",
+  className,
+  children,
+  link,
+  ...props
+}: BtnProps) {
   if (link) {
     return (
       <Link
-        to={link} 
+        to={link}
         className={cn(buttonVariants({ variant, size }), className)}
         {...props}
       >
@@ -62,5 +67,3 @@ export default function Button({ variant = "default", size = "default", classNam
     </button>
   );
 }
-
-

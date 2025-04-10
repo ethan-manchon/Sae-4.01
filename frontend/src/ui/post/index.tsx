@@ -11,7 +11,7 @@ import Pin from "../pin";
 import { EditSvg, AnswerSvg, PinSvg } from "../../assets/svg/svg";
 import { usePopover } from "../popover/context";
 import Retweet from "../retweet";
-import { parseContent } from "../parseContent"; 
+import { parseContent } from "../parseContent";
 
 interface PostProps {
   pseudo: string;
@@ -61,7 +61,9 @@ export default function Post({
   const [censor, setCensor] = useState<boolean>(censored || false);
   const [noComment, setNoComment] = useState<boolean>(readOnly || false);
   const [pinnedState, setPinnedState] = useState<boolean>(pinned || false);
-  const [readOnlyState, setReadOnlyState] = useState<boolean>(readOnly || false);
+  const [readOnlyState, setReadOnlyState] = useState<boolean>(
+    readOnly || false,
+  );
 
   const handleDeleted = () => {
     setDisappearing(true);
@@ -121,7 +123,9 @@ export default function Post({
       <div className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            {pinned && userId !== meId && <PinSvg className="cursor-default hover:text-primary" />}
+            {pinned && userId !== meId && (
+              <PinSvg className="cursor-default hover:text-primary" />
+            )}
             <Pdp pdp={pdp} pseudo={pseudo} link={`/profil/${pseudo}`} />
             <Date date={createdAt} />
           </div>
@@ -141,7 +145,11 @@ export default function Post({
               >
                 <EditSvg color={editing ? "active" : "default"} />
               </Button>
-              {pinned !== undefined ? <Pin postId={post_id} pinned={pinnedState}/> : ""}
+              {pinned !== undefined ? (
+                <Pin postId={post_id} pinned={pinnedState} />
+              ) : (
+                ""
+              )}
             </div>
           )}
         </div>

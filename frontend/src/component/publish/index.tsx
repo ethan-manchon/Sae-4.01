@@ -21,19 +21,16 @@ export default function Publish({ OnClick }: TweetInputProps) {
   const MAX_MEDIA = 4;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Nettoyage des URLs lors du démontage pour éviter les fuites mémoire
   useEffect(() => {
     return () => {
       media.forEach((m) => URL.revokeObjectURL(m.previewUrl));
     };
   }, [media]);
 
-  // Ouvre l'input file caché
   const addFiles = () => {
     fileInputRef.current?.click();
   };
 
-  // Gestion de la sélection de fichiers, cumulant les fichiers déjà présents
   const handleFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
@@ -48,12 +45,10 @@ export default function Publish({ OnClick }: TweetInputProps) {
         previewUrl: URL.createObjectURL(file),
       }));
       setMedia((prev) => [...prev, ...newMedia]);
-      // Réinitialise l'input pour pouvoir sélectionner à nouveau les mêmes fichiers
       e.target.value = "";
     }
   };
 
-  // Suppression d'un média via son identifiant unique
   const handleRemoveMedia = (id: string) => {
     setMedia((prev) => {
       const updated = prev.filter((item) => {
@@ -70,15 +65,13 @@ export default function Publish({ OnClick }: TweetInputProps) {
     });
   };
 
-  // Envoi du formulaire avec le contenu et les fichiers médias
   async function handlePublish() {
     const formData = new FormData();
     formData.append("content", text);
-    // Remplacez "media" par "media[]" pour envoyer un tableau de fichiers
     media.forEach((item) => {
       formData.append("media[]", item.file);
     });
-  
+
     const result = await publishPost(formData);
     if (!result.error) {
       setText("");
@@ -90,43 +83,44 @@ export default function Publish({ OnClick }: TweetInputProps) {
   }
 
   return (
-    <div className="flex flex-row gap-8 items-center p-4 border shadow border-border rounded-lg w-3/4 md:w-8/9 mx-auto">
-      <div className="flex flex-col grow-1">
+    <div className="mx-1/6 flex w-full flex-row items-center gap-8 rounded-lg border border-border p-4 shadow lg:w-8/9">
+      <div className="flex grow-1 flex-col">
         <input
           type="text"
-          className="bg-bg p-4 border border-border rounded-lg text-fg"
+          className="rounded-lg border border-border bg-bg p-4 text-fg"
           placeholder="Publier un tweet..."
           value={text}
           onChange={(e) => setText(e.target.value.slice(0, maxChars))}
         />
-        <div className={`text-sm text-right ${text.length === 280 ? "text-red" : "text-fg"}`}>
+        <div
+          className={`text-right text-sm ${text.length === 280 ? "text-red" : "text-fg"}`}
+        >
           {`${maxChars - text.length} / 280`}
         </div>
         {errorMessage && (
-          <p className="text-red-500 text-sm mt-1">{errorMessage}</p>
+          <p className="mt-1 text-sm text-red-500">{errorMessage}</p>
         )}
-        {/* Aperçu des fichiers sélectionnés */}
         {media.length > 0 && (
-          <div className="flex gap-2 mt-2 flex-wrap">
+          <div className="mt-2 flex flex-wrap gap-2">
             {media.map((item) => (
               <div key={item.id} className="relative">
                 {item.file.type.startsWith("image/") ? (
                   <img
                     src={item.previewUrl}
                     alt="preview"
-                    className="w-24 h-24 object-cover rounded"
+                    className="h-24 w-24 rounded object-cover"
                   />
                 ) : item.file.type.startsWith("video/") ? (
                   <video
                     src={item.previewUrl}
                     controls
-                    className="w-24 h-24 object-cover rounded"
+                    className="h-24 w-24 rounded object-cover"
                   />
                 ) : null}
                 <button
                   type="button"
                   onClick={() => handleRemoveMedia(item.id)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"
+                  className="absolute top-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs text-white"
                 >
                   X
                 </button>
@@ -135,7 +129,7 @@ export default function Publish({ OnClick }: TweetInputProps) {
           </div>
         )}
       </div>
-      <div className="flex flex-col md:flex-row">
+      <div className="flex flex-col lg:flex-row">
         <Button onClick={addFiles} variant="transparent">
           <PaperClip />
         </Button>

@@ -1,13 +1,16 @@
-import React from 'react';
+import React from "react";
 
 interface ErrorProps {
-    error: string;
+  error: string;
 }
 
 export default function Error({ error }: ErrorProps) {
-    return (
-    <div className="bg-error-bg border border-error-border text-error px-4 py-3 rounded relative mt-2" role="alert">
-        <span className="block sm:inline">{error}</span>
+  return (
+    <div
+      className="relative mt-2 rounded border border-error-border bg-error-bg px-4 py-3 text-error"
+      role="alert"
+    >
+      <span className="block sm:inline">{error}</span>
     </div>
-    );
+  );
 }

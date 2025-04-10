@@ -98,16 +98,16 @@ export default function AdminPosts() {
           placeholder="Rechercher un post ou un pseudo..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full rounded-full border border-border bg-gray-50 p-2 px-4 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+          className="w-full rounded-full border border-border bg-grey-very-light p-2 px-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none"
         />
       </div>
 
       <div
         ref={scrollContainerRef}
-        className="flex-1 space-y-4 overflow-y-auto bg-gray-50 px-4 py-4"
+        className="flex-1 space-y-4 overflow-y-auto bg-grey-very-light px-4 py-4"
       >
         {filteredPosts.length === 0 && !loading && (
-          <p className="text-center text-sm text-gray-400">
+          <p className="text-center text-sm text-element">
             Aucun post ne correspond à votre recherche.
           </p>
         )}
@@ -150,7 +150,6 @@ export default function AdminPosts() {
                   >
                     <TrashSvg />
                   </Button>
-
                 </div>
               </div>
             </div>

@@ -56,9 +56,11 @@ export default function LikeButton({ postId }: LikeButtonProps) {
     <Button
       onClick={toggleLike}
       variant="transparent"
-      className={`flex items-center space-x-2 transition-colors duration-200 ease-in-out `}
+      className={`flex items-center space-x-2 transition-colors duration-200 ease-in-out`}
     >
-      <LikeSvg color={blocked ? "disabled" : userHasLiked ? "active" : "default"} />
+      <LikeSvg
+        color={blocked ? "disabled" : userHasLiked ? "active" : "default"}
+      />
       <span>{likes.length}</span>
     </Button>
   );

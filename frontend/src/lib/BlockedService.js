@@ -19,7 +19,7 @@ export async function loadBlocked() {
     return await response.json();
   } catch (error) {
     console.error("Error loading blocked users:", error);
-    return{ error: error.message };
+    return { error: error.message };
   }
 }
 

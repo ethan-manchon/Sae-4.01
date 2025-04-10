@@ -40,10 +40,10 @@ export default function Feed() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-element md:flex-row">
+    <div className="flex min-h-screen flex-col bg-white text-element lg:flex-row">
       <NavBar user={user} />
 
-      <main className="flex flex-1 flex-col items-center px-4 pt-[4.5rem] md:ml-64 md:pt-8">
+      <main className="flex flex-1 flex-col items-center px-4 pt-[4.5rem] lg:ml-64 lg:pt-8">
         <div className="w-full max-w-[600px]">
           <section className="mb-6">
             <Publish OnClick={triggerRefresh} />
@@ -55,12 +55,11 @@ export default function Feed() {
             </h2>
             <Button onClick={triggerRefresh}>
               <span>🔄</span>
-              <span className="hidden md:inline">Rafraîchir</span>
+              <span className="hidden lg:inline">Rafraîchir</span>
             </Button>
           </div>
 
-          <section className="space-y-4">
-
+          <section className="w-full space-y-4">
             <Feeds
               refresh={reset}
               loader={(page, subscribe) =>

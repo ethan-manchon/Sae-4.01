@@ -51,7 +51,7 @@ export default function Repost({
   const [commentaire, SetCommentaire] = useState<string>(comment || "");
   const [disappearing, setDisappearing] = useState(false);
   const [me, setMe] = useState<number | null>(null);
-  
+
   useEffect(() => {
     loadMe()
       .then((me) => {
@@ -76,7 +76,9 @@ export default function Repost({
   };
 
   return (
-    <div className={`mx-auto my-6 flex w-full max-w-xl flex-col overflow-hidden rounded-lg border border-element bg-white shadow-md${disappearing ? "scale-95 opacity-0" : ""}`}>
+    <div
+      className={`mx-auto my-6 flex w-full max-w-xl flex-col overflow-hidden rounded-lg border border-element bg-white shadow-md${disappearing ? "scale-95 opacity-0" : ""}`}
+    >
       <div className="flex items-center justify-between border-b border-element bg-gradient-to-r from-gray-50 to-gray-100 px-5 py-3">
         <Pdp
           pdp={repostUser.pdp}
@@ -85,7 +87,9 @@ export default function Repost({
         />
         <div className="flex items-center space-x-2">
           <Date date={created_at} />
-          {repostUser.id === me && <Trash postId={repost_id} type="repost" onDeleted={handleDeleted}/>}
+          {repostUser.id === me && (
+            <Trash postId={repost_id} type="repost" onDeleted={handleDeleted} />
+          )}
         </div>
       </div>
 
@@ -94,20 +98,20 @@ export default function Repost({
           <span>{commentaire}</span>
         </div>
       )}
-        <Post
-          post_id={post_id}
-          pseudo={pseudo}
-          content={content}
-          createdAt={createdAt}
-          pdp={pdp}
-          userId={userId}
-          meId={meId}
-          banned={banned}
-          count={count}
-          media={media}
-          censored={censored}
-          onDeleted={onDeleted}
-        />
+      <Post
+        post_id={post_id}
+        pseudo={pseudo}
+        content={content}
+        createdAt={createdAt}
+        pdp={pdp}
+        userId={userId}
+        meId={meId}
+        banned={banned}
+        count={count}
+        media={media}
+        censored={censored}
+        onDeleted={onDeleted}
+      />
     </div>
   );
 }

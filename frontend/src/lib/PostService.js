@@ -83,14 +83,14 @@ export async function togglePin(postId, pin) {
   const headers = getTokenHeaders();
   if (!headers) return { success: false, error: "Unauthorized" };
   const body = new URLSearchParams();
-  body.append("pin", pin.toString()); 
+  body.append("pin", pin.toString());
   try {
     const response = await fetch(`${API_BASE}/${postId}`, {
-      method: "POST", 
-      headers: { 
-        ...headers, 
-        Accept: "application/json", 
-        "Content-Type": "application/x-www-form-urlencoded"  
+      method: "POST",
+      headers: {
+        ...headers,
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       body: body.toString(),
     });
@@ -116,7 +116,7 @@ export async function loadPosts(page = 1, subscribe = false, userId) {
   try {
     const response = await fetch(url, {
       method: "GET",
-      headers
+      headers,
     });
     if (!response.ok) throw new Error("Failed to load posts");
 
@@ -124,7 +124,7 @@ export async function loadPosts(page = 1, subscribe = false, userId) {
 
     return {
       posts: result.items,
-      next_page: result.items.length === 10 ? page + 1 : null
+      next_page: result.items.length === 10 ? page + 1 : null,
     };
   } catch (error) {
     console.error("Error loading posts:", error);
@@ -217,15 +217,15 @@ export async function searchByHashtag(tag, page = 1) {
   try {
     const response = await fetch(`${API_BASE}/hashtag/${tag}?page=${page}`, {
       method: "GET",
-      headers
+      headers,
     });
     if (!response.ok) throw new Error("Failed to search posts by hashtag");
 
     const result = await response.json();
-    
+
     return {
       posts: result.items || [],
-      next_page: result.items && result.items.length === 10 ? page + 1 : null
+      next_page: result.items && result.items.length === 10 ? page + 1 : null,
     };
   } catch (error) {
     console.error("Error searching posts by hashtag:", error);
@@ -270,4 +270,3 @@ export async function searchPosts({
     return { posts: [], next_page: null, error: e.message };
   }
 }
-

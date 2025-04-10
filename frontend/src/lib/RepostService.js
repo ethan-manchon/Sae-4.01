@@ -6,7 +6,7 @@ function getTokenHeaders() {
   return token
     ? {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }
     : null;
 }
@@ -20,9 +20,9 @@ export async function createRepost(postId, comment) {
     const response = await fetch(API_BASE, {
       method: "POST",
       headers,
-      body: JSON.stringify({ 
-        post_id: postId, 
-        comment: comment.toString()
+      body: JSON.stringify({
+        post_id: postId,
+        comment: comment.toString(),
       }),
     });
     const result = await response.json();
@@ -63,4 +63,3 @@ export async function loadRepost(postId) {
     return [];
   }
 }
-

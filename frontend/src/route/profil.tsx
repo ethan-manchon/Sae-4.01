@@ -61,9 +61,9 @@ export default function ProfilPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-white text-element md:flex-row">
+    <div className="flex min-h-screen flex-col bg-white text-element lg:flex-row">
       <NavBar user={meUser} />
-      <main className="flex flex-1 flex-col items-center px-4 pt-20 md:ml-64 md:pt-8">
+      <main className="flex flex-1 flex-col items-center px-4 pt-20 lg:ml-64 lg:pt-8">
         <div className="w-full xl:w-1/2">
           {loading ? (
             <p className="text-center">Chargement du profil...</p>
@@ -84,7 +84,9 @@ export default function ProfilPage() {
             <div className="mt-8 rounded-xl border border-red-light bg-red-very-light px-4 py-3 text-center text-red shadow-sm">
               <h2 className="text-lg font-medium">Utilisateur introuvable</h2>
               <p className="mt-1 text-sm">
-                Le profil <span className="font-bold underline">{username}</span> que vous cherchez n'existe pas ou a été supprimé.
+                Le profil{" "}
+                <span className="font-bold underline">{username}</span> que vous
+                cherchez n'existe pas ou a été supprimé.
               </p>
             </div>
           )}

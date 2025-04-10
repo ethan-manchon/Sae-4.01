@@ -479,7 +479,7 @@ public function searchPosts(
             $start = \DateTime::createFromFormat('Y-m-d', $dateFilter);
             if ($start) {
                 $end = (clone $start)->modify('+1 day');
-                $posts->andWhere('r.created_at >= :start AND r.created_at < :end')
+                $reposts->andWhere('r.created_at >= :start AND r.created_at < :end')
                       ->setParameter('start', $start)
                       ->setParameter('end', $end);
             }

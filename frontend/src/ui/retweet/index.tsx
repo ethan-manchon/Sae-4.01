@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { loadMe } from "../../lib/UserService";
-import { loadRepost, createRepost, deleteRepost } from "../../lib/RepostService";
+import {
+  loadRepost,
+  createRepost,
+  deleteRepost,
+} from "../../lib/RepostService";
 import Button from "../button";
 import { RetweetSvg } from "../../assets/svg/svg";
 
 interface RetweetProps {
   postId: number;
-
 }
 
 export default function Retweet({ postId }: RetweetProps) {
@@ -89,30 +92,32 @@ export default function Retweet({ postId }: RetweetProps) {
         variant="transparent"
         className="flex items-center space-x-2 transition-colors duration-200 ease-in-out"
       >
-        <RetweetSvg color={blocked ? "disabled" : userHasRepostd ? "active" : "default"} />
+        <RetweetSvg
+          color={blocked ? "disabled" : userHasRepostd ? "active" : "default"}
+        />
         <span>{reposts.length}</span>
       </Button>
 
       {open && (
-  <div
-    ref={popoverRef}
-    className="absolute bottom-full mb-2 right-0 z-50 w-80 space-y-3 rounded-xl border border-gray-200 bg-white p-4 shadow-lg"
-  >
-    <textarea
-      value={comment}
-      onChange={(e) => setComment(e.target.value)}
-      placeholder="Ajoutez un commentaire (optionnel)"
-      className="w-full resize-none rounded-md border border-gray-300 bg-gray-50 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      rows={3}
-    />
-    <div className="flex justify-end space-x-2">
-      <Button onClick={() => setOpen(false)} variant="transparent">
-        Annuler
-      </Button>
-      <Button onClick={handleRepostSubmit}>Retweeter</Button>
-    </div>
-  </div>
-)}
+        <div
+          ref={popoverRef}
+          className="absolute right-0 bottom-full z-50 mb-2 w-80 space-y-3 rounded-xl border border-gray-200 bg-white p-4 shadow-lg"
+        >
+          <textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Ajoutez un commentaire (optionnel)"
+            className="w-full resize-none rounded-md border border-gray-300 bg-gray-50 p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            rows={3}
+          />
+          <div className="flex justify-end space-x-2">
+            <Button onClick={() => setOpen(false)} variant="transparent">
+              Annuler
+            </Button>
+            <Button onClick={handleRepostSubmit}>Retweeter</Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -32,7 +32,9 @@ export default function PopoverMessage({
   if (!visible) return null;
 
   return (
-    <div className={`fixed top-5 right-5 z-50 rounded-lg px-4 py-2 shadow-lg ${bgColors[type]}`}>
+    <div
+      className={`fixed top-5 right-5 z-50 rounded-lg px-4 py-2 shadow-lg ${bgColors[type]}`}
+    >
       {message}
     </div>
   );

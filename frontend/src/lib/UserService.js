@@ -62,10 +62,10 @@ export async function patchUsers(id, patch) {
 
 export async function loadMe() {
   if (cachedMe) return cachedMe;
-  
+
   const headers = getTokenHeaders();
   if (!headers) return null;
-  
+
   try {
     const response = await fetch(`${API_BASE}`, { headers });
     if (!response.ok) throw new Error("Erreur de chargement de profil");

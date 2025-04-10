@@ -7,16 +7,22 @@ interface PopoverContextProps {
   showPopover: (message: string, type?: PopoverType) => void;
 }
 
-const PopoverContext = createContext<PopoverContextProps | undefined>(undefined);
+const PopoverContext = createContext<PopoverContextProps | undefined>(
+  undefined,
+);
 
 export function usePopover() {
   const context = useContext(PopoverContext);
-  if (!context) throw new Error("usePopover must be used within PopoverProvider");
+  if (!context)
+    throw new Error("usePopover must be used within PopoverProvider");
   return context;
 }
 
 export function PopoverProvider({ children }: { children: ReactNode }) {
-  const [popover, setPopover] = useState<{ message: string; type: PopoverType } | null>(null);
+  const [popover, setPopover] = useState<{
+    message: string;
+    type: PopoverType;
+  } | null>(null);
 
   const showPopover = (message: string, type: PopoverType = "info") => {
     setPopover({ message, type });

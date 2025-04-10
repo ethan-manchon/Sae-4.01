@@ -5,8 +5,8 @@ import Button from "../button";
 import { PinSvg } from "../../assets/svg/svg";
 
 interface PinProps {
-    postId: number;
-    pinned: boolean;
+  postId: number;
+  pinned: boolean;
 }
 
 export default function Pin({ postId, pinned }: PinProps) {

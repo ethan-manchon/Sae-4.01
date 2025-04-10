@@ -13,24 +13,28 @@ export default function BackOffice() {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex h-screen flex-col">
       <NavBar user={user} />
-      <div className="pt-20 md:pt-0 md:pl-64 flex-1 w-full overflow-hidden">
-        <div className="h-full flex flex-col">
-          <header className="border-b border-border bg-white p-4 shadow-sm sticky top-0 z-20">
-            <div className="w-full max-w-5xl mx-auto flex flex-wrap gap-2 sm:gap-4">
+      <div className="w-full flex-1 overflow-hidden pt-20 lg:pt-0 lg:pl-64">
+        <div className="flex h-full flex-col">
+          <header className="sticky top-0 z-20 border-b border-border bg-white p-4 shadow-sm">
+            <div className="mx-auto flex w-full max-w-5xl flex-wrap gap-2 sm:gap-4">
               <button
                 onClick={() => setTab("posts")}
-                className={`text-sm font-medium px-4 py-2 rounded-full transition-all ${
-                  tab === "posts" ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-600"
+                className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                  tab === "posts"
+                    ? "bg-grey-very-light text-primary"
+                    : "text-element hover:bg-grey-very-light hover:text-primary"
                 }`}
               >
                 Posts
               </button>
               <button
                 onClick={() => setTab("users")}
-                className={`text-sm font-medium px-4 py-2 rounded-full transition-all ${
-                  tab === "users" ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100 text-gray-600"
+                className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                  tab === "users"
+                    ? "bg-grey-very-light text-primary"
+                    : "text-element hover:bg-grey-very-light hover:text-primary"
                 }`}
               >
                 Utilisateurs
@@ -38,7 +42,7 @@ export default function BackOffice() {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto bg-gray-50">
+          <main className="flex-1 overflow-y-auto bg-grey-very-light p-4">
             {tab === "posts" && <AdminPosts />}
             {tab === "users" && <UsersList />}
           </main>

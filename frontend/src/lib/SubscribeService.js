@@ -6,12 +6,12 @@ function getTokenHeaders() {
   return token
     ? {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       }
     : null;
 }
 
-export async function loadSubscriptions(  ) {
+export async function loadSubscriptions() {
   const headers = getTokenHeaders();
   if (!headers) return [];
 
@@ -19,7 +19,7 @@ export async function loadSubscriptions(  ) {
     const response = await fetch(`${API_BASE}`, { headers });
     if (!response.ok) throw new Error("Failed to load subscriptions");
 
-    return await response.json(); 
+    return await response.json();
   } catch (error) {
     console.error("Error loading subscriptions:", error);
     return [];
@@ -72,16 +72,16 @@ export async function unsubscribeFromUser(userId) {
 }
 
 export async function isUserFollowed(targetUserId) {
-    const headers = getTokenHeaders();
-    if (!headers) return false;
+  const headers = getTokenHeaders();
+  if (!headers) return false;
 
-    try {
-        const response = await fetch(`${API_BASE}/${targetUserId}`, { headers });
-        if (!response.ok) throw new Error("Failed to fetch blocked users");
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error checking block status:", error);
-        return false;
-    }
+  try {
+    const response = await fetch(`${API_BASE}/${targetUserId}`, { headers });
+    if (!response.ok) throw new Error("Failed to fetch blocked users");
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error checking block status:", error);
+    return false;
+  }
 }

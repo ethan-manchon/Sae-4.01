@@ -1,7 +1,7 @@
-import React from "react"
+import React from "react";
 
 interface DateProps {
-    date: string;
+  date: string;
 }
 export default function DateComponent({ date }: DateProps) {
   const now = new Date();
@@ -19,11 +19,14 @@ export default function DateComponent({ date }: DateProps) {
   else if (diffInDays < 7) formattedDate = `${diffInDays} j`;
   else if (diffInWeek < 4) formattedDate = `${diffInWeek} sem`;
   else {
-    formattedDate = new Intl.DateTimeFormat('fr-FR', { dateStyle: 'long' }).format(createdDate);
-  } return (
-<div className="flex items-center text-element text-xs">
-    <span className="text-element mx-1">·</span>
-    <span className="text-element text-xs">{formattedDate}</span>
-</div>
-  )
+    formattedDate = new Intl.DateTimeFormat("fr-FR", {
+      dateStyle: "long",
+    }).format(createdDate);
+  }
+  return (
+    <div className="flex items-center text-xs text-element">
+      <span className="mx-1 text-element">·</span>
+      <span className="text-xs text-element">{formattedDate}</span>
+    </div>
+  );
 }

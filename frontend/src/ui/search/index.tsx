@@ -27,7 +27,7 @@ export default function Search({
         type="text"
         placeholder="Rechercher un tweet ..."
         value={search}
-        onChange={(e) => setSearch(e.target.value.trimStart())}  // éviter les espaces initiaux
+        onChange={(e) => setSearch(e.target.value.trimStart())}
         className="w-full border border-border rounded px-4 py-2 mb-2"
       />
 
