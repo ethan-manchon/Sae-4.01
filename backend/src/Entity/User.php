@@ -94,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $blockers;
 
     #[ORM\Column]
-    private ?bool $readOnly = null;
+    private ?bool $readOnly = false;
 
     /**
      * @var Collection<int, Reposts>

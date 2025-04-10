@@ -57,7 +57,7 @@ export default function ProfilComponent({ user, type }: UserProps) {
     <div className="w-full border-b border-border bg-white">
       <div className="relative">
         <img
-          src={`http://localhost:8080/${bannerImage}`}
+          src={`${(import.meta as any).env.VITE_API_URL}${bannerImage}`}
           alt="Bannière"
           className="h-40 w-full object-cover"
         />

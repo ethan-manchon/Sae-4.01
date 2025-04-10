@@ -8,17 +8,17 @@ interface IconProps {
 
 export default function Icon({ className, url }: IconProps) {
   const icons = {
-    undefined: "/assets/icon/undefined.webp",
-    default: "/assets/icon/devicon_default.svg",
-    facebook: "/assets/icon/devicon_facebook.svg",
-    github: "/assets/icon/devicon_github.svg",
-    linkedin: "/assets/icon/devicon_linkedin.svg",
-    instagram: "/assets/icon/devicon_instagram.svg",
-    wikipedia: "/assets/icon/devicon_wikipedia.svg",
-    google: "/assets/icon/devicon_google.svg",
-    youtube: "/assets/icon/devicon_youtube.svg",
-    twitch: "/assets/icon/devicon_twitch.svg",
-    unilim: "/assets/icon/devicon_unilim.svg",
+    undefined: `${(import.meta as any).env.BASE_URL}/assets/icon/undefined.webp`,
+    default: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_default.svg`,
+    facebook: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_facebook.svg`,
+    github: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_github.svg`,
+    linkedin: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_linkedin.svg`,
+    instagram: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_instagram.svg`,
+    wikipedia: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_wikipedia.svg`,
+    google: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_google.svg`,
+    youtube: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_youtube.svg`,
+    twitch: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_twitch.svg`,
+    unilim: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_unilim.svg`,
   };
 
   const found = url

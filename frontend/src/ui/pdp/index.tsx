@@ -21,10 +21,10 @@ export default function Picture({
     <Button
       variant="transparent"
       link={link}
-      className={`} flex h-12 items-center gap-2`}
+      className={`flex h-12 items-center gap-2`}
     >
       <img
-        src={`http://localhost:8080/${profilePicture}`}
+        src={`${(import.meta as any).env.VITE_API_URL}${profilePicture}`}
         alt="Photo de profil"
         className={`h-12 w-12 rounded-full border-2 shadow-md ${className}`}
         loading="lazy"

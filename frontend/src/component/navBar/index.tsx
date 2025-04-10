@@ -35,7 +35,7 @@ export default function NavBar({ user }: Props) {
           variant="transparent"
           className="mb-6 flex items-center gap-2"
         >
-          <img src="/assets/twitter-logo.svg" className="h-8 w-8" />
+          <img src={`${(import.meta as any).env.BASE_URL}/assets/twitter-logo.svg`} className="h-8 w-8" />
           <p className="text-2xl font-bold text-primary">Twitter</p>
         </Button>
 
@@ -65,8 +65,14 @@ export default function NavBar({ user }: Props) {
 
       <div className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-border bg-bg px-4 py-2 lg:hidden">
         <div className="flex items-center gap-2">
-          <img src="/assets/twitter-logo.svg" className="h-8 w-8" />
-          <p className="text-xl font-bold text-primary">Twitter</p>
+        <Button
+          link="/"
+          variant="transparent"
+          className="mb-6 flex items-center gap-2"
+        >
+          <img src={`${(import.meta as any).env.BASE_URL}/assets/twitter-logo.svg`} className="h-8 w-8" />
+          <p className="text-2xl font-bold text-primary">Twitter</p>
+        </Button>
         </div>
         <Pdp
           pdp={user?.pdp}
@@ -76,17 +82,21 @@ export default function NavBar({ user }: Props) {
       </div>
 
       <div className="fixed bottom-0 left-0 z-50 flex w-full items-center justify-around border-border bg-bg py-2 lg:hidden">
-        <Button variant="transparent" link="/">
-          Home
-        </Button>
-        {isAdmin && (
-          <Button variant="transparent" link="/backoffice">
-            Admin
+      <Button variant="transparent" link="/foryoupage">
+            Pour moi
           </Button>
-        )}
-        <Button variant="transparent" onClick={handleDisconnect}>
-          Logout
-        </Button>
+        {isAdmin && (
+            <Button variant="transparent" link="/backoffice">
+              Back Office
+            </Button>
+          )}
+          <Button
+            variant="transparent"
+            link="/login"
+            onClick={handleDisconnect}
+          >
+            Logout
+          </Button>
       </div>
     </>
   );

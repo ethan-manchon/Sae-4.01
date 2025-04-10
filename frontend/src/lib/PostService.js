@@ -156,7 +156,7 @@ export async function editPost(postId, data) {
 
   let body, headers;
   if (data instanceof FormData) {
-    data.append("_method", "PATCH");
+    data.append("_method", "POST");
     body = data;
     headers = { ...tokenHeaders };
     delete headers["Content-Type"];

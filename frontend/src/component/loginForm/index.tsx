@@ -51,7 +51,7 @@ export default function LoginForm() {
             const response = await SignIn(formDataToSend);
             
             if (response.status === 200) {
-                window.location.href = "/";
+                window.location.href =  (import.meta as any).env.BASE_URL;
             } else if (response.status === 401) {
                 setError("Invalid email or password");
             } else if (response.status === 403) {

@@ -100,7 +100,6 @@ export default function Settings() {
       <Button onClick={toggleSettings}>Mon compte</Button>
 
       {confirmation && (
-        // mettre le popover
         <div className="fixed right-4 bottom-4 rounded bg-green px-4 py-2 text-white shadow">
           Modifications enregistrées !
         </div>

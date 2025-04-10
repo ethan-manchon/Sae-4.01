@@ -171,13 +171,13 @@ export default function Post({
                         <div key={index} className="relative">
                           {url.match(/\.(mp4|webm|ogg)$/i) ? (
                             <video
-                              src={`http://localhost:8080/${url}`}
+                              src={`${(import.meta as any).env.VITE_API_URL}${url}`}
                               controls
                               className="h-auto w-full rounded"
                             />
                           ) : (
                             <img
-                              src={`http://localhost:8080/${url}`}
+                              src={`${(import.meta as any).env.VITE_API_URL}${url}`}
                               alt={`media-${index}`}
                               className="h-auto w-full rounded object-cover"
                               loading="lazy"
@@ -276,7 +276,7 @@ export default function Post({
                 return (
                   <video
                     key={index}
-                    src={`http://localhost:8080/${url}`}
+                    src={`${(import.meta as any).env.VITE_API_URL}${url}`}
                     controls
                     className="h-auto w-full rounded"
                   />
@@ -285,7 +285,7 @@ export default function Post({
               return (
                 <img
                   key={index}
-                  src={`http://localhost:8080/${url}`}
+                  src={`${(import.meta as any).env.VITE_API_URL}${url}`}
                   alt={`media-${index}`}
                   className="h-auto w-full rounded object-cover"
                 />

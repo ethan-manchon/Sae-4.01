@@ -75,7 +75,11 @@ const router = createBrowserRouter([
       </ProtectedRouteAdmin>
     ),
   },
-]);
+],
+{
+  basename: (import.meta as any).env.BASE_URL,
+}
+);
 
 const rootElement = document.querySelector("#root");
 
