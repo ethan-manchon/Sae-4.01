@@ -217,7 +217,7 @@ export default function Post({
                   <div className="mt-4">
                     <p className="mb-2 font-bold">Nouveaux médias ajoutés :</p>
                     <div className="grid grid-cols-2 gap-2">
-                      {newMediaFiles.map((file, index) => {
+                    {newMediaFiles.map((file, index) => {
                         const previewUrl = URL.createObjectURL(file);
                         return (
                           <div key={index} className="relative">
@@ -269,7 +269,7 @@ export default function Post({
           )}
         </div>
 
-        {!editing && currentMedia.length > 0 && (
+        {!editing && !censor && currentMedia.length > 0 && (
           <div className="mt-4 grid grid-cols-2 gap-2">
             {currentMedia.map((url, index) => {
               if (url.match(/\.(mp4|webm|ogg)$/i)) {

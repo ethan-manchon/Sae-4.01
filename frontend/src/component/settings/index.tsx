@@ -185,7 +185,7 @@ export default function Settings() {
                   </div>
                   {pdp && (
                     <img
-                      src={`http://localhost:8080/${pdp}`}
+                      src={`${(import.meta as any).env.VITE_API_URL}${pdp}`}
                       alt="pdp preview"
                       className="mt-3 h-20 w-20 rounded-full border-2 border-primary object-cover shadow"
                     />
@@ -211,7 +211,7 @@ export default function Settings() {
                   </div>
                   {banner && (
                     <img
-                      src={`http://localhost:8080/${banner}`}
+                      src={`${(import.meta as any).env.VITE_API_URL}${banner}`}
                       alt="banner preview"
                       className="mt-3 h-24 w-full rounded border-2 border-primary object-cover shadow"
                     />
