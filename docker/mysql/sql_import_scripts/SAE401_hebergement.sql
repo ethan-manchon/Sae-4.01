@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : sae-mysql
--- Généré le : lun. 07 avr. 2025 à 11:24
+-- Généré le : ven. 11 avr. 2025 à 11:07
 -- Version du serveur : 8.4.4
 -- Version de PHP : 8.2.27
 
@@ -85,7 +85,8 @@ INSERT INTO `access_token` (`id`, `user_id`, `created_at`, `hashed_token`, `expi
 (58, 12, '2025-04-03 17:50:14', '45eb9438f20cbf357dba41c06eb01cad2b68a67b61114409e7f71b7d54edc7aa', '2025-04-10 17:50:14', 1),
 (59, 21, '2025-04-03 17:52:43', 'fd15aa808ee3abc769ea97787f745e4ee6dde0ae5006383ff52eceeda4bd8876', '2025-04-10 17:52:43', 1),
 (60, 17, '2025-04-03 17:53:30', '46a26cc042b77b2d014f77f5d06ed0782cecd447e42a00fda8f9e727b1600c15', '2025-04-10 17:53:30', 0),
-(61, 17, '2025-04-04 11:06:03', '24028b3b3152c43cb73a8ee606676345604f2c71a3760e738baf073c792b65e7', '2025-04-11 11:06:03', 1);
+(61, 17, '2025-04-04 11:06:03', '24028b3b3152c43cb73a8ee606676345604f2c71a3760e738baf073c792b65e7', '2025-04-11 11:06:03', 0),
+(62, 17, '2025-04-08 07:57:55', 'b51b1a596bc69cf2bfc2226084e4fcb227dfd0125f206157c7fb49434d9b08c4', '2025-04-15 07:57:55', 1);
 
 -- --------------------------------------------------------
 
@@ -105,7 +106,8 @@ CREATE TABLE `blocked` (
 
 INSERT INTO `blocked` (`id`, `user_blocked_id`, `user_blocker_id`) VALUES
 (4, 8, 17),
-(18, 21, 17);
+(24, 17, 21),
+(25, 21, 17);
 
 -- --------------------------------------------------------
 
@@ -124,9 +126,7 @@ CREATE TABLE `doctrine_migration_versions` (
 --
 
 INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_time`) VALUES
-('DoctrineMigrations\\Version20250314132542', '2025-03-17 14:39:30', 36),
-('DoctrineMigrations\\Version20250315123200', '2025-03-17 14:39:30', 40),
-('DoctrineMigrations\\Version20250315123432', '2025-03-17 14:39:30', 83),
+('DoctrineMigrations\\Version20250323111245', '2025-03-23 11:12:53', 292),
 ('DoctrineMigrations\\Version20250323111246', '2025-03-23 11:12:54', 29),
 ('DoctrineMigrations\\Version20250323220638', '2025-03-23 22:06:46', 166),
 ('DoctrineMigrations\\Version20250323223737', '2025-03-23 22:37:39', 91),
@@ -149,7 +149,14 @@ INSERT INTO `doctrine_migration_versions` (`version`, `executed_at`, `execution_
 ('DoctrineMigrations\\Version20250401091411', '2025-04-01 09:14:29', 267),
 ('DoctrineMigrations\\Version20250403110943', '2025-04-03 11:09:53', 46),
 ('DoctrineMigrations\\Version20250403171018', '2025-04-03 17:10:30', 35),
-('DoctrineMigrations\\Version20250404110229', '2025-04-04 11:02:44', 53);
+('DoctrineMigrations\\Version20250404110229', '2025-04-04 11:02:44', 53),
+('DoctrineMigrations\\Version20250408142521', '2025-04-08 14:25:26', 69),
+('DoctrineMigrations\\Version20250408211123', '2025-04-08 21:11:38', 1),
+('DoctrineMigrations\\Version20250408211156', '2025-04-08 21:12:00', 530),
+('DoctrineMigrations\\Version20250408212404', '2025-04-08 21:24:07', 655),
+('DoctrineMigrations\\Version20250408212519', '2025-04-08 21:25:21', 498),
+('DoctrineMigrations\\Version20250408215224', '2025-04-08 21:52:26', 114),
+('DoctrineMigrations\\Version20250409082934', '2025-04-09 08:29:44', 42);
 
 -- --------------------------------------------------------
 
@@ -163,90 +170,92 @@ CREATE TABLE `post` (
   `created_at` datetime NOT NULL,
   `user_id` int NOT NULL,
   `media` json DEFAULT NULL,
-  `censor` tinyint(1) NOT NULL
+  `censor` tinyint(1) NOT NULL,
+  `pin` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Déchargement des données de la table `post`
 --
 
-INSERT INTO `post` (`id`, `content`, `created_at`, `user_id`, `media`, `censor`) VALUES
-(1, 'Juste une journée parfaite au parc! ☀️', '2023-09-25 14:30:00', 1, NULL, 0),
-(2, 'Déjeuner délicieux avec des amis! 🍔', '2023-09-26 12:45:00', 3, NULL, 0),
-(3, 'Nouvelle lecture passionnante! 📚', '2023-09-27 18:20:00', 4, NULL, 0),
-(4, 'Soirée cinéma à la maison! 🎬', '2023-09-28 20:15:00', 6, NULL, 0),
-(5, 'Balade matinale dans la forêt. 🌳', '2023-09-29 08:00:00', 7, NULL, 0),
-(6, 'Atelier de peinture réussi! 🎨', '2023-09-30 15:30:00', 8, NULL, 0),
-(7, 'Dîner romantique en tête-à-tête. ❤️', '2023-10-01 19:00:00', 12, NULL, 0),
-(8, 'Concert incroyable hier soir! 🎤', '2023-10-02 22:30:00', 14, NULL, 0),
-(9, 'Journée de détente au spa. 🧪', '2023-10-03 11:00:00', 15, NULL, 0),
-(10, 'Randonnée épique en montagne! ⛰️', '2023-10-04 13:45:00', 1, NULL, 0),
-(11, 'Découverte d\'un nouveau café en ville. ☕', '2023-10-05 10:30:00', 3, NULL, 0),
-(12, 'Soirée jeux de société entre amis. 🎲', '2023-10-06 21:00:00', 4, NULL, 0),
-(13, 'Séance de yoga relaxante. 🧘‍♀️', '2023-10-07 09:15:00', 6, NULL, 0),
-(14, 'Visite d\'un musée fascinant. 🏛️', '2023-10-08 14:00:00', 7, NULL, 0),
-(15, 'Pique-nique au bord du lac. 🌊', '2023-10-09 12:00:00', 8, NULL, 0),
-(16, 'Cours de cuisine réussi! 🍳', '2023-10-10 17:30:00', 12, NULL, 0),
-(17, 'Sortie vélo dans la campagne. 🚴‍♂️', '2023-10-11 15:45:00', 14, NULL, 0),
-(18, 'Nuit sous les étoiles. ✨', '2023-10-12 23:00:00', 15, NULL, 0),
-(19, 'Festival de musique inoubliable! 🎶', '2023-10-13 18:30:00', 1, NULL, 0),
-(20, 'Après-midi shopping bien rempli. 🛍️', '2023-10-14 16:00:00', 3, NULL, 0),
-(21, 'Match de foot intense! ⚽', '2023-10-15 20:45:00', 4, NULL, 0),
-(22, 'Exposition d\'art contemporain. 🖼️', '2023-10-16 13:00:00', 6, NULL, 0),
-(23, 'Promenade en bord de mer. 🌊', '2023-10-17 11:30:00', 7, NULL, 0),
-(24, 'Atelier de poterie créatif. 🏺', '2023-10-18 14:45:00', 8, NULL, 0),
-(25, 'Dîner gastronomique exquis. 🍽️', '2023-10-19 19:30:00', 12, NULL, 0),
-(26, 'Concert de jazz envoûtant. 🎷', '2023-10-20 21:00:00', 14, NULL, 0),
-(27, 'Journée à la plage sous le soleil. 🏖️', '2023-10-21 12:30:00', 15, NULL, 0),
-(28, 'Randonnée en forêt magique. 🌳', '2023-10-22 10:00:00', 1, NULL, 0),
-(29, 'Soirée théâtre captivante. 🎭', '2023-10-23 20:00:00', 3, NULL, 0),
-(30, 'Balade en vélo le long de la rivière. 🚴‍♀️', '2023-10-24 15:00:00', 4, NULL, 0),
-(31, 'Découverte d\'un nouveau restaurant. 🍴', '2023-10-25 18:30:00', 6, NULL, 0),
-(32, 'Sortie en famille au zoo. 🦁', '2023-10-26 11:00:00', 7, NULL, 0),
-(33, 'Atelier de photographie inspirant. 📸', '2023-10-27 14:00:00', 8, NULL, 0),
-(34, 'Soirée cinéma en plein air. 🎬', '2023-10-28 21:30:00', 12, NULL, 0),
-(35, 'Journée de pêche relaxante. 🎣', '2023-10-29 09:30:00', 14, NULL, 0),
-(36, 'Concert de rock électrisant! 🎸', '2023-10-30 22:00:00', 15, NULL, 0),
-(37, 'Balade en montgolfière inoubliable. 🎈', '2023-10-31 08:00:00', 1, NULL, 0),
-(38, 'Dîner entre amis convivial. 🍷', '2023-11-01 19:00:00', 3, NULL, 0),
-(39, 'Sortie en kayak sur le lac. 🛶', '2023-11-02 13:30:00', 4, NULL, 0),
-(40, 'Visite d\'un château historique. 🏰', '2023-11-03 11:00:00', 6, NULL, 0),
-(41, 'Atelier de cuisine italienne. 🍝', '2023-11-04 17:30:00', 7, NULL, 0),
-(42, 'Soirée jeux vidéo entre potes. 🎮', '2023-11-05 20:00:00', 8, NULL, 0),
-(43, 'Journée à la ferme avec les enfants. 🐄', '2023-11-06 10:30:00', 12, NULL, 0),
-(44, 'Concert de musique classique. 🎻', '2023-11-07 19:30:00', 14, NULL, 0),
-(45, 'Balade en raquettes dans la neige. ❄️', '2023-11-08 14:00:00', 15, NULL, 0),
-(46, 'Dîner romantique au restaurant. 🍽️', '2023-11-09 18:30:00', 1, NULL, 0),
-(47, 'Sortie en bateau sur la rivière. ⛵', '2023-11-10 12:00:00', 3, NULL, 0),
-(48, 'Visite d\'un musée d\'art moderne. 🏛️', '2023-11-11 15:00:00', 4, NULL, 0),
-(49, 'Atelier de bricolage créatif. 🔧', '2023-11-12 10:30:00', 6, NULL, 0),
-(50, 'Soirée cinéma avec des amis. 🎬', '2023-11-13 20:00:00', 7, NULL, 0),
-(51, 'ozhdiqzhiod nodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<ooz hdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdi qzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnod j<oozhdiqzhiodnodj<oozhdiqzhiodnodj<o', '2025-03-24 14:28:32', 7, NULL, 0),
-(52, 'Hey', '2025-03-24 15:51:38', 15, NULL, 0),
-(53, 'Ho', '2025-02-24 15:51:38', 7, NULL, 0),
-(54, 'Encore un test de la date ', '2025-03-14 15:55:34', 8, NULL, 0),
-(55, 'Et un test supplémetaire', '2025-03-24 17:55:55', 14, NULL, 0),
-(56, 'Ton tweet', '2025-03-25 15:15:17', 18, NULL, 0),
-(57, 'ENCORE IUN TEST', '2025-03-25 15:15:27', 18, NULL, 0),
-(58, 'test', '2025-03-25 15:16:02', 18, NULL, 0),
-(59, 'Test d\'affichage dans le home', '2025-03-26 10:48:28', 12, NULL, 0),
-(60, 'test', '2025-03-26 10:55:52', 12, NULL, 0),
-(61, 'test2', '2025-03-26 10:56:20', 12, NULL, 0),
-(62, 'Test', '2025-03-26 12:37:35', 12, NULL, 0),
-(63, 'encore un essai', '2025-03-26 12:42:16', 12, NULL, 0),
-(64, 'test', '2025-03-26 12:42:25', 12, NULL, 0),
-(65, 'encore un essai supplémentaire', '2025-03-26 12:44:22', 12, '[]', 0),
-(66, 'test de plus', '2025-03-26 12:45:35', 12, NULL, 0),
-(67, 'plus encore', '2025-03-26 12:47:42', 12, NULL, 0),
-(68, 'hoIZUYD87AGZIUGDQIUCZHDQKJ', '2025-03-26 15:07:45', 12, NULL, 0),
-(69, 'test', '2025-03-26 21:24:09', 15, NULL, 0),
-(70, 'encore 1', '2025-03-26 21:24:16', 15, '[]', 0),
-(71, 'et test', '2025-03-26 21:24:24', 15, '[]', 0),
-(73, 'Ce contenu a été censuré.iuyi', '2025-03-27 12:20:21', 17, '[]', 1),
-(86, 'Wouaf !', '2025-04-01 09:27:51', 21, '[]', 0),
-(94, 'wouaf!', '2025-04-03 11:49:27', 21, '[\"/assets/post/67ee75c738893.png\", \"/assets/post/67ee75c738ca1.png\"]', 0),
-(96, 'Miaou', '2025-04-03 17:07:14', 21, '[\"/assets/post/67eec0422c4ca.png\"]', 1),
-(97, 'tralalero tralala', '2025-04-07 08:30:51', 17, '[\"/assets/post/67f38d3ba0e97.jpg\"]', 0);
+INSERT INTO `post` (`id`, `content`, `created_at`, `user_id`, `media`, `censor`, `pin`) VALUES
+(1, 'Juste une journée parfaite au parc! ☀️', '2023-09-25 14:30:00', 1, NULL, 0, 1),
+(2, 'Déjeuner délicieux avec des amis! 🍔', '2023-09-26 12:45:00', 17, NULL, 0, 0),
+(3, 'Nouvelle lecture passionnante! 📚', '2023-09-27 18:20:00', 4, NULL, 0, NULL),
+(4, 'Soirée cinéma à la maison! 🎬', '2023-09-28 20:15:00', 6, NULL, 0, NULL),
+(5, 'Balade matinale dans la forêt. 🌳', '2023-09-29 08:00:00', 7, NULL, 0, NULL),
+(6, 'Atelier de peinture réussi! 🎨', '2023-09-30 15:30:00', 8, NULL, 0, NULL),
+(7, 'Dîner romantique en tête-à-tête. ❤️', '2023-10-01 19:00:00', 12, NULL, 0, NULL),
+(8, 'Concert incroyable hier soir! 🎤', '2023-10-02 22:30:00', 14, NULL, 0, NULL),
+(9, 'Journée de détente au spa. 🧪', '2023-10-03 11:00:00', 15, NULL, 0, NULL),
+(10, 'Randonnée épique en montagne! ⛰️', '2023-10-04 13:45:00', 1, NULL, 0, NULL),
+(11, 'Découverte d\'un nouveau café en ville. ☕', '2023-10-05 10:30:00', 3, NULL, 0, NULL),
+(12, 'Soirée jeux de société entre amis. 🎲', '2023-10-06 21:00:00', 4, NULL, 0, NULL),
+(13, 'Séance de yoga relaxante. 🧘‍♀️', '2023-10-07 09:15:00', 6, NULL, 0, NULL),
+(14, 'Visite d\'un musée fascinant. 🏛️', '2023-10-08 14:00:00', 7, NULL, 0, NULL),
+(15, 'Pique-nique au bord du lac. 🌊', '2023-10-09 12:00:00', 8, NULL, 0, NULL),
+(16, 'Cours de cuisine réussi! 🍳', '2023-10-10 17:30:00', 12, NULL, 0, NULL),
+(17, 'Sortie vélo dans la campagne. 🚴‍♂️', '2023-10-11 15:45:00', 14, NULL, 0, NULL),
+(18, 'Nuit sous les étoiles. ✨', '2023-10-12 23:00:00', 15, NULL, 0, NULL),
+(19, 'Festival de musique inoubliable! 🎶', '2023-10-13 18:30:00', 1, NULL, 0, NULL),
+(20, 'Après-midi shopping bien rempli. 🛍️', '2023-10-14 16:00:00', 3, NULL, 0, NULL),
+(21, 'Match de foot intense! ⚽', '2023-10-15 20:45:00', 4, NULL, 0, NULL),
+(22, 'Exposition d\'art contemporain. 🖼️', '2023-10-16 13:00:00', 6, NULL, 0, NULL),
+(23, 'Promenade en bord de mer. 🌊', '2023-10-17 11:30:00', 7, NULL, 0, NULL),
+(24, 'Atelier de poterie créatif. 🏺', '2023-10-18 14:45:00', 8, NULL, 0, NULL),
+(25, 'Dîner gastronomique exquis. 🍽️', '2023-10-19 19:30:00', 12, NULL, 0, NULL),
+(26, 'Concert de jazz envoûtant. 🎷', '2023-10-20 21:00:00', 14, NULL, 0, NULL),
+(27, 'Journée à la plage sous le soleil. 🏖️', '2023-10-21 12:30:00', 15, NULL, 0, NULL),
+(28, 'Randonnée en forêt magique. 🌳', '2023-10-22 10:00:00', 1, NULL, 0, NULL),
+(29, 'Soirée théâtre captivante. 🎭', '2023-10-23 20:00:00', 3, NULL, 0, NULL),
+(30, 'Balade en vélo le long de la rivière. 🚴‍♀️', '2023-10-24 15:00:00', 4, NULL, 0, NULL),
+(31, 'Découverte d\'un nouveau restaurant. 🍴', '2023-10-25 18:30:00', 6, NULL, 0, NULL),
+(32, 'Sortie en famille au zoo. 🦁', '2023-10-26 11:00:00', 7, NULL, 0, NULL),
+(33, 'Atelier de photographie inspirant. 📸', '2023-10-27 14:00:00', 8, NULL, 0, NULL),
+(34, 'Soirée cinéma en plein air. 🎬', '2023-10-28 21:30:00', 12, NULL, 0, NULL),
+(35, 'Journée de pêche relaxante. 🎣', '2023-10-29 09:30:00', 14, NULL, 0, NULL),
+(36, 'Concert de rock électrisant! 🎸', '2023-10-30 22:00:00', 15, NULL, 0, NULL),
+(37, 'Balade en montgolfière inoubliable. 🎈', '2023-10-31 08:00:00', 1, NULL, 0, NULL),
+(38, 'Dîner entre amis convivial. 🍷', '2023-11-01 19:00:00', 3, NULL, 0, NULL),
+(39, 'Sortie en kayak sur le lac. 🛶', '2023-11-02 13:30:00', 4, NULL, 0, NULL),
+(40, 'Visite d\'un château historique. 🏰', '2023-11-03 11:00:00', 6, NULL, 0, NULL),
+(41, 'Atelier de cuisine italienne. 🍝', '2023-11-04 17:30:00', 7, NULL, 0, NULL),
+(42, 'Soirée jeux vidéo entre potes. 🎮', '2023-11-05 20:00:00', 8, NULL, 0, NULL),
+(43, 'Journée à la ferme avec les enfants. 🐄', '2023-11-06 10:30:00', 12, NULL, 0, NULL),
+(44, 'Concert de musique classique. 🎻', '2023-11-07 19:30:00', 14, NULL, 0, NULL),
+(45, 'Balade en raquettes dans la neige. ❄️', '2023-11-08 14:00:00', 15, NULL, 0, NULL),
+(46, 'Dîner romantique au restaurant. 🍽️', '2023-11-09 18:30:00', 1, NULL, 0, NULL),
+(47, 'Sortie en bateau sur la rivière. ⛵', '2023-11-10 12:00:00', 3, NULL, 0, NULL),
+(48, 'Visite d\'un musée d\'art moderne. 🏛️', '2023-11-11 15:00:00', 4, NULL, 0, NULL),
+(49, 'Atelier de bricolage créatif. 🔧', '2023-11-12 10:30:00', 6, NULL, 0, NULL),
+(50, 'Soirée cinéma avec des amis. 🎬', '2023-11-13 20:00:00', 7, NULL, 0, NULL),
+(51, 'ozhdiqzhiod nodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<ooz hdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdi qzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnodj<oozhdiqzhiodnod j<oozhdiqzhiodnodj<oozhdiqzhiodnodj<o', '2025-03-24 14:28:32', 7, NULL, 0, NULL),
+(52, 'Hey', '2025-03-24 15:51:38', 15, NULL, 0, NULL),
+(53, 'Ho', '2025-02-24 15:51:38', 7, NULL, 0, NULL),
+(54, 'Encore un test de la date ', '2025-03-14 15:55:34', 8, NULL, 0, NULL),
+(55, 'Et un test supplémetaire', '2025-03-24 17:55:55', 14, NULL, 0, NULL),
+(56, 'Ton tweet', '2025-03-25 15:15:17', 18, NULL, 0, NULL),
+(57, 'ENCORE IUN TEST', '2025-03-25 15:15:27', 18, NULL, 0, NULL),
+(58, 'test', '2025-03-25 15:16:02', 18, NULL, 0, NULL),
+(59, 'Test d\'affichage dans le home', '2025-03-26 10:48:28', 12, NULL, 0, NULL),
+(60, 'test', '2025-03-26 10:55:52', 12, NULL, 0, NULL),
+(61, 'test2', '2025-03-26 10:56:20', 12, NULL, 0, NULL),
+(62, 'Test', '2025-03-26 12:37:35', 12, NULL, 0, NULL),
+(63, 'encore un essai', '2025-03-26 12:42:16', 12, NULL, 0, NULL),
+(64, 'test', '2025-03-26 12:42:25', 12, NULL, 1, NULL),
+(65, 'encore un essai supplémentaire', '2025-03-26 12:44:22', 12, '[]', 0, NULL),
+(66, 'test de plus', '2025-03-26 12:45:35', 12, NULL, 0, NULL),
+(67, 'plus encore', '2025-04-01 12:47:42', 12, NULL, 0, NULL),
+(68, 'hoIZUYD87AGZIUGDQIUCZHDQKJ', '2025-04-02 15:07:45', 12, NULL, 0, NULL),
+(69, 'test', '2025-04-03 21:24:09', 15, NULL, 0, NULL),
+(70, 'encore 1', '2025-04-04 21:24:16', 15, '[]', 0, NULL),
+(71, 'et test', '2025-04-06 21:24:24', 15, '[]', 0, NULL),
+(86, 'Wouaf !', '2025-04-06 09:27:51', 21, '[]', 0, NULL),
+(94, 'wouaf!', '2025-04-07 11:49:27', 21, '[\"/assets/post/67ee75c738893.png\", \"/assets/post/67ee75c738ca1.png\"]', 0, NULL),
+(96, 'Miaou', '2025-04-08 17:07:14', 21, '[\"/assets/post/67eec0422c4ca.png\"]', 1, 1),
+(104, '@eeee comment ça va #question', '2025-04-09 21:27:43', 17, '[]', 0, NULL),
+(105, '@test', '2025-04-09 21:56:45', 17, '[]', 0, NULL),
+(106, 'Comment ça va ? #question', '2025-04-10 07:41:10', 17, '[]', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -287,11 +296,9 @@ INSERT INTO `post_like` (`id`, `user_id`, `post_id`) VALUES
 (32, 17, 54),
 (72, 17, 57),
 (26, 17, 63),
-(96, 17, 68),
 (35, 17, 69),
 (45, 17, 70),
 (36, 17, 71),
-(95, 17, 73),
 (89, 21, 59),
 (90, 21, 60),
 (91, 21, 63),
@@ -299,6 +306,31 @@ INSERT INTO `post_like` (`id`, `user_id`, `post_id`) VALUES
 (105, 21, 68),
 (106, 21, 86),
 (109, 21, 94);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `repost`
+--
+
+CREATE TABLE `repost` (
+  `id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `post_id` int DEFAULT NULL,
+  `created_at` datetime NOT NULL COMMENT '(DC2Type:datetime_immutable)',
+  `comment` varchar(280) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Déchargement des données de la table `repost`
+--
+
+INSERT INTO `repost` (`id`, `user_id`, `post_id`, `created_at`, `comment`) VALUES
+(1, 15, 94, '2025-04-08 22:05:09', 'Trop marrant'),
+(2, 17, 96, '2025-04-08 22:05:09', NULL),
+(3, 19, 24, '2025-04-09 11:52:00', NULL),
+(29, 17, 104, '2025-04-09 21:33:32', ''),
+(30, 17, 86, '2025-04-10 07:51:43', 'test');
 
 -- --------------------------------------------------------
 
@@ -319,27 +351,21 @@ CREATE TABLE `respond` (
 --
 
 INSERT INTO `respond` (`id`, `id_post_id`, `user_id_id`, `content`, `created_at`) VALUES
-(1, 73, 4, 'Test', '2025-03-29 22:50:36'),
 (2, 20, 7, 'Test2', '2025-03-29 22:50:36'),
-(3, 73, 8, 'zeadqdeq', '2025-03-29 22:56:53'),
 (4, 31, 14, 'zeqs', '2025-03-29 22:56:53'),
-(5, 73, 17, 'Content cannot be empty', '2025-03-29 23:31:54'),
-(11, 73, 17, 'ahahah', '2025-03-30 21:35:04'),
 (14, 55, 17, 'test', '2025-03-30 21:58:09'),
 (15, 54, 17, 'ahahah', '2025-03-30 21:58:15'),
 (16, 55, 17, 'feur', '2025-03-31 08:52:15'),
 (17, 70, 17, 'test', '2025-03-31 09:49:20'),
-(18, 73, 17, 'yzeez', '2025-04-01 21:00:26'),
-(19, 73, 17, 'ye', '2025-04-01 21:11:00'),
 (20, 86, 17, 'test', '2025-04-01 21:43:33'),
 (21, 86, 17, 'test', '2025-04-01 22:03:08'),
 (22, 46, 17, 'test', '2025-04-01 22:04:28'),
-(23, 73, 21, 'ahahah', '2025-04-02 11:57:50'),
 (24, 86, 21, '🐕', '2025-04-02 12:13:05'),
 (25, 68, 21, 'test', '2025-04-03 07:55:05'),
 (26, 67, 21, 'test', '2025-04-03 10:13:43'),
 (30, 94, 21, 'teas', '2025-04-03 17:06:28'),
-(32, 96, 17, 'test', '2025-04-03 18:08:49');
+(32, 96, 17, 'test', '2025-04-03 18:08:49'),
+(43, 24, 17, 'agiao', '2025-04-09 11:54:17');
 
 -- --------------------------------------------------------
 
@@ -369,7 +395,6 @@ INSERT INTO `subscribe` (`id`, `follower_id`, `following_id`) VALUES
 (10, 17, 12),
 (11, 17, 14),
 (9, 17, 15),
-(41, 17, 21),
 (15, 19, 17),
 (39, 21, 12),
 (38, 21, 15);
@@ -411,11 +436,11 @@ INSERT INTO `user` (`id`, `email`, `roles`, `password`, `pseudo`, `is_verified`,
 (12, 'new@email.com', '[\"ROLE_ADMIN\"]', '$2y$13$FdBs/Vj1932kwzwrJezMJOOPdwezpL/Hv6FJ5QLjJrPsW89sL1Upy', 'NouveauPseudo', 1, NULL, 'Hello c\'est moi le compte test, et  ceci est ma biographie', 'ethan5.webp', 'Limoges, France', 'https://www.google.fr/', 1, 0, 0),
 (14, 'ethan.manchon@gmail.com', '[\"ROLE_ADMIN\"]', '$2y$13$HDmTPWiU.fVORNHvfeVVWOcT8qrnIVXy2v5UELxYkKPYN5xBa3HUi', 'Ethan5zed', 1, NULL, 'Hello c\'est moi le compte test, et  ceci est ma biographie', NULL, NULL, NULL, 0, 0, 0),
 (15, 'atyllion@gmail.com', '[]', '$2y$13$pNpHl8Qo3hTJczUncajdO.nyrgwtvy8vJ0gkXfjvA4ynLxjgPU.u2', 'Captyllion', 1, NULL, NULL, NULL, NULL, NULL, 1, 1, 0),
-(17, 'captyllion@gmail.com', '[\"ROLE_ADMIN\"]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'Atyllion', 1, '/assets/pdp/67efd1cb3154f.png', 'La biographie en construction !!!', '67efd1cd28629.png', 'Adresse, France', 'https://mmi.unilim.fr', 1, 0, 0),
+(17, 'captyllion@gmail.com', '[\"ROLE_ADMIN\"]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'Atyllion', 1, '/assets/pdp/67f519f8a4692.png', 'La biographie en construction !!!', '67f51a7e125fd.png', 'Adresse, France', 'https://mmi.unilim.fr', 1, 0, 0),
 (18, '9eme@gmail.com', '[]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', '9eme', 1, NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
 (19, 'zafqfeq@gmail.com', '[]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'eeee', 0, NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
 (20, 'zazdadfqfeq@gmail.com', '[]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'eeeezda', 1, NULL, NULL, NULL, NULL, NULL, 0, 0, 0),
-(21, 'kermestr@gmail.com', '[]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'Kermestr', 1, '/assets/pdp/67ed2786259f0.png', '🐶Viens voir mon chenil\n', '67ed2795d5c99.png', ' Kermestr, 29380 Le Trévoux, France', 'https://www.chenildekermestr.fr/ ', 1, 0, 0),
+(21, 'kermestr@gmail.com', '[]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'Kermestr', 1, '/assets/pdp/67ed2786259f0.png', '🐶Viens voir mon chenil\n', '67ed2795d5c99.png', ' Kermestr, 29380 Le Trévoux, France', 'https://www.chenildekermestr.fr/ ', 1, 0, 1),
 (23, 'mdp@gmail.com', '[]', '$2y$13$GuVoPFmRg9Oy3h1idr37ZepKXEipgSXeGP2fHZI5jdxvDb/tQPafW', 'Mots', 0, NULL, NULL, NULL, NULL, NULL, 1, 0, 0);
 
 --
@@ -460,6 +485,14 @@ ALTER TABLE `post_like`
   ADD KEY `IDX_653627B84B89032C` (`post_id`);
 
 --
+-- Index pour la table `repost`
+--
+ALTER TABLE `repost`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `IDX_DD3446C5A76ED395` (`user_id`),
+  ADD KEY `IDX_DD3446C54B89032C` (`post_id`);
+
+--
 -- Index pour la table `respond`
 --
 ALTER TABLE `respond`
@@ -491,31 +524,37 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT pour la table `access_token`
 --
 ALTER TABLE `access_token`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT pour la table `blocked`
 --
 ALTER TABLE `blocked`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT pour la table `post`
 --
 ALTER TABLE `post`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=98;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT pour la table `post_like`
 --
 ALTER TABLE `post_like`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=119;
+
+--
+-- AUTO_INCREMENT pour la table `repost`
+--
+ALTER TABLE `repost`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT pour la table `respond`
 --
 ALTER TABLE `respond`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT pour la table `subscribe`
@@ -558,6 +597,13 @@ ALTER TABLE `post`
 ALTER TABLE `post_like`
   ADD CONSTRAINT `FK_653627B84B89032C` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `FK_653627B8A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE;
+
+--
+-- Contraintes pour la table `repost`
+--
+ALTER TABLE `repost`
+  ADD CONSTRAINT `FK_DD3446C54B89032C` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`),
+  ADD CONSTRAINT `FK_DD3446C5A76ED395` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`);
 
 --
 -- Contraintes pour la table `respond`

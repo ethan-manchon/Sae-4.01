@@ -35,7 +35,7 @@ export default function NavBar({ user }: Props) {
           variant="transparent"
           className="mb-6 flex items-center gap-2"
         >
-          <img src={`${(import.meta as any).env.BASE_URL}/assets/twitter-logo.svg`} className="h-8 w-8" />
+          <img src={`http://localhost:8090/assets/twitter-logo.svg`} className="h-8 w-8" />
           <p className="text-2xl font-bold text-primary">Twitter</p>
         </Button>
 
@@ -70,7 +70,7 @@ export default function NavBar({ user }: Props) {
           variant="transparent"
           className="mb-6 flex items-center gap-2"
         >
-          <img src={`${(import.meta as any).env.BASE_URL}/assets/twitter-logo.svg`} className="h-8 w-8" />
+          <img src={`http://localhost:8090/assets/twitter-logo.svg`} className="h-8 w-8" />
           <p className="text-2xl font-bold text-primary">Twitter</p>
         </Button>
         </div>

@@ -8,17 +8,17 @@ interface IconProps {
 
 export default function Icon({ className, url }: IconProps) {
   const icons = {
-    undefined: `${(import.meta as any).env.BASE_URL}/assets/icon/undefined.webp`,
-    default: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_default.svg`,
-    facebook: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_facebook.svg`,
-    github: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_github.svg`,
-    linkedin: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_linkedin.svg`,
-    instagram: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_instagram.svg`,
-    wikipedia: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_wikipedia.svg`,
-    google: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_google.svg`,
-    youtube: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_youtube.svg`,
-    twitch: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_twitch.svg`,
-    unilim: `${(import.meta as any).env.BASE_URL}/assets/icon/devicon_unilim.svg`,
+    undefined: `http://localhost:8090/assets/icon/undefined.webp`,
+    default: `http://localhost:8090/assets/icon/devicon_default.svg`,
+    facebook: `http://localhost:8090/assets/icon/devicon_facebook.svg`,
+    github: `http://localhost:8090/assets/icon/devicon_github.svg`,
+    linkedin: `http://localhost:8090/assets/icon/devicon_linkedin.svg`,
+    instagram: `http://localhost:8090/assets/icon/devicon_instagram.svg`,
+    wikipedia: `http://localhost:8090/assets/icon/devicon_wikipedia.svg`,
+    google: `http://localhost:8090/assets/icon/devicon_google.svg`,
+    youtube: `http://localhost:8090/assets/icon/devicon_youtube.svg`,
+    twitch: `http://localhost:8090/assets/icon/devicon_twitch.svg`,
+    unilim: `http://localhost:8090/assets/icon/devicon_unilim.svg`,
   };
 
   const found = url
